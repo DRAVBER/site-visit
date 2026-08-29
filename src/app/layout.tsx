@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { AppProviders } from "@/components/site/providers";
 import { profile } from "@/lib/portfolio";
 
@@ -101,6 +102,7 @@ export default function RootLayout({
       >
         <AppProviders>{children}</AppProviders>
         <Toaster />
+        <SonnerToaster position="bottom-right" richColors closeButton />
       </body>
     </html>
   );

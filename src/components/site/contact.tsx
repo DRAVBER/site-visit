@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { motion, type Variants } from "framer-motion";
 import { Check, Copy, Mail } from "lucide-react";
+import { toast } from "sonner";
 import { useI18n } from "@/lib/i18n";
+import { copyToClipboard } from "@/lib/clipboard";
 import { profile } from "@/lib/portfolio";
 import { SectionHeading } from "./section-heading";
 import { DiscordIcon, GithubIcon, TelegramIcon } from "./icons";
@@ -47,12 +49,11 @@ export function ContactSection() {
   ];
 
   const copyEmail = async () => {
-    try {
-      await navigator.clipboard.writeText(profile.socialLinks.email);
+    const ok = await copyToClipboard(profile.socialLinks.email);
+    if (ok) {
       setCopied(true);
+      toast.success(t("toast.emailCopied"));
       setTimeout(() => setCopied(false), 2000);
-    } catch {
-      /* clipboard unavailable */
     }
   };
 

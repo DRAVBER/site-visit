@@ -3,11 +3,12 @@
 import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "framer-motion";
-import { FolderOpen } from "lucide-react";
+import { FolderOpen, SearchX } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import type { Project } from "@/lib/portfolio";
+import { resolveLocalized, type Project } from "@/lib/portfolio";
 import { SectionHeading } from "./section-heading";
 import { ProjectCard, CategoryTabs } from "./project-card";
+import { ProjectSearch } from "./project-search";
 
 /** heavy dialog is code-split to keep first paint fast */
 const ProjectDialog = dynamic(
@@ -29,6 +30,7 @@ export function ProjectsSection({
 }) {
   const { t, locale } = useI18n();
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<Project | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [liveMeta, setLiveMeta] = useState<
@@ -66,13 +68,22 @@ export function ProjectsSection({
     [projects]
   );
 
-  const visible = useMemo(
-    () =>
-      activeCategory
-        ? sorted.filter((p) => p.category === activeCategory)
-        : sorted,
-    [sorted, activeCategory]
-  );
+  /** category filter + full-text search (title / description / tags) */
+  const visible = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return sorted.filter((p) => {
+      if (activeCategory && p.category !== activeCategory) return false;
+      if (!q) return true;
+      const haystack = [
+        p.title,
+        resolveLocalized(p.description, locale),
+        p.tags.join(" "),
+      ]
+        .join(" ")
+        .toLowerCase();
+      return haystack.includes(q);
+    });
+  }, [sorted, activeCategory, query, locale]);
 
   const counts = (id: string | null) =>
     id ? projects.filter((p) => p.category === id).length : projects.length;
@@ -125,14 +136,35 @@ export function ProjectsSection({
           counts={counts}
         />
 
+        <ProjectSearch
+          value={query}
+          onChange={setQuery}
+          placeholder={t("projects.searchPlaceholder")}
+          clearLabel={t("projects.searchClear")}
+          resultCount={visible.length}
+          resultLabel={t("projects.resultsFound")}
+        />
+
         {visible.length === 0 ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="mx-auto flex max-w-md flex-col items-center gap-3 rounded-2xl border border-dashed border-border/80 p-12 text-center text-muted-foreground"
           >
-            <FolderOpen className="h-10 w-10 text-primary/50" aria-hidden="true" />
-            <p>{t("projects.empty")}</p>
+            {query.trim() ? (
+              <>
+                <SearchX className="h-10 w-10 text-primary/50" aria-hidden="true" />
+                <p>
+                  {t("projects.noResults")} «{query.trim()}»
+                </p>
+                <p className="text-sm">{t("projects.noResultsHint")}</p>
+              </>
+            ) : (
+              <>
+                <FolderOpen className="h-10 w-10 text-primary/50" aria-hidden="true" />
+                <p>{t("projects.empty")}</p>
+              </>
+            )}
           </motion.div>
         ) : (
           <motion.div

@@ -14,6 +14,7 @@ import { ThemeToggle } from "./theme-toggle";
 import { LanguageToggle } from "./language-toggle";
 import { useI18n } from "@/lib/i18n";
 import { profile } from "@/lib/portfolio";
+import { useScrollSpy } from "@/hooks/use-scrollspy";
 
 const NAV_SECTIONS = [
   { id: "hero", key: "nav.home" },
@@ -22,11 +23,14 @@ const NAV_SECTIONS = [
   { id: "contact", key: "nav.contact" },
 ] as const;
 
-/** Fixed glass header: monogram logo, anchor nav, theme + language switches. */
+const SECTION_IDS = NAV_SECTIONS.map((s) => s.id);
+
+/** Fixed glass header: monogram logo, scrollspy nav, theme + language switches. */
 export function SiteHeader() {
   const { t, locale } = useI18n();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const activeSection = useScrollSpy(SECTION_IDS);
 
   // glass background appears once the page is scrolled
   useEffect(() => {
@@ -60,19 +64,27 @@ export function SiteHeader() {
           </span>
         </a>
 
-        {/* desktop nav */}
+        {/* desktop nav with scrollspy highlight */}
         <nav aria-label="Main" className="hidden md:block">
-          <ul className="flex items-center gap-1">
-            {NAV_SECTIONS.map(({ id, key }) => (
-              <li key={id}>
-                <a
-                  href={`#${id}`}
-                  className="rounded-full px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                >
-                  {t(key)}
-                </a>
-              </li>
-            ))}
+          <ul className="flex items-center gap-1 rounded-full border border-border/50 bg-secondary/30 p-1 backdrop-blur-sm">
+            {NAV_SECTIONS.map(({ id, key }) => {
+              const isActive = activeSection === id;
+              return (
+                <li key={id}>
+                  <a
+                    href={`#${id}`}
+                    aria-current={isActive ? "true" : undefined}
+                    className={`relative rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                      isActive
+                        ? "bg-primary/90 text-primary-foreground shadow-[0_2px_14px_-2px_rgba(139,92,246,0.6)]"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {t(key)}
+                  </a>
+                </li>
+              );
+            })}
           </ul>
         </nav>
 
@@ -104,23 +116,31 @@ export function SiteHeader() {
               </SheetHeader>
               <nav aria-label="Mobile" className="mt-6">
                 <ul className="flex flex-col gap-1">
-                  {NAV_SECTIONS.map(({ id, key }) => (
-                    <li key={id}>
-                      <a
-                        href={`#${id}`}
-                        onClick={() => setOpen(false)}
-                        className="flex items-center justify-between rounded-xl px-4 py-3 text-base font-medium text-muted-foreground transition-all hover:bg-accent hover:text-accent-foreground hover:pl-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                      >
-                        {t(key)}
-                        <span
-                          aria-hidden="true"
-                          className="text-primary/60 transition-transform"
+                  {NAV_SECTIONS.map(({ id, key }) => {
+                    const isActive = activeSection === id;
+                    return (
+                      <li key={id}>
+                        <a
+                          href={`#${id}`}
+                          onClick={() => setOpen(false)}
+                          aria-current={isActive ? "true" : undefined}
+                          className={`flex items-center justify-between rounded-xl px-4 py-3 text-base font-medium transition-all hover:bg-accent hover:text-accent-foreground hover:pl-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                            isActive ? "text-primary" : "text-muted-foreground"
+                          }`}
                         >
-                          →
-                        </span>
-                      </a>
-                    </li>
-                  ))}
+                          {t(key)}
+                          <span
+                            aria-hidden="true"
+                            className={`transition-transform ${
+                              isActive ? "text-primary translate-x-1" : "text-primary/60"
+                            }`}
+                          >
+                            →
+                          </span>
+                        </a>
+                      </li>
+                    );
+                  })}
                 </ul>
               </nav>
               <p className="mt-8 px-4 text-xs text-muted-foreground">

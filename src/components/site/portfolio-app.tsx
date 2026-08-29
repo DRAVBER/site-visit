@@ -1,12 +1,14 @@
 "use client";
 
-import { projects, categories, profile } from "@/lib/portfolio";
+import { projects, categories } from "@/lib/portfolio";
 import { SiteHeader } from "./header";
 import { Hero } from "./hero";
 import { ProjectsSection } from "./projects";
 import { BioSection } from "./bio";
 import { ContactSection } from "./contact";
 import { SiteFooter } from "./footer";
+import { ScrollProgress } from "./scroll-progress";
+import { BackToTop } from "./back-to-top";
 
 /**
  * Client shell assembling all sections. Portfolio content comes from
@@ -17,6 +19,7 @@ export function PortfolioApp() {
   return (
     <div className="flex min-h-svh flex-col">
       <SiteHeader />
+      <ScrollProgress />
       <main className="flex-1">
         <Hero />
         <ProjectsSection projects={projects} categories={categories} />
@@ -24,6 +27,7 @@ export function PortfolioApp() {
         <ContactSection />
       </main>
       <SiteFooter />
+      <BackToTop />
     </div>
   );
 }

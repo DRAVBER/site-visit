@@ -11,6 +11,8 @@ import {
   Terminal,
   X,
 } from "lucide-react";
+import { toast } from "sonner";
+import { copyToClipboard } from "@/lib/clipboard";
 import {
   Dialog,
   DialogContent,
@@ -86,12 +88,11 @@ export function ProjectDialog({
 
   const copyRun = async () => {
     if (!project.run) return;
-    try {
-      await navigator.clipboard.writeText(project.run);
+    const ok = await copyToClipboard(project.run);
+    if (ok) {
       setCopied(true);
+      toast.success(t("toast.commandsCopied"));
       setTimeout(() => setCopied(false), 2000);
-    } catch {
-      /* clipboard unavailable */
     }
   };
 

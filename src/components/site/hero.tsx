@@ -4,8 +4,9 @@ import { motion, type Variants } from "framer-motion";
 import { ArrowDown, ArrowRight, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n";
-import { profile, formatStars } from "@/lib/portfolio";
+import { profile } from "@/lib/portfolio";
 import { DiscordIcon, GithubIcon, TelegramIcon } from "./icons";
+import { CountUp } from "./count-up";
 
 const container: Variants = {
   hidden: {},
@@ -26,10 +27,10 @@ export function Hero() {
   const { t } = useI18n();
 
   const stats = [
-    { value: `${profile.stats.years}+`, label: t("hero.stats.years") },
-    { value: `${profile.stats.projects}+`, label: t("hero.stats.projects") },
-    { value: `${profile.stats.openSource}`, label: t("hero.stats.openSource") },
-    { value: formatStars(profile.stats.stars), label: t("hero.stats.stars") },
+    { value: profile.stats.years, suffix: "+", label: t("hero.stats.years"), format: "plain" as const },
+    { value: profile.stats.projects, suffix: "+", label: t("hero.stats.projects"), format: "plain" as const },
+    { value: profile.stats.openSource, suffix: "", label: t("hero.stats.openSource"), format: "plain" as const },
+    { value: profile.stats.stars, suffix: "", label: t("hero.stats.stars"), format: "compact" as const },
   ];
 
   const socials = [
@@ -158,7 +159,7 @@ export function Hero() {
             >
               <dt className="sr-only">{s.label}</dt>
               <dd className="text-gradient text-2xl font-bold tabular-nums sm:text-3xl">
-                {s.value}
+                <CountUp value={s.value} suffix={s.suffix} format={s.format} />
               </dd>
               <dd className="mt-1 text-xs leading-snug text-muted-foreground sm:text-sm">
                 {s.label}

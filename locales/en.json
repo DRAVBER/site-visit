@@ -39,7 +39,12 @@
     "source": "Source code",
     "demo": "Live demo",
     "stars": "stars",
-    "updated": "Updated"
+    "updated": "Updated",
+    "searchPlaceholder": "Search projects, tags…",
+    "searchClear": "Clear search",
+    "resultsFound": "projects found",
+    "noResults": "Nothing found for",
+    "noResultsHint": "Try a different keyword or clear the search"
   },
   "projectDialog": {
     "overview": "Overview",
@@ -84,6 +89,10 @@
     "emailDesc": "For everything formal",
     "copyEmail": "Copy email address",
     "copied": "Email copied to clipboard"
+  },
+  "toast": {
+    "emailCopied": "Email copied to clipboard",
+    "commandsCopied": "Commands copied to clipboard"
   },
   "footer": {
     "madeWith": "Made with",

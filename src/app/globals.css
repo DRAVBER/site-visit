@@ -210,6 +210,39 @@
   box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.28), 0 8px 40px -8px var(--glow);
 }
 
+/* gradient border ring on hover — used by project cards.
+   Pseudo-element drawn as a 1px ring via mask-composite, fades in on hover. */
+.card-ring-glow {
+  position: relative;
+}
+
+.card-ring-glow::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(139, 92, 246, 0.65),
+    rgba(217, 70, 239, 0.45) 55%,
+    rgba(59, 130, 246, 0.35)
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.card-ring-glow:hover::before,
+.card-ring-glow:focus-within::before {
+  opacity: 1;
+}
+
 /* fixed header glass background */
 .header-glass {
   background: var(--header-bg);
