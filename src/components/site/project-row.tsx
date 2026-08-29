@@ -12,6 +12,7 @@ import {
 } from "@/lib/portfolio";
 import { CategoryGlyph } from "./icons";
 import { RelativeTime } from "./relative-time";
+import { spotlightProps } from "@/hooks/use-spotlight";
 
 /**
  * Compact list row — the space-efficient alternative to the card grid.
@@ -49,6 +50,7 @@ export function ProjectRow({
 }) {
   const [imageError, setImageError] = useState(false);
   const cover = project.screenshots[0];
+  const spotlight = spotlightProps<HTMLElement>();
 
   return (
     <motion.article
@@ -62,7 +64,8 @@ export function ProjectRow({
         ease: [0.22, 1, 0.36, 1],
       }}
       data-card=""
-      className="group relative overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm transition-all duration-300 hover:border-primary/45 hover:shadow-[0_14px_40px_-16px_rgba(139,92,246,0.45)] focus-within:border-primary/45"
+      {...spotlight}
+      className="card-spotlight group relative overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm transition-all duration-300 hover:border-primary/45 hover:shadow-[0_14px_40px_-16px_rgba(139,92,246,0.45)] focus-within:border-primary/45"
     >
       {/* gradient wash on hover */}
       <span

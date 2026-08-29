@@ -299,6 +299,75 @@
   to { transform: rotate(24deg) translateX(320%); }
 }
 
+/* cursor spotlight — a soft radial glow that follows the pointer across a
+   card. Coordinates arrive as --mx/--my (px, relative to the element) via
+   the spotlightProps hook; the overlay itself is pure CSS. Touch devices
+   get nothing (@media hover:none) and the overlay is transparent in print. */
+.card-spotlight::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  background: radial-gradient(
+    420px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(139, 92, 246, 0.1),
+    transparent 46%
+  );
+  z-index: 15;
+}
+
+.card-spotlight:hover::after,
+.card-spotlight:focus-within::after {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .card-spotlight::after {
+    display: none;
+  }
+}
+
+/* infinite tech-strip marquee (BIO). The track holds the item list twice;
+   translating by exactly -50% loops seamlessly. Edges fade out via a
+   mask so items appear to float in from the blur. */
+.marquee {
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 14%,
+    black 86%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 14%,
+    black 86%,
+    transparent
+  );
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 42s linear infinite;
+  will-change: transform;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 /* fixed header glass background */
 .header-glass {
   background: var(--header-bg);
@@ -373,6 +442,18 @@
   }
   .card-shine::after {
     display: none;
+  }
+  /* static spotlight (no fade-in) and a scrollable, non-animated marquee */
+  .card-spotlight::after {
+    transition: none;
+  }
+  .marquee-track {
+    animation: none;
+  }
+  .marquee {
+    overflow-x: auto;
+    mask-image: none;
+    -webkit-mask-image: none;
   }
   *,
   *::before,

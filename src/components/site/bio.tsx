@@ -1,7 +1,8 @@
 "use client";
 
+import { useMemo } from "react";
 import { motion, type Variants } from "framer-motion";
-import { Briefcase, Clock, MapPin, Quote, Radio } from "lucide-react";
+import { Briefcase, Clock, MapPin, Quote, Radio, Sparkles } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { profile, resolveLocalized } from "@/lib/portfolio";
 import { useNow } from "@/lib/clock";
@@ -35,6 +36,62 @@ function LocalTimeChip() {
       <Clock className="h-3.5 w-3.5" aria-hidden="true" />
       {time ? <span className="tabular-nums">{time}</span> : "—:—"}
     </span>
+  );
+}
+
+/**
+ * Infinite tech-strip marquee — the deduplicated union of every skill
+ * group, drifting horizontally. Content is duplicated once in the DOM
+ * (aria-hidden) so the CSS translateX(-50%) loop is seamless.
+ */
+function TechMarquee() {
+  const { t } = useI18n();
+  const stack = useMemo(
+    () => Array.from(new Set(profile.skills.flatMap((g) => g.items))),
+    []
+  );
+
+  const items = (key: string) => (
+    <ul
+      key={key}
+      className="flex shrink-0 items-center gap-3 pr-3"
+    >
+      {stack.map((skill) => (
+        <li
+          key={`${key}-${skill}`}
+          className="flex items-center gap-3 rounded-full border border-border bg-card px-4 py-1.5 font-mono text-xs whitespace-nowrap text-foreground/75 transition-colors duration-300 hover:border-primary/40 hover:text-primary"
+        >
+          <span
+            aria-hidden="true"
+            className="h-1 w-1 rounded-full bg-primary/70"
+          />
+          {skill}
+        </li>
+      ))}
+    </ul>
+  );
+
+  return (
+    <motion.div
+      variants={fadeUp}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-80px" }}
+      className="mt-8 print:hidden"
+    >
+      <p className="mb-5 flex items-center justify-center gap-2 text-xs font-semibold tracking-[0.18em] text-primary/70 uppercase">
+        <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
+        {t("bio.stackTitle")}
+      </p>
+      {/* decorative — skills already exist as static lists above, so the
+          moving strip is hidden from assistive tech entirely */}
+      <div aria-hidden="true" className="marquee">
+        <div className="marquee-track">
+          {items("a")}
+          {items("b")}
+        </div>
+      </div>
+    </motion.div>
   );
 }
 
@@ -314,6 +371,9 @@ export function BioSection() {
             </motion.div>
           </div>
         </div>
+
+        {/* daily toolkit — infinite marquee strip (decorative, data-driven) */}
+        <TechMarquee />
       </div>
     </section>
   );

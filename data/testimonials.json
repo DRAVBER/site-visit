@@ -1,0 +1,67 @@
+[
+  {
+    "id": "marta-lund",
+    "quote": {
+      "en": "Alex rebuilt our booking platform in three months. Page load went from 4.2s to 0.6s and support tickets dropped by half. He thinks about the product, not just the code.",
+      "ru": "Алекс пересобрал нашу платформу бронирования за три месяца. Загрузка страницы ускорилась с 4,2 с до 0,6 с, а тикеты в поддержку упали вдвое. Он думает о продукте, а не только о коде."
+    },
+    "author": "Marta Lund",
+    "role": { "en": "Product Lead", "ru": "Продакт-лид" },
+    "company": "Fjordline",
+    "initials": "ML",
+    "rating": 5,
+    "project": "Nebula Analytics"
+  },
+  {
+    "id": "dmitry-orlov",
+    "quote": {
+      "en": "Rare combination: an engineer who ships fast and a designer's eye for detail. The internal tool he built is the one my team actually enjoys opening every morning.",
+      "ru": "Редкое сочетание: инженер, который быстро шипит, и дизайнерский взгляд на детали. Внутренний инструмент, который он сделал, — единственный, который моей команде приятно открывать каждое утро."
+    },
+    "author": "Dmitry Orlov",
+    "role": { "en": "CTO", "ru": "CTO" },
+    "company": "Kvant Labs",
+    "initials": "DO",
+    "rating": 5,
+    "project": "Prism Notes"
+  },
+  {
+    "id": "sarah-chen",
+    "quote": {
+      "en": "We hired Alex for a two-week automation script and kept him for a year. Every deliverable came with tests, docs and a sane rollback plan. Zero drama, lots of value.",
+      "ru": "Мы наняли Алекса на двухнедельный скрипт автоматизации — и оставили его на год. Каждый релиз приходил с тестами, документацией и разумным планом отката. Никакой драмы, много пользы."
+    },
+    "author": "Sarah Chen",
+    "role": { "en": "Operations Director", "ru": "Директор по операциям" },
+    "company": "Brightside",
+    "initials": "SC",
+    "rating": 5,
+    "project": "repo-sweep"
+  },
+  {
+    "id": "ivan-petrov",
+    "quote": {
+      "en": "VaultDrop passed our security audit on the first attempt. Alex explains encryption trade-offs in plain language — as a non-technical founder, I appreciated that a lot.",
+      "ru": "VaultDrop прошёл наш security-аудит с первой попытки. Алекс объясняет компромиссы шифрования простым языком — как нетехнический основатель, я это очень оценил."
+    },
+    "author": "Ivan Petrov",
+    "role": { "en": "Founder", "ru": "Основатель" },
+    "company": "Safedock",
+    "initials": "IP",
+    "rating": 5,
+    "project": "VaultDrop"
+  },
+  {
+    "id": "lena-hoffmann",
+    "quote": {
+      "en": "His open-source libraries saved us weeks of work. When we reported an edge-case bug, the fix landed the same evening. That level of care is why we sponsor his work.",
+      "ru": "Его open-source-библиотеки сэкономили нам недели работы. Когда мы сообщили об edge-case баге, фикс попал в репозиторий тем же вечером. Именно такая забота — причина, по которой мы спонсируем его работу."
+    },
+    "author": "Lena Hoffmann",
+    "role": { "en": "Engineering Manager", "ru": "Менеджер разработки" },
+    "company": "Studiokuh",
+    "initials": "LH",
+    "rating": 5,
+    "project": "lumen-kit"
+  }
+]

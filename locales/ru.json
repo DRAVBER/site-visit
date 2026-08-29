@@ -14,7 +14,8 @@
     "switchLanguage": "Переключить язык",
     "goTo": "Перейти к",
     "openPalette": "Открыть командную палитру",
-    "menuDescription": "Навигация по разделам сайта"
+    "menuDescription": "Навигация по разделам сайта",
+    "testimonials": "Отзывы"
   },
   "a11y": {
     "skipToContent": "Перейти к содержимому"
@@ -32,7 +33,10 @@
     "openTelegram": "Открыть Telegram",
     "openDiscord": "Открыть Discord",
     "printResume": "Печать / сохранить как PDF",
-    "hint": "Нажмите Ctrl+K в любой момент"
+    "hint": "Нажмите Ctrl+K в любой момент",
+    "hintTitle": "Быстрая навигация",
+    "hintBody": "Нажмите Ctrl + K, чтобы перейти к любому проекту или разделу.",
+    "hintDismiss": "Понятно"
   },
   "hero": {
     "badge": "Открыт для новых проектов",
@@ -76,7 +80,8 @@
     "viewMode": "Режим отображения",
     "viewGrid": "Сетка",
     "viewList": "Список",
-    "listOpen": "Открыть проект"
+    "listOpen": "Открыть проект",
+    "featuredOnly": "Только избранное"
   },
   "projectDialog": {
     "overview": "Описание",
@@ -114,7 +119,8 @@
     "activitySummary": "коммитов за последний год",
     "activityLess": "меньше",
     "activityMore": "больше",
-    "activityContributions": "коммитов"
+    "activityContributions": "коммитов",
+    "stackTitle": "Ежедневный стек"
   },
   "contact": {
     "title": "Давайте создадим что-то вместе",
@@ -140,5 +146,15 @@
     "rights": "Все права защищены.",
     "backToTop": "Наверх",
     "builtNote": "Собрано на Next.js, Tailwind CSS и shadcn/ui"
+  },
+  "testimonials": {
+    "title": "Добрые слова",
+    "subtitle": "Что говорят клиенты и коллеги после совместных релизов.",
+    "ratingLabel": "Оценка {rating} из 5",
+    "prev": "Предыдущий отзыв",
+    "next": "Следующий отзыв",
+    "goTo": "Перейти к отзыву {index}",
+    "autoRotate": "Отзывы меняются автоматически",
+    "projectLabel": "проект"
   }
 }

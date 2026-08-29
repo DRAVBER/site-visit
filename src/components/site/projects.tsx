@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "framer-motion";
-import { FolderOpen, LayoutGrid, ListIcon, SearchX } from "lucide-react";
+import { FolderOpen, LayoutGrid, ListIcon, SearchX, Star } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { resolveLocalized, type Project } from "@/lib/portfolio";
 import { useUiStore } from "@/lib/ui-store";
@@ -35,6 +35,7 @@ export function ProjectsSection({
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [sortMode, setSortMode] = useState<SortMode>("featured");
+  const [featuredOnly, setFeaturedOnly] = useState(false);
   const [liveMeta, setLiveMeta] = useState<
     Record<string, { stars?: number; lastCommit?: string }>
   >({});
@@ -94,11 +95,12 @@ export function ProjectsSection({
     return [...projects].sort(bySort);
   }, [projects, sortMode]);
 
-  /** category filter + full-text search (title / description / tags) */
+  /** category filter + featured toggle + full-text search (title / description / tags) */
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
     return sorted.filter((p) => {
       if (activeCategory && p.category !== activeCategory) return false;
+      if (featuredOnly && !p.featured) return false;
       if (!q) return true;
       const haystack = [
         p.title,
@@ -109,7 +111,7 @@ export function ProjectsSection({
         .toLowerCase();
       return haystack.includes(q);
     });
-  }, [sorted, activeCategory, query, locale]);
+  }, [sorted, activeCategory, query, locale, featuredOnly]);
 
   const counts = (id: string | null) =>
     id ? projects.filter((p) => p.category === id).length : projects.length;
@@ -235,6 +237,26 @@ export function ProjectsSection({
             resultLabel={t("projects.resultsFound")}
           />
           <div className="flex items-center gap-3">
+            {/* featured-only quick filter */}
+            <button
+              type="button"
+              onClick={() => setFeaturedOnly((v) => !v)}
+              aria-pressed={featuredOnly}
+              className={`flex h-10 items-center gap-2 rounded-full border px-4 text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                featuredOnly
+                  ? "border-primary/60 bg-primary/15 text-primary shadow-[0_2px_14px_-2px_rgba(139,92,246,0.5)]"
+                  : "border-border/70 bg-secondary/40 text-muted-foreground hover:border-primary/40 hover:text-foreground"
+              }`}
+            >
+              <Star
+                aria-hidden="true"
+                className={`h-3.5 w-3.5 transition-transform duration-300 ${
+                  featuredOnly ? "scale-110 fill-primary" : ""
+                }`}
+              />
+              <span className="hidden sm:inline">{t("projects.featuredOnly")}</span>
+              <span className="sm:hidden" aria-hidden="true">{t("projects.featured")}</span>
+            </button>
             <SortSelect
               value={sortMode}
               onChange={setSortMode}

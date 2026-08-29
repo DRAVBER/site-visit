@@ -3,16 +3,15 @@
  *
  * All content comes from flat JSON files in /data — adding a project or a
  * category is a matter of adding an entry there, no component changes needed:
- *   - data/projects.json    → projects grid
- *   - data/categories.json  → filter tabs (ordered by `order`)
- *   - data/profile.json     → owner info, skills, experience, social links
- *
- * Localized fields accept either a plain string (same in every language) or
- * an { en, ru } object resolved against the active locale.
+ *   - data/projects.json      → projects grid
+ *   - data/categories.json    → filter tabs (ordered by `order`)
+ *   - data/profile.json       → owner info, skills, experience, social links
+ *   - data/testimonials.json  → “what clients say” carousel
  */
 import projectsJson from "../../data/projects.json";
 import categoriesJson from "../../data/categories.json";
 import profileJson from "../../data/profile.json";
+import testimonialsJson from "../../data/testimonials.json";
 
 export type Locale = "en" | "ru";
 
@@ -76,6 +75,20 @@ export interface ActivityConfig {
   seed: number;
 }
 
+export interface Testimonial {
+  id: string;
+  quote: Localized;
+  author: string;
+  role: Localized;
+  company: string;
+  /** two-letter monogram shown in the avatar circle */
+  initials: string;
+  /** 1–5 stars rendered under the quote */
+  rating?: number;
+  /** related project title (informational chip) */
+  project?: string;
+}
+
 export interface Profile {
   name: string;
   handle: string;
@@ -113,6 +126,10 @@ export const categories: Category[] = [...(categoriesJson as Category[])].sort(
 );
 
 export const profile: Profile = profileJson as Profile;
+
+/** client quotes — data/testimonials.json (section renders nothing if empty) */
+export const testimonials: Testimonial[] =
+  testimonialsJson as Testimonial[];
 
 /** number of screenshots across all projects (used for stats / alt text) */
 export const projectIds = projects.map((p) => p.id);

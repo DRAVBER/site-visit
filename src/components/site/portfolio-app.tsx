@@ -7,11 +7,13 @@ import { SiteHeader } from "./header";
 import { Hero } from "./hero";
 import { ProjectsSection } from "./projects";
 import { BioSection } from "./bio";
+import { TestimonialsSection } from "./testimonials";
 import { ContactSection } from "./contact";
 import { SiteFooter } from "./footer";
 import { ScrollProgress } from "./scroll-progress";
 import { BackToTop } from "./back-to-top";
 import { CommandPalette } from "./command-palette";
+import { PaletteHint } from "./palette-hint";
 
 /**
  * Client shell assembling all sections. Portfolio content comes from
@@ -48,11 +50,13 @@ export function PortfolioApp() {
           <Hero />
           <ProjectsSection projects={projects} categories={categories} />
           <BioSection />
+          <TestimonialsSection />
           <ContactSection />
         </main>
         <SiteFooter />
         <BackToTop />
         <CommandPalette />
+        <PaletteHint />
       </div>
     </MotionConfig>
   );

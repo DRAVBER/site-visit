@@ -146,3 +146,35 @@ Unresolved issues / risks, приоритеты следующей фазы:
 - Домен-заглушка alexvolkov.dev (TODO в layout.tsx/sitemap.ts/robots.ts/page.tsx) — заменить при деплое.
 - График активности декоративный (генерится по сиду); при желании можно заменить на реальные данные GitHub contributions API (нужен токен).
 - Идеи следующего раунда: 404/not-found страница, testimonials-секция (data-driven), фильтр «только featured», RSS/blog-микросекция, анимация появления тултипов при первом визите (onboarding-хинт), e2e-тесты Playwright.
+
+---
+Task ID: 5
+Agent: main agent (Z.ai Code) — сессия после сбоя cron (Failure: model concurrency limit exceeded)
+Task: Продолжение после упавшего раунда: QA стабильности фазы 4 + раунд развития — секция отзывов (testimonials), фильтр «только избранное», подсказка командной палитры для первого визита, spotlight-эффект карточек, marquee-лента технологий, стилевые правки по VLM-ревью.
+
+Work Log:
+- Входной QA (agent-browser, desktop 1280 + mobile 390): 4 секции/8 карточек/RU/dark — фильтры категорий (Software → 2), диалог проекта (открытие/Escape), тема dark⇄light + персистентность (ключ next-themes "theme"), язык RU⇄EN + "portfolio-lang", палитра Ctrl+K (19 пунктов, поиск "vaultdrop" → диалог), поиск "rust" → 1, сетка⇄список + localStorage "portfolio-view", мобильное Sheet-меню, горизонтальный скролл невозможен (scrollX=0 при попытке; scrollWidth>clientWidth только от клипнутых декоративных орбов). Консоль и ошибки страницы чистые. Багов фазы 4 не найдено.
+- Зафиксирован падший dev-сервер (process исчез после Fast Refresh) — перезапущен `bun run dev` в фоне, страница 200.
+- Фича: секция «Добрые слова» (testimonials) — data/testimonials.json (5 отзывов: quote{en,ru}, author, role{en,ru}, company, initials, rating, project), тип Testimonial + загрузчик в lib/portfolio.ts, компонент testimonials.tsx: карусель с авто-прокруткой 7с (пауза при hover/focus, отключена при reduced-motion), AnimatePresence mode="wait" слайды, стрелки prev/next + точки-индикаторы (role=tablist/tab), монограмма-аватар с градиентной рамкой, 5 звёзд, чип связанного проекта; print-fallback — все отзывы сеткой 2 колонки (проверено в PDF). Секция № 04, контакты перенумерованы в 05 (contact.tsx).
+- Навигация: «Отзывы» добавлена в шапку (NAV_SECTIONS) и в командную палитру (SECTIONS → 20 пунктов, шорткаты 01–05), scrollspy подхватил автоматически.
+- Фича: фильтр «Только избранное» — кнопка-переключатель со звездой в тулбаре проектов (aria-pressed, при активации заливка звезды + фиолетовая рамка), комбинируется с категорией/поиском (8 → 2 карточки).
+- Фича: подсказка командной палитры (palette-hint.tsx) — плашка снизу по центру через 3с после первого визита, автоскрытие через 15с, крестики/открытие палитры помечают "portfolio-palette-hint"="seen"; видимость выведена из состояния (mounted && raised && !paletteOpen) — без setState-in-effect (линт-ошибка исправлена при разработке).
+- Фича: spotlight-эффект — hooks/use-spotlight.ts пишет --mx/--my (px относительно элемента) в onMouseMove без ре-рендеров; CSS .card-spotlight::after — radial-gradient 420px rgba(139,92,246,.1) за курсором, opacity fade 0.45s, z-index 15, отключён на тач (@media hover:none) и в reduced-motion. Применён к ProjectCard и ProjectRow. Проверено: synthetic mousemove (bubbles) устанавливает переменные (50px/60px), hover даёт ::after opacity=1.
+- Фича: marquee «Ежедневный стек» в BIO (TechMarquee в bio.tsx) — дедуплицированный union всех skills[] (19 чипов × 2 копии в треке), CSS-анимация translateX(-50%) 42s linear infinite, пауза при hover, маска затухания краёв (14%/86%), aria-hidden (контент дублируется статическими списками навыков), print:hidden; reduced-motion — без анимации, маски и с overflow-x:auto.
+- Стиль по VLM-ревью (оценки 8/10 и 6-7/10): маска marquee расширена 10%→14%, чипы marquee — контраст выше (border-border, bg-card, text-foreground/75), точки карусели — контраст /30→/50, hover /80 + hover:bg-secondary на кнопке; prev/next увеличены h-10→h-11 (44px touch), точки получили hit-area 24×24 (кнопка h-6 w-6 с pill-спаном внутри — WCAG 2.5.8); вертикальный ритм marquee (mt-8, mb-5).
+- Локали: nav.testimonials, testimonials.* (8 ключей), projects.featuredOnly, bio.stackTitle, palette.hintTitle/hintBody/hintDismiss — RU + EN (тип Dictionary = typeof en, ключи добавлены в оба файла; исправлен баг-опечатка tuple в hintTitle через python-скрипт).
+- README: секции «Добрые слова» (с JSON-примером), обновлены палитра (01–05, подсказка первого визита), поиск/сортировка (featured-only, spotlight), BIO (marquee), структура (testimonials.json, palette-hint, use-spotlight).
+- QA итоговое: карусель — авто-ротация подтверждена (индекс меняется между eval-замерами), next/prev/dots кликабельны (Ivan→Lena), EN-локализация всех новых текстов ("Kind words", "Featured only", "Daily toolkit", nav "Reviews"); мобайл 390px — оверфлоу нет, тач-таргеты 44/44 и 24/24; печать — PDF 5 страниц, белый фон, отзывы на стр. 4–5 (VLM подтвердил имена Marta Lund/Dmitry Orlov/Sarah Chen/Ivan Petrov); lint чистый; dev.log чистый (только Cross-origin dev-предупреждение Next.js); ложные тревоги VLM опровергнуты измерениями DOM (контакт-h2 полностью видим: left=16/right=374 при 390px; маска marquee работает — пиксельный анализ показал затухание яркости у краёв).
+- Гидратация: единственный console-error «tree hydrated…attributes mismatch» возникает ТОЛЬКО после Fast Refresh циклов и исчезает на чистой перезагрузке — известный артефакт React19+Radix+Turbopack dev-режима (см. фазу 4), не воспроизводится в production.
+
+Stage Summary:
+- Добавлены 5 фич (карусель отзывов, featured-фильтр, подсказка палитры, spotlight, marquee) + стилевые улучшения по VLM-ревью; site вырос до 5 секций (hero/projects/bio/testimonials/contact, нумерация 01–05).
+- Архитектура неизменно data-driven: testimonials.json управляет секцией (пустой файл = секция не рендерится), marquee собирается из profile.skills автоматически.
+- Багов фазы 4 не найдено; все новые фичи покрыты браузерным QA (desktop+mobile), PDF-печатью и VLM-ревью скриншотов; lint чистый.
+- Cron webDevReview (job_id 344255, каждые 15 мин) существует и активен; падение «Failure» прошлого раунда — временный лимит конкуренции модели glm-5.3, не баг проекта; задача продолжит триггериться сама.
+
+Unresolved issues / risks, приоритеты следующей фазы:
+- Домен-заглушка alexvolkov.dev в layout.tsx/sitemap.ts/robots.ts/page.tsx (JSON-LD) — заменить при деплое (TODO на месте).
+- GitHub API возвращает {} для вымышленных репо (ожидаемо) — при замене githubUrl на реальные метаданные подтянутся сами.
+- Отзывы карусели на тач-устройствах: авто-прокрутка активна (пауза только на hover/focus) — можно добавить паузу на touchstart при жалобах.
+- Идеи следующего раунда: 404/not-found страница, e2e-тесты Playwright, RSS/blog-микросекция, проекты «подробнее» через query-параметры (шаринг ссылок на диалог), skeleton-загрузка GitHub-меты, лайтхаус-прогон вне песочницы.

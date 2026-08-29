@@ -14,7 +14,8 @@
     "switchLanguage": "Switch language",
     "goTo": "Go to",
     "openPalette": "Open command palette",
-    "menuDescription": "Site section navigation"
+    "menuDescription": "Site section navigation",
+    "testimonials": "Reviews"
   },
   "a11y": {
     "skipToContent": "Skip to content"
@@ -32,7 +33,10 @@
     "openTelegram": "Open Telegram",
     "openDiscord": "Open Discord",
     "printResume": "Print / save as PDF",
-    "hint": "Press Ctrl+K anytime"
+    "hint": "Press Ctrl+K anytime",
+    "hintTitle": "Quick navigation",
+    "hintBody": "Press Ctrl + K to jump to any project or section.",
+    "hintDismiss": "Got it"
   },
   "hero": {
     "badge": "Available for new projects",
@@ -76,7 +80,8 @@
     "viewMode": "View mode",
     "viewGrid": "Grid",
     "viewList": "List",
-    "listOpen": "Open project"
+    "listOpen": "Open project",
+    "featuredOnly": "Featured only"
   },
   "projectDialog": {
     "overview": "Overview",
@@ -114,7 +119,8 @@
     "activitySummary": "commits in the last year",
     "activityLess": "less",
     "activityMore": "more",
-    "activityContributions": "commits"
+    "activityContributions": "commits",
+    "stackTitle": "Daily toolkit"
   },
   "contact": {
     "title": "Let's build something together",
@@ -140,5 +146,15 @@
     "rights": "All rights reserved.",
     "backToTop": "Back to top",
     "builtNote": "Built with Next.js, Tailwind CSS & shadcn/ui"
+  },
+  "testimonials": {
+    "title": "Kind words",
+    "subtitle": "What clients and colleagues say after shipping together.",
+    "ratingLabel": "Rated {rating} out of 5",
+    "prev": "Previous review",
+    "next": "Next review",
+    "goTo": "Go to review {index}",
+    "autoRotate": "Reviews rotate automatically",
+    "projectLabel": "project"
   }
 }
