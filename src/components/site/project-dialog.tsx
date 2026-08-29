@@ -10,6 +10,7 @@ import {
   Copy,
   ExternalLink,
   Link2,
+  Maximize2,
   Star,
   Terminal,
   X,
@@ -30,6 +31,7 @@ import {
   type Category,
 } from "@/lib/portfolio";
 import { CategoryGlyph, GithubIcon } from "./icons";
+import { Lightbox } from "./lightbox";
 
 /** compact card shown in the "See also" strip at the bottom of the dialog */
 export interface RelatedProject {
@@ -39,9 +41,12 @@ export interface RelatedProject {
 }
 
 /** Gallery with dots — remounts per project (key) which resets the selection.
- *  Arrow keys ← → move between shots when the gallery is focused. */
-function Gallery({ shots, altBase }: { shots: string[]; altBase: string }) {
+ *  Arrow keys ← → move between shots when the gallery is focused.
+ *  Clicking the image opens the fullscreen lightbox viewer. */
+function Gallery({ shots, altBase, zoomLabel }: { shots: string[]; altBase: string; zoomLabel: string }) {
+  const { t } = useI18n();
   const [active, setActive] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   if (shots.length === 0) return null;
 
@@ -64,13 +69,41 @@ function Gallery({ shots, altBase }: { shots: string[]; altBase: string }) {
         }
       }}
     >
-      <img
-        key={shots[active]}
-        src={shots[active]}
-        alt={`${altBase} ${active + 1}`}
-        className="h-full w-full object-cover"
-        loading="lazy"
-        decoding="async"
+      <button
+        type="button"
+        onClick={() => setLightboxOpen(true)}
+        aria-label={zoomLabel}
+        title={zoomLabel}
+        className="group/img relative block h-full w-full cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      >
+        <img
+          key={shots[active]}
+          src={shots[active]}
+          alt={`${altBase} ${active + 1}`}
+          className="h-full w-full object-cover"
+          loading="lazy"
+          decoding="async"
+        />
+        {/* zoom hint — appears on hover/focus */}
+        <span
+          aria-hidden="true"
+          className="absolute right-3 bottom-3 grid h-9 w-9 place-items-center rounded-full border border-white/15 bg-black/55 text-white opacity-0 backdrop-blur-md transition-all duration-300 group-hover/img:opacity-100 group-focus-visible/img:opacity-100 group-hover/img:scale-105"
+        >
+          <Maximize2 className="h-4 w-4" />
+        </span>
+      </button>
+      <Lightbox
+        images={shots}
+        index={active}
+        onIndexChange={setActive}
+        open={lightboxOpen}
+        onOpenChange={setLightboxOpen}
+        altBase={altBase}
+        labels={{
+          close: t("lightbox.close"),
+          prev: t("lightbox.prev"),
+          next: t("lightbox.next"),
+        }}
       />
       {shots.length > 1 ? (
         <>
@@ -202,6 +235,7 @@ export function ProjectDialog({
             key={project.id}
             shots={project.screenshots}
             altBase={`${project.title} — ${t("projectDialog.screenshot")}`}
+            zoomLabel={t("projectDialog.zoom")}
           />
         ) : (
           <div className="flex aspect-[16/7] w-full items-center justify-center bg-gradient-to-br from-violet-600/30 via-purple-700/20 to-transparent">

@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useI18n } from "@/lib/i18n";
 import { profile } from "@/lib/portfolio";
+import { useMounted } from "@/hooks/use-mounted";
 import { DiscordIcon, GithubIcon, TelegramIcon } from "./icons";
 import { CountUp } from "./count-up";
 
@@ -61,10 +62,25 @@ function Magnetic({ children }: { children: React.ReactNode }) {
   );
 }
 
+/** Time-of-day greeting — swaps the generic “Hi, I'm” for a personal one.
+ *  Rendered only after hydration (SSR keeps the static default so the
+ *  server and client markup match). */
+function useTimeGreeting(): string {
+  const { t } = useI18n();
+  const mounted = useMounted();
+  if (!mounted) return t("hero.greeting");
+  const hour = new Date().getHours();
+  if (hour >= 5 && hour < 12) return t("hero.greetingMorning");
+  if (hour >= 12 && hour < 18) return t("hero.greetingAfternoon");
+  if (hour >= 18 && hour < 23) return t("hero.greetingEvening");
+  return t("hero.greetingNight");
+}
+
 /** Full-viewport hero: aurora orbs + blueprint grid, gradient headline, CTAs, stats. */
 export function Hero() {
   const { t } = useI18n();
   const reduce = useReducedMotion();
+  const greeting = useTimeGreeting();
 
   // cursor-following ambient glow (desktop + motion-ok only)
   const glowX = useMotionValue(-300);
@@ -150,7 +166,7 @@ export function Hero() {
           variants={item}
           className="mt-8 text-base font-medium tracking-wide text-muted-foreground sm:text-lg"
         >
-          {t("hero.greeting")}
+          {greeting}
         </motion.p>
         <motion.h1
           variants={item}

@@ -19,7 +19,8 @@
     "goTo": "Go to",
     "openPalette": "Open command palette",
     "menuDescription": "Site section navigation",
-    "testimonials": "Reviews"
+    "testimonials": "Reviews",
+    "notes": "Notes"
   },
   "a11y": {
     "skipToContent": "Skip to content"
@@ -69,6 +70,10 @@
   "hero": {
     "badge": "Available for new projects",
     "greeting": "Hi, I'm",
+    "greetingMorning": "Good morning, I'm",
+    "greetingAfternoon": "Good afternoon, I'm",
+    "greetingEvening": "Good evening, I'm",
+    "greetingNight": "Good night, I'm",
     "tagline": "I craft fast, beautiful software for the web",
     "subtitle": "Independent developer with 6 years of experience. Web platforms, desktop apps, CLI tools — from the first commit to production.",
     "viewProjects": "View projects",
@@ -124,8 +129,14 @@
     "copyCommands": "Copy commands",
     "copyLink": "Copy link",
     "shareLabel": "Share this project",
+    "zoom": "Open screenshot fullscreen",
     "related": "See also",
     "relatedOpen": "Open {title} details"
+  },
+  "lightbox": {
+    "close": "Close viewer",
+    "prev": "Previous screenshot",
+    "next": "Next screenshot"
   },
   "bio": {
     "title": "About me",
@@ -188,6 +199,18 @@
     "backToTop": "Back to top",
     "builtNote": "Built with Next.js, Tailwind CSS & shadcn/ui",
     "rss": "RSS feed — subscribe to new projects"
+  },
+  "notes": {
+    "title": "Notes",
+    "subtitle": "Short thoughts, releases and finds — a living feed between the big projects.",
+    "type_thought": "Thought",
+    "type_release": "Release",
+    "type_link": "Reading",
+    "type_milestone": "Milestone",
+    "readMore": "Read",
+    "latest": "Latest",
+    "expand": "Show {count} more",
+    "collapse": "Show less"
   },
   "testimonials": {
     "title": "Kind words",

@@ -7,6 +7,7 @@ import { SiteHeader } from "./header";
 import { Hero } from "./hero";
 import { ProjectsSection } from "./projects";
 import { BioSection } from "./bio";
+import { NotesSection } from "./notes";
 import { TestimonialsSection } from "./testimonials";
 import { ContactSection } from "./contact";
 import { SiteFooter } from "./footer";
@@ -51,6 +52,7 @@ export function PortfolioApp() {
           <Hero />
           <ProjectsSection projects={projects} categories={categories} />
           <BioSection />
+          <NotesSection />
           <TestimonialsSection />
           <ContactSection />
         </main>

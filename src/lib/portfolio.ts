@@ -7,11 +7,13 @@
  *   - data/categories.json    → filter tabs (ordered by `order`)
  *   - data/profile.json       → owner info, skills, experience, social links
  *   - data/testimonials.json  → “what clients say” carousel
+ *   - data/notes.json         → “notes” micro-blog feed (thoughts / releases / links)
  */
 import projectsJson from "../../data/projects.json";
 import categoriesJson from "../../data/categories.json";
 import profileJson from "../../data/profile.json";
 import testimonialsJson from "../../data/testimonials.json";
+import notesJson from "../../data/notes.json";
 
 export type Locale = "en" | "ru";
 
@@ -82,6 +84,20 @@ export interface ActivityConfig {
   seed: number;
 }
 
+/** note kinds rendered with dedicated icons in the notes feed */
+export type NoteType = "thought" | "release" | "link" | "milestone";
+
+export interface Note {
+  id: string;
+  /** ISO date (yyyy-mm-dd) shown localized in the feed */
+  date: string;
+  type: NoteType;
+  text: Localized;
+  /** optional external link (reading recommendations, releases…) */
+  url?: string;
+  tags?: string[];
+}
+
 export interface Testimonial {
   id: string;
   quote: Localized;
@@ -139,6 +155,11 @@ export const profile: Profile = profileJson as Profile;
 /** client quotes — data/testimonials.json (section renders nothing if empty) */
 export const testimonials: Testimonial[] =
   testimonialsJson as Testimonial[];
+
+/** micro-blog notes — data/notes.json, newest first (section hidden if empty) */
+export const notes: Note[] = [...(notesJson as Note[])].sort(
+  (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+);
 
 /** number of screenshots across all projects (used for stats / alt text) */
 export const projectIds = projects.map((p) => p.id);

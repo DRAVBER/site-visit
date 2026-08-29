@@ -331,6 +331,12 @@ export function ProjectsSection({
           </div>
         </div>
 
+        {/* a11y: screen readers announce the result count whenever the
+            category / search / featured filters change it */}
+        <p aria-live="polite" role="status" className="sr-only">
+          {visible.length} {t("projects.resultsFound")}
+        </p>
+
         {visible.length === 0 ? (
           <motion.div
             initial={{ opacity: 0 }}

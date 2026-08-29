@@ -23,6 +23,7 @@ const NAV_SECTIONS = [
   { id: "hero", key: "nav.home" },
   { id: "projects", key: "nav.projects" },
   { id: "bio", key: "nav.bio" },
+  { id: "notes", key: "nav.notes" },
   { id: "testimonials", key: "nav.testimonials" },
   { id: "contact", key: "nav.contact" },
 ] as const;
@@ -72,8 +73,9 @@ export function SiteHeader() {
           </span>
         </a>
 
-        {/* desktop nav with scrollspy highlight */}
-        <nav aria-label="Main" className="hidden md:block">
+        {/* desktop nav with scrollspy highlight — lg+: six items need the room,
+            md–lg visitors use the sheet menu instead */}
+        <nav aria-label="Main" className="hidden lg:block">
           <ul className="flex items-center gap-1 rounded-full border border-border/50 bg-secondary/30 p-1 backdrop-blur-sm">
             {NAV_SECTIONS.map(({ id, key }) => {
               const isActive = activeSection === id;
@@ -137,14 +139,14 @@ export function SiteHeader() {
           <LanguageToggle />
           <ThemeToggle />
 
-          {/* mobile hamburger */}
+          {/* mobile hamburger — shown below lg so six nav items never overflow */}
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
                 aria-label={t("nav.openMenu")}
-                className="h-9 w-9 rounded-full text-muted-foreground hover:bg-accent hover:text-accent-foreground md:hidden"
+                className="h-9 w-9 rounded-full text-muted-foreground hover:bg-accent hover:text-accent-foreground lg:hidden"
               >
                 {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </Button>
@@ -162,7 +164,7 @@ export function SiteHeader() {
                 </SheetDescription>
               </SheetHeader>
               <nav aria-label="Mobile" className="mt-6">
-                <ul className="flex flex-col gap-1">
+                <ul className="flex max-h-[60vh] flex-col gap-1 overflow-y-auto pr-1">
                   {NAV_SECTIONS.map(({ id, key }) => {
                     const isActive = activeSection === id;
                     return (

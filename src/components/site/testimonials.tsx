@@ -161,7 +161,7 @@ export function TestimonialsSection() {
       <div className="mx-auto max-w-7xl">
         <SectionHeading
           id="testimonials"
-          number="04"
+          number="05"
           title={t("testimonials.title")}
           subtitle={t("testimonials.subtitle")}
         />
