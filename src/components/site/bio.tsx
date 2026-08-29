@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { motion, type Variants } from "framer-motion";
-import { Briefcase, Clock, MapPin, Quote, Radio, Sparkles } from "lucide-react";
+import { BookOpen, Briefcase, Clock, MapPin, Quote, Radio, Sparkles } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { profile, resolveLocalized } from "@/lib/portfolio";
 import { useNow } from "@/lib/clock";
@@ -91,6 +91,69 @@ function TechMarquee() {
           {items("b")}
         </div>
       </div>
+    </motion.div>
+  );
+}
+
+/** "Currently learning" — topics with a decorative progress bar each.
+ *  Data-driven from profile.json → learning[] (renders nothing if empty). */
+function LearningCard() {
+  const { t, locale } = useI18n();
+  const items = profile.learning ?? [];
+  if (items.length === 0) return null;
+
+  return (
+    <motion.div
+      variants={fadeUp}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-80px" }}
+      className="relative overflow-hidden rounded-2xl border border-border/70 bg-card p-5 sm:p-6"
+    >
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-16 -left-16 h-40 w-40 rounded-full bg-fuchsia-500/10 blur-3xl print:hidden"
+      />
+      <h3 className="relative flex items-center gap-2.5 text-sm font-semibold tracking-[0.18em] text-primary/80 uppercase">
+        <span className="grid h-7 w-7 place-items-center rounded-lg bg-primary/15 text-primary">
+          <BookOpen className="h-4 w-4" aria-hidden="true" />
+        </span>
+        {t("bio.learningTitle")}
+      </h3>
+      <ul className="relative mt-4 grid gap-4 sm:grid-cols-3 sm:gap-3">
+        {items.map((item, i) => {
+          const level = Math.min(100, Math.max(0, Math.round(item.level)));
+          return (
+            <li key={i} className="min-w-0">
+              <div className="flex items-baseline justify-between gap-2">
+                <p className="truncate font-mono text-xs font-medium text-foreground/85" title={resolveLocalized(item.topic, locale)}>
+                  {resolveLocalized(item.topic, locale)}
+                </p>
+                <span className="shrink-0 font-mono text-[11px] font-semibold text-primary">
+                  {level}%
+                </span>
+              </div>
+              <div
+                role="progressbar"
+                aria-label={resolveLocalized(item.topic, locale)}
+                aria-valuenow={level}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                className="mt-2 h-1.5 overflow-hidden rounded-full bg-secondary"
+              >
+                {/* width animates from 0 to the target level once in view */}
+                <motion.div
+                  initial={{ width: 0 }}
+                  whileInView={{ width: `${level}%` }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 1.1, delay: 0.15 + i * 0.12, ease: [0.22, 1, 0.36, 1] }}
+                  className="h-full rounded-full bg-gradient-to-r from-violet-600 via-purple-500 to-fuchsia-500 shadow-[0_0_8px_rgba(139,92,246,0.5)]"
+                />
+              </div>
+            </li>
+          );
+        })}
+      </ul>
     </motion.div>
   );
 }
@@ -285,6 +348,9 @@ export function BioSection() {
               </motion.div>
             ) : null}
 
+            {/* currently learning — decorative progress bars (profile.json → learning[]) */}
+            <LearningCard />
+
             {/* activity graph (decorative, seeded from data/profile.json) */}
             <motion.div
               variants={fadeUp}
@@ -307,9 +373,25 @@ export function BioSection() {
                 <Briefcase className="h-4 w-4" aria-hidden="true" />
                 {t("bio.experienceTitle")}
               </h3>
-              <ol className="relative mt-6 space-y-8 before:absolute before:top-1 before:bottom-1 before:left-[7px] before:w-px before:bg-gradient-to-b before:from-primary/60 before:via-primary/25 before:to-transparent">
+              <ol className="relative mt-6 space-y-8">
+                {/* the connector line draws itself downward on first view */}
+                <motion.span
+                  aria-hidden="true"
+                  initial={{ scaleY: 0 }}
+                  whileInView={{ scaleY: 1 }}
+                  viewport={{ once: true, margin: "-60px" }}
+                  transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+                  className="absolute top-1 bottom-1 left-[7px] w-px origin-top bg-gradient-to-b from-primary/60 via-primary/25 to-transparent"
+                />
                 {profile.experience.map((job, i) => (
-                  <li key={i} className="relative pl-8">
+                  <motion.li
+                    key={i}
+                    initial={{ opacity: 0, x: -14 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true, margin: "-40px" }}
+                    transition={{ duration: 0.5, delay: 0.15 + i * 0.14, ease: [0.22, 1, 0.36, 1] }}
+                    className="relative pl-8"
+                  >
                     <span
                       aria-hidden="true"
                       className={`absolute top-1.5 left-0 h-[15px] w-[15px] rounded-full border-[3px] border-background ${
@@ -331,7 +413,7 @@ export function BioSection() {
                     <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
                       {resolveLocalized(job.description, locale)}
                     </p>
-                  </li>
+                  </motion.li>
                 ))}
               </ol>
             </motion.div>
@@ -347,25 +429,37 @@ export function BioSection() {
                 {t("bio.skillsTitle")}
               </h3>
               <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                {profile.skills.map((group) => (
-                  <div
+                {profile.skills.map((group, gi) => (
+                  <motion.div
                     key={resolveLocalized(group.label, locale)}
+                    initial={{ opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-40px" }}
+                    transition={{ duration: 0.5, delay: gi * 0.1, ease: [0.22, 1, 0.36, 1] }}
                     className="rounded-2xl border border-border/60 bg-card/60 p-5 transition-all duration-300 hover:border-primary/35"
                   >
                     <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                       {resolveLocalized(group.label, locale)}
                     </p>
                     <ul className="mt-3 flex flex-wrap gap-1.5">
-                      {group.items.map((skill) => (
-                        <li
+                      {group.items.map((skill, si) => (
+                        <motion.li
                           key={skill}
+                          initial={{ opacity: 0, scale: 0.85 }}
+                          whileInView={{ opacity: 1, scale: 1 }}
+                          viewport={{ once: true, margin: "-20px" }}
+                          transition={{
+                            duration: 0.35,
+                            delay: 0.15 + gi * 0.1 + si * 0.035,
+                            ease: [0.22, 1, 0.36, 1],
+                          }}
                           className="cursor-default rounded-lg border border-transparent bg-secondary px-2.5 py-1 font-mono text-xs text-secondary-foreground transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:text-primary"
                         >
                           {skill}
-                        </li>
+                        </motion.li>
                       ))}
                     </ul>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </motion.div>

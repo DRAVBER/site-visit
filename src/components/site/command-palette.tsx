@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import {
   ArrowRight,
   Command as CommandIcon,
+  Keyboard,
   Languages,
   Mail,
   Moon,
@@ -45,7 +46,7 @@ const SECTIONS = [
  */
 export function CommandPalette() {
   const { t, locale, toggleLocale } = useI18n();
-  const { paletteOpen, setPaletteOpen, openProject } = useUiStore();
+  const { paletteOpen, setPaletteOpen, openProject, setShortcutsOpen } = useUiStore();
   const { theme, setTheme } = useTheme();
 
   /* global Ctrl+K / Cmd+K — registered on window so it works everywhere */
@@ -97,6 +98,12 @@ export function CommandPalette() {
     setPaletteOpen(false);
     /* let the dialog unmount before the print preview renders */
     requestAnimationFrame(() => window.print());
+  };
+
+  const openShortcuts = () => {
+    setPaletteOpen(false);
+    /* small delay so the palette animation finishes first */
+    requestAnimationFrame(() => setShortcutsOpen(true));
   };
 
   return (
@@ -171,6 +178,11 @@ export function CommandPalette() {
           <CommandItem onSelect={printResume} className="gap-2.5 rounded-lg">
             <Printer className="text-primary/70" aria-hidden="true" />
             {t("palette.printResume")}
+          </CommandItem>
+          <CommandItem onSelect={openShortcuts} className="gap-2.5 rounded-lg">
+            <Keyboard className="text-primary/70" aria-hidden="true" />
+            {t("palette.shortcutsAction")}
+            <CommandShortcut>?</CommandShortcut>
           </CommandItem>
           <CommandItem
             onSelect={() => window.open(profile.socialLinks.github, "_blank")}

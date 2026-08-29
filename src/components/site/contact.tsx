@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { motion, type Variants } from "framer-motion";
-import { Check, Copy, Mail } from "lucide-react";
+import { Check, Copy, Mail, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n } from "@/lib/i18n";
 import { copyToClipboard } from "@/lib/clipboard";
+import { downloadVCard } from "@/lib/vcard";
 import { profile } from "@/lib/portfolio";
 import { SectionHeading } from "./section-heading";
 import { DiscordIcon, GithubIcon, TelegramIcon } from "./icons";
@@ -54,6 +55,15 @@ export function ContactSection() {
       setCopied(true);
       toast.success(t("toast.emailCopied"));
       setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const saveContact = () => {
+    try {
+      downloadVCard();
+      toast.success(t("toast.vcardSaved"));
+    } catch {
+      toast.error(t("toast.vcardFailed"));
     }
   };
 
@@ -160,6 +170,33 @@ export function ContactSection() {
           </span>
           <span className="sr-only" role="status">
             {copied ? t("contact.copied") : ""}
+          </span>
+        </motion.button>
+
+        {/* vCard — save the owner to the address book in one click */}
+        <motion.button
+          type="button"
+          onClick={saveContact}
+          variants={card}
+          custom={4}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-60px" }}
+          className="group mt-4 flex w-full flex-col items-center justify-between gap-4 rounded-2xl border border-border/70 bg-card p-6 text-center transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-[0_16px_40px_-18px_rgba(139,92,246,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:flex-row sm:text-left print:hidden"
+        >
+          <span className="flex items-center gap-4">
+            <span className="grid h-12 w-12 place-items-center rounded-xl bg-gradient-to-br from-violet-600 to-purple-700 text-white shadow-[0_8px_24px_-8px_rgba(139,92,246,0.7)] transition-transform duration-300 group-hover:scale-110">
+              <UserPlus className="h-5 w-5" aria-hidden="true" />
+            </span>
+            <span>
+              <span className="block text-base font-semibold">{t("contact.saveContact")}</span>
+              <span className="block text-sm text-muted-foreground">
+                {t("contact.vcardDesc")}
+              </span>
+            </span>
+          </span>
+          <span className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 font-mono text-xs font-semibold text-muted-foreground transition-all group-hover:border-primary/50 group-hover:text-primary">
+            {profile.handle}.vcf
           </span>
         </motion.button>
       </div>

@@ -38,6 +38,14 @@ bun run build && bun run start
 
 Палитра полностью локализована (ключи `palette.*` в `locales/*.json`). При первом визите через пару секунд появляется ненавязчивая подсказка про `Ctrl+K` (крестик или открытие палитры больше её не показывает).
 
+## ⌨️ Горячие клавиши (справка по `?`)
+
+Нажмите `?` (или `/`) в любой момент — откроется панель со всеми горячими клавишами сайта: палитра `Ctrl+K`, навигация по сетке проектов стрелками ←→↑↓ / Home / End, листание галереи в диалоге проекта, закрытие окон по `Escape`. Панель также открывается из командной палитры («Горячие клавиши») и кнопкой в футере. Клавиши отрисованы как физические кейкапы, список сгруппирован по контексту (Общие / Сетка проектов / Диалог проекта). Ключи локализации — `shortcuts.*`.
+
+## 👤 Сохранить контакт (vCard)
+
+В секции контактов — карточка «Сохранить контакт»: один клик скачивает vCard 4.0 (`.vcf`) с именем, ролью, email, таймзоной и ссылками на соцсети. Файл импортируется в адресную книгу любого устройства (iOS/Android/macOS/Windows/Gmail). Данные собираются автоматически из `data/profile.json`; генератор — `src/lib/vcard.ts` (RFC 6350: экранирование спецсимволов, CRLF-переносы).
+
 ## 🔎 Поиск, сортировка, теги и режимы отображения
 
 - **Поиск** — живой фильтр по названию, описанию и тегам (комбинируется с фильтром категорий); счётчик результатов в бейдже.
@@ -52,6 +60,7 @@ bun run build && bun run start
 ## 📌 Секция «Сейчас в работе» и график активности (BIO)
 
 - **«Сейчас в работе»** — что владелец делает прямо сейчас: пункты лежат в `data/profile.json` → `now[]` (эмодзи + текст `en`/`ru`). Отредактируйте список — секция обновится сама.
+- **«Сейчас изучаю»** — карточка с прогресс-барами изучаемых технологий: `data/profile.json` → `learning[]` (`topic` + `level` 0–100). Полосы анимируются заполнением при появлении в вьюпорте, уровень подписан процентом (для скринридеров — `role="progressbar"` с aria-значениями). Пустой массив — карточка не рендерится.
 - **График активности** — декоративный GitHub-style график коммитов за год. Управляется сидом: `data/profile.json` → `activity.seed` (смените число — график «перетасуется»). Локализованные подписи месяцев, тултипы с числом коммитов, горизонтальный скролл на мобильных.
 - **Локальное время** — живые часы владельца в карточке портрета (`profile.timezone`, IANA-формат), обновляются каждые 30 секунд.
 - **Бегущая строка стека** — бесконечная marquee-лента «Ежедневный стек» внизу секции: собирается автоматически из всех групп `skills[]` (уникальные значения), пауза при наведении, края затухают через CSS-маску. При `prefers-reduced-motion` лента замирает и скроллится пальцем.
@@ -153,7 +162,8 @@ bun run build && bun run start
 data/
   projects.json      # проекты — контент сетки
   categories.json    # категории — вкладки фильтров
-  profile.json       # владелец: имя, аватар, соцсети, навыки, опыт, now[], activity.seed
+  profile.json       # владелец: имя, аватар, соцсети, навыки, опыт, now[],
+                     # learning[], activity.seed
   testimonials.json  # отзывы клиентов — карусель «Добрые слова»
 locales/
   ru.json / en.json  # все тексты интерфейса
@@ -167,14 +177,18 @@ src/
   app/
     layout.tsx       # SEO-метаданные, шрифты (next/font), PWA, провайдеры
     page.tsx         # единственная страница-лендинг (+ JSON-LD)
+    not-found.tsx    # терминальная 404-страница (двуязычная, тематическая)
     api/github/      # обогащение данных из GitHub API (кэш 1ч, fallback)
     sitemap.ts robots.ts
   components/site/   # header, hero, projects, project-card, project-row (список),
-                     # project-dialog, bio (+ tech-marquee), testimonials (карусель),
-                     # contact, footer, toggles, icons, command-palette,
-                     # palette-hint (подсказка первого визита), sort-select,
-                     # project-search, activity-graph, relative-time,
-                     # scroll-progress, back-to-top (с прогресс-кольцом), count-up
+                     # project-dialog, bio (+ tech-marquee, learning-card),
+                     # testimonials (карусель), contact (+ vCard), footer,
+                     # toggles, icons, command-palette, shortcuts-dialog
+                     # (справка по «?»), palette-hint (подсказка первого визита),
+                     # sort-select, project-search, activity-graph,
+                     # relative-time, scroll-progress, back-to-top
+                     # (с прогресс-кольцом), count-up, section-heading
+                     # (word-reveal анимация заголовков)
   hooks/
     use-mounted.ts   # клиент-онли рендер без hydration-мисматчей
     use-scrollspy.ts
@@ -182,7 +196,9 @@ src/
   lib/
     portfolio.ts     # типы + загрузка data/*.json + formatRelativeTime
     i18n.tsx         # RU/EN провайдер (useSyncExternalStore)
-    ui-store.ts      # zustand-стор: палитра, диалог проекта, режим сетка/список
+    ui-store.ts      # zustand-стор: палитра, справка клавиш, диалог проекта,
+                     # режим сетка/список
+    vcard.ts         # генератор vCard 4.0 (RFC 6350) + скачивание .vcf
     clock.ts         # общая минутная подписка (useNow) для всех таймстемпов
 ```
 
@@ -196,7 +212,8 @@ src/
 - Данные GitHub — кэш 1 час (`revalidate` + `s-maxage`), fallback на локальный JSON.
 - `prefers-reduced-motion` — все анимации отключаются (CSS + `MotionConfig reducedMotion="user"`).
 - SEO: Open Graph, `sitemap.xml`, `robots.txt`, JSON-LD Person-схема (`page.tsx`), PWA-манифест + иконки (в т.ч. maskable).
-- A11y: skip-link «Перейти к содержимому», roving-навигация стрелками по сетке проектов, `aria-pressed` на тегах/режимах, тултипы на соцссылках hero, `aria-current` в навигации, sr-only описания для графика активности и мобильного меню.
+- A11y: skip-link «Перейти к содержимому», roving-навигация стрелками по сетке проектов, `aria-pressed` на тегах/режимах, тултипы на соцссылках hero, `aria-current` в навигации, sr-only описания для графика активности и мобильного меню, `role=progressbar` на полосах прогресса обучения.
+- Микроанимации: word-reveal заголовков секций, draw-анимация линии опыта, stagger-появление чипов навыков и звёзд оценок, hover-подъём карточки отзыва — все с `prefers-reduced-motion` фолбэком.
 
 ## 🧪 Адаптивность
 

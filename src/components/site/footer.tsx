@@ -1,13 +1,15 @@
 "use client";
 
-import { ArrowUp, Heart } from "lucide-react";
+import { ArrowUp, Heart, Keyboard } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { profile } from "@/lib/portfolio";
+import { useUiStore } from "@/lib/ui-store";
 import { DiscordIcon, GithubIcon, TelegramIcon } from "./icons";
 
 /** Sticky footer: copyright, social links, made-with note, back to top. */
 export function SiteFooter() {
   const { t } = useI18n();
+  const setShortcutsOpen = useUiStore((s) => s.setShortcutsOpen);
   const year = new Date().getFullYear();
 
   const socials = [
@@ -63,20 +65,35 @@ export function SiteFooter() {
           {t("footer.builtNote")}
         </p>
 
-        {/* back to top */}
-        <button
-          type="button"
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          aria-label={t("footer.backToTop")}
-          title={t("footer.backToTop")}
-          className="group inline-flex items-center gap-2 rounded-full border border-border/70 bg-secondary/40 px-4 py-2 text-xs font-medium text-muted-foreground transition-all duration-300 hover:border-primary/50 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring print:hidden"
-        >
-          <ArrowUp
-            className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5"
-            aria-hidden="true"
-          />
-          {t("footer.backToTop")}
-        </button>
+        {/* back to top + shortcuts */}
+        <div className="flex flex-wrap items-center justify-center gap-2.5 print:hidden">
+          <button
+            type="button"
+            onClick={() => setShortcutsOpen(true)}
+            aria-label={t("shortcuts.title")}
+            title={t("shortcuts.title")}
+            className="group inline-flex items-center gap-2 rounded-full border border-border/70 bg-secondary/40 px-4 py-2 text-xs font-medium text-muted-foreground transition-all duration-300 hover:border-primary/50 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <Keyboard
+              className="h-3.5 w-3.5 transition-transform duration-300 group-hover:scale-110"
+              aria-hidden="true"
+            />
+            {t("shortcuts.title")}
+          </button>
+          <button
+            type="button"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            aria-label={t("footer.backToTop")}
+            title={t("footer.backToTop")}
+            className="group inline-flex items-center gap-2 rounded-full border border-border/70 bg-secondary/40 px-4 py-2 text-xs font-medium text-muted-foreground transition-all duration-300 hover:border-primary/50 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <ArrowUp
+              className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5"
+              aria-hidden="true"
+            />
+            {t("footer.backToTop")}
+          </button>
+        </div>
       </div>
     </footer>
   );

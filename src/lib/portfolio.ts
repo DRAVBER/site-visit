@@ -70,6 +70,13 @@ export interface NowItem {
   label: Localized;
 }
 
+export interface LearningItem {
+  /** tech/topic being studied right now */
+  topic: Localized;
+  /** 0–100 — decorative mastery progress shown as a gradient bar */
+  level: number;
+}
+
 export interface ActivityConfig {
   /** PRNG seed — change it to reshuffle the decorative graph */
   seed: number;
@@ -110,6 +117,8 @@ export interface Profile {
   timezone?: string;
   /** "Now" section — what the owner is currently working on */
   now?: NowItem[];
+  /** "Currently learning" — topics with a decorative progress level */
+  learning?: LearningItem[];
   /** decorative contribution graph config */
   activity?: ActivityConfig;
   skills: SkillGroup[];

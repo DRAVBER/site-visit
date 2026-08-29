@@ -213,3 +213,39 @@ Task: QA стабильности фазы 5 + раунд развития: ша
 - Домен-заглушка alexvolkov.dev в layout.tsx/sitemap.ts/robots.ts/page.tsx (JSON-LD) — заменить при деплое (TODO на месте).
 - 3D-tilt карточек отклонён в этом раунде — конфликт с framer-motion transforms на motion.article (потребовал бы рефакторинга entry-анимации). Альтернатива — вынести tilt на внутренний wrapper, но риск регрессии выше ценности.
 - Идеи следующего раунда: 404/not-found страница (вне видимых маршрутов песочницы, но для продакшена), e2e-тесты Playwright, секция «сейчас читаю»/«изучаю», skeleton для GitHub-меты при медленном API, RSS/blog-микросекция, анимация появления тултипов при первом визите (onboarding).
+
+---
+Task ID: 7
+Agent: main agent (Z.ai Code) — сессия восстановления после Failure (пошаговое выполнение)
+Task: QA стабильности фазы 6 + раунд развития: справка горячих клавиш (?), vCard «Сохранить контакт», карточка «Сейчас изучаю» с прогресс-барами, 404-страница, стилевые микроанимации (word-reveal заголовков, draw-линия опыта, stagger чипов навыков, pop-in звёзд отзывов, hover-подъём карточки отзыва).
+
+Текущее состояние (оценка входа):
+- Фаза 6 стабильна: входной agent-browser smoke-тест — 5 секций, 8 карточек, RU/dark по умолчанию; фильтры (Софт → 2), поиск (rust → 1, через React-native setter), диалог + hash-синк (#p=vaultdrop), тема dark⇄light + localStorage, язык RU⇄EN, палитра Ctrl+K (20 пунктов), testimonials, footer — всё работает; горизонтальный скролл невозможен (scrollX=0, body overflow-x: clip; scrollWidth>clientWidth — известный ложный сигнал от клипнутых орбов). Консоль и dev.log чистые. Багов фазы 6 не найдено.
+- Зафиксировано падение dev-сервера в середине раунда (процесс исчез после долгой компиляции 75s — тот же известный паттерн, что в фазе 5) — перезапущен `bun run dev` в фоне, HTTP 200 восстановлен.
+
+Выполненные работы / модификации:
+- Фича: справка горячих клавиш (`shortcuts-dialog.tsx`) — глобальный хоткей `?` / `/` (игнорируется в инпутах), 3 группы (Общие / Сетка проектов / Диалог проекта), кейкапы-стилизация kbd (h-6, inset-тень, моно-шрифт), данные о шорткатах — чистые строковые массивы (combo-структура `[["Ctrl","K"]]`, без JSX в массивах — линт-чисто). Входы: хоткей, действие в палитре (21 пункт теперь, с CommandShortcut «?»), кнопка в футере рядом с «Наверх». Состояние в ui-store (shortcutsOpen).
+- Фича: vCard «Сохранить контакт» (`lib/vcard.ts` + карточка в contact.tsx) — генератор vCard 4.0 по RFC 6350 (экранирование \;,\n, CRLF), из profile.json: FN/N/TITLE/EMAIL/TZ/NOTE/URL×3; скачивание Blob→anchor→revokeObjectURL, файл `alexvolkov.vcf`; toast успеха/ошибки; карточка в стиле email-карточки с UserPlus-иконкой в градиенте и моно-бейджем «alexvolkov.vcf»; print:hidden.
+- Фича: карточка «Сейчас изучаю» (LearningCard в bio.tsx) — data-driven из profile.json → learning[] (topic + level 0–100, 3 технологии); градиентные прогресс-бары анимируются заполнением (motion width 0→level%, stagger 0.12s), проценты моно-шрифтом, role=progressbar + aria-valuenow/min/max; пустой массив = не рендерится. Тип LearningItem добавлен в portfolio.ts.
+- Фича: 404-страница (`app/not-found.tsx`) — терминальное окно с обменом `curl -I …/path → HTTP/2 404` (pathname после гидрации через useMounted — без SSR-мисматча), гигантский 404 с text-gradient-animated, aurora-орб + bg-grid с radial-маской, 2 CTA (градиентная «На главную» + outline «Смотреть проекты» → /#projects), full RU/EN локализация.
+- Стили: word-reveal заголовков секций (SectionHeading) — слова выезжают из overflow-hidden масок со stagger 0.07s, aria-label сохраняет полный заголовок для скринридеров, subtitle с задержкой после слов. НАЙДЕН И ИСПРАВЛЕН баг: процентные y-значения ("110%") в whileInView не триггерятся в этой связке framer-motion (элементы застревали в opacity:0) — заменено на пиксельное y:100 (100px > любой line-height заголовка, маска гарантирует полное скрытие).
+- Стили: draw-анимация линии таймлайна опыта (motion.span scaleY 0→1, origin-top) + каскадное появление записей (x: -14→0, stagger 0.14s); stagger-появление чипов навыков (scale 0.85→1 + delay по индексу); pop-in звёзд рейтинга в отзывах (scale+rotate, stagger 0.07s, при каждой смене слайда); hover-подъём карточки отзыва (-translate-y-1 + тень).
+- Локали: shortcuts.* (13 ключей), notFound.* (5), contact.saveContact/vcardDesc, toast.vcardSaved/vcardFailed, bio.learningTitle, palette.shortcutsAction — RU + EN.
+- README: секции «Горячие клавиши (справка по ?)», «Сохранить контакт (vCard)», «Сейчас изучаю» в BIO, структура обновлена (not-found.tsx, shortcuts-dialog, vcard.ts, learning[]), a11y/микроанимации дополнены.
+
+Результаты верификации:
+- Справка: `?` открывает (3 группы, 15 кейкапов), Escape закрывает, footer-кнопка переоткрывает, действие из палитры (фильтр «клав» → клик) открывает; EN — «Keyboard shortcuts».
+- vCard: карточка рендерится, клик → toast «vCard загружен — контакт можно импортировать» (downloadVCard выполнен без исключений); EN — «Save contact».
+- Learning: 3 прогресс-бара (68/42/24%), aria-значения корректны; после scrollIntoView ширины анимируются (169/104/59px); мобильная 390px — карточка 316px, влезает.
+- 404: /nonexistent-page-xyz → h1 «Такой страницы нет», терминал с path, ссылки / и /#projects; VLM-ревью 8.5/10 — применены правки:对比 кнопки (border-border, text-foreground), mt-6→mt-4 у 404, muted-foreground у подсказки.
+- Стили: word-reveal «Проекты» и «Давайте создадим что-то вместе» (4 слова) — все opacity:1 после входа в вьюпорт; таймлайн-линия и чипы навыков анимируются при реальном попадании в вьюпорт (первичный «застрявший» замер был из-за проверки вне вьюпорта — ложная тревога); звёзды и hover отзыва на месте.
+- Регрессия: 5 секций / 8 карточек / RU/dark, фильтр Софт→2, поиск rust→1, диалог+#p=vaultdrop, палитра 21 пункт, тема/язык + persistence, testimonials, scrollspy, footer — всё работает; мобильный 390px: scrollX=0, все новые элементы адаптивны; справка на мобиле — полноширинная (390px, без переполнения).
+- VLM-ревью: learning-card 9/10, contact 8/10 (vCard ниже фолда — скролл, не баг; отдельный скриншот vCard 9/10), testimonials 8.5/10 (верхнотяжёлая цитата — осознанный min-height дизайн), shortcuts mobile 7.5/10 → после правок выравнивания (kbd h-7→h-6 + leading-none везде, min-h-9 строк, footer-hint shrink-0) desktop-версия 8/10 «Fixed and correct».
+- Линт чистый, dev.log чистый (только GET/compile), чистый reload без ошибок консоли.
+
+Нерешённые вопросы / риски, приоритеты следующей фазы:
+- Процентные y-значения в whileInView не работают в этой версии framer-motion (исправлено пикселями в SectionHeading) — при будущих анимациях использовать px или variants, не "%" строки.
+- Домен-заглушка alexvolkov.dev (TODO в layout.tsx/sitemap.ts/robots.ts/page.tsx) — заменить при деплое.
+- Clipboard в headless запрещён (vCard-скачивание проверено по отсутствию исключений и toast; в реальных браузерах Blob-download не требует clipboard).
+- Гидратация: Radix useId-варнинг после Fast Refresh — известный dev-артефакт React19+Radix+Turbopack, в production не воспроизводится.
+- Идеи следующего раунда: e2e-тесты Playwright, RSS/blog-микросекция, skeleton для GitHub-меты при медленном API, onboarding-туториал по первым шагам, лайтхаус-прогон вне песочницы, аналитика (plausible/umami) при деплое.

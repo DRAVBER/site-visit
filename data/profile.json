@@ -49,6 +49,20 @@
   "activity": {
     "seed": 1337
   },
+  "learning": [
+    {
+      "topic": "WASM & wasm-bindgen",
+      "level": 68
+    },
+    {
+      "topic": "Rust async internals (tokio)",
+      "level": 42
+    },
+    {
+      "topic": "Local-first sync & CRDTs",
+      "level": 24
+    }
+  ],
   "skills": [
     {
       "label": { "en": "Frontend", "ru": "Фронтенд" },

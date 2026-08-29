@@ -21,21 +21,31 @@ const AUTO_ADVANCE_MS = 7000;
 
 function Stars({ rating, label }: { rating: number; label: string }) {
   return (
-    <p
+    <motion.p
       className="flex items-center gap-1"
       aria-label={label}
       title={label}
     >
       {Array.from({ length: 5 }, (_, i) => (
-        <Star
+        <motion.span
           key={i}
-          aria-hidden="true"
-          className={`h-3.5 w-3.5 ${
-            i < rating ? "fill-primary text-primary" : "text-muted-foreground/30"
-          }`}
-        />
+          initial={{ opacity: 0, scale: 0.4, rotate: -30 }}
+          animate={{ opacity: 1, scale: 1, rotate: 0 }}
+          transition={{
+            duration: 0.35,
+            delay: 0.25 + i * 0.07,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+        >
+          <Star
+            aria-hidden="true"
+            className={`h-3.5 w-3.5 ${
+              i < rating ? "fill-primary text-primary" : "text-muted-foreground/30"
+            }`}
+          />
+        </motion.span>
       ))}
-    </p>
+    </motion.p>
   );
 }
 
@@ -168,7 +178,7 @@ export function TestimonialsSection() {
           onFocusCapture={() => setPaused(true)}
           onBlurCapture={() => setPaused(false)}
         >
-          <div className="card-ring-glow relative overflow-hidden rounded-3xl border border-border/70 bg-card/80 px-6 py-10 shadow-sm backdrop-blur-sm sm:px-12">
+          <div className="card-ring-glow relative overflow-hidden rounded-3xl border border-border/70 bg-card/80 px-6 py-10 shadow-sm backdrop-blur-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_24px_60px_-24px_rgba(139,92,246,0.45)] sm:px-12">
             <AnimatePresence mode="wait" initial={false}>
               <Slide
                 key={item.id}

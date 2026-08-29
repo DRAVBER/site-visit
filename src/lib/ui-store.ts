@@ -17,6 +17,8 @@ const VIEW_STORAGE_KEY = "portfolio-view";
 interface UiState {
   /** command palette open/closed */
   paletteOpen: boolean;
+  /** keyboard shortcuts help dialog open/closed */
+  shortcutsOpen: boolean;
   /** project shown in the details dialog (null = closed) */
   selectedProject: Project | null;
   dialogOpen: boolean;
@@ -25,6 +27,7 @@ interface UiState {
 
   setPaletteOpen: (open: boolean) => void;
   togglePalette: () => void;
+  setShortcutsOpen: (open: boolean) => void;
   /** open a project dialog (used by cards and by the palette) */
   openProject: (project: Project) => void;
   closeDialog: () => void;
@@ -36,12 +39,14 @@ interface UiState {
 
 export const useUiStore = create<UiState>((set) => ({
   paletteOpen: false,
+  shortcutsOpen: false,
   selectedProject: null,
   dialogOpen: false,
   viewMode: "grid",
 
   setPaletteOpen: (open) => set({ paletteOpen: open }),
   togglePalette: () => set((s) => ({ paletteOpen: !s.paletteOpen })),
+  setShortcutsOpen: (open) => set({ shortcutsOpen: open }),
 
   openProject: (project) =>
     set({ selectedProject: project, dialogOpen: true, paletteOpen: false }),

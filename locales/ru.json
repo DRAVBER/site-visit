@@ -20,6 +20,28 @@
   "a11y": {
     "skipToContent": "Перейти к содержимому"
   },
+  "notFound": {
+    "title": "Такой страницы нет",
+    "description": "Возможно, ссылка устарела или в ней опечатка. Зато все проекты — на месте.",
+    "backHome": "На главную",
+    "viewProjects": "Смотреть проекты",
+    "hint": "или воспользуйтесь навигацией на главной"
+  },
+  "shortcuts": {
+    "title": "Горячие клавиши",
+    "subtitle": "Сайт полностью управляется с клавиатуры.",
+    "globalGroup": "Общие",
+    "palette": "Командная палитра",
+    "thisHelp": "Эта справка",
+    "closeAny": "Закрыть окно",
+    "gridGroup": "Сетка проектов",
+    "gridMove": "Переход между карточками",
+    "gridHome": "Первая / последняя карточка",
+    "gridOpen": "Открыть проект",
+    "dialogGroup": "Диалог проекта",
+    "galleryMove": "Листать галерею скриншотов",
+    "footerHint": "Нажмите ? в любой момент, чтобы открыть эту справку"
+  },
   "palette": {
     "placeholder": "Команда или проект…",
     "empty": "Ничего не найдено",
@@ -33,6 +55,7 @@
     "openTelegram": "Открыть Telegram",
     "openDiscord": "Открыть Discord",
     "printResume": "Печать / сохранить как PDF",
+    "shortcutsAction": "Горячие клавиши",
     "hint": "Нажмите Ctrl+K в любой момент",
     "hintTitle": "Быстрая навигация",
     "hintBody": "Нажмите Ctrl + K, чтобы перейти к любому проекту или разделу.",
@@ -116,6 +139,7 @@
     "present": "наст. время",
     "nowTitle": "Сейчас в работе",
     "nowStatus": "в сети",
+    "learningTitle": "Сейчас изучаю",
     "localTime": "Локальное время",
     "activityTitle": "Активность",
     "activitySummary": "коммитов за последний год",
@@ -136,7 +160,9 @@
     "email": "Email",
     "emailDesc": "Для всего официального",
     "copyEmail": "Скопировать адрес почты",
-    "copied": "Email скопирован в буфер обмена"
+    "copied": "Email скопирован в буфер обмена",
+    "saveContact": "Сохранить контакт",
+    "vcardDesc": "vCard — добавится в адресную книгу вашего устройства"
   },
   "toast": {
     "emailCopied": "Email скопирован в буфер обмена",
@@ -144,7 +170,9 @@
     "linkCopied": "Ссылка скопирована",
     "themeToggledDark": "Тёмная тема",
     "themeToggledLight": "Светлая тема",
-    "langSwitched": "Язык: {lang}"
+    "langSwitched": "Язык: {lang}",
+    "vcardSaved": "vCard загружен — контакт можно импортировать",
+    "vcardFailed": "Не удалось сформировать vCard"
   },
   "footer": {
     "madeWith": "Сделано с",

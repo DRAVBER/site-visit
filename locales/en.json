@@ -20,6 +20,28 @@
   "a11y": {
     "skipToContent": "Skip to content"
   },
+  "notFound": {
+    "title": "This page doesn't exist",
+    "description": "The link may be outdated or contain a typo. All the projects are still right where they belong, though.",
+    "backHome": "Back home",
+    "viewProjects": "View projects",
+    "hint": "or use the navigation on the home page"
+  },
+  "shortcuts": {
+    "title": "Keyboard shortcuts",
+    "subtitle": "The whole site is operable from the keyboard.",
+    "globalGroup": "Global",
+    "palette": "Command palette",
+    "thisHelp": "This cheat sheet",
+    "closeAny": "Close dialog",
+    "gridGroup": "Projects grid",
+    "gridMove": "Move between cards",
+    "gridHome": "First / last card",
+    "gridOpen": "Open project",
+    "dialogGroup": "Project dialog",
+    "galleryMove": "Browse screenshot gallery",
+    "footerHint": "Press ? anytime to reopen this cheat sheet"
+  },
   "palette": {
     "placeholder": "Type a command or project…",
     "empty": "No results found",
@@ -33,6 +55,7 @@
     "openTelegram": "Open Telegram",
     "openDiscord": "Open Discord",
     "printResume": "Print / save as PDF",
+    "shortcutsAction": "Keyboard shortcuts",
     "hint": "Press Ctrl+K anytime",
     "hintTitle": "Quick navigation",
     "hintBody": "Press Ctrl + K to jump to any project or section.",
@@ -116,6 +139,7 @@
     "present": "present",
     "nowTitle": "Now",
     "nowStatus": "online",
+    "learningTitle": "Currently learning",
     "localTime": "Local time",
     "activityTitle": "Activity",
     "activitySummary": "commits in the last year",
@@ -136,7 +160,9 @@
     "email": "Email",
     "emailDesc": "For everything formal",
     "copyEmail": "Copy email address",
-    "copied": "Email copied to clipboard"
+    "copied": "Email copied to clipboard",
+    "saveContact": "Save contact",
+    "vcardDesc": "vCard — imports straight into your device's address book"
   },
   "toast": {
     "emailCopied": "Email copied to clipboard",
@@ -144,7 +170,9 @@
     "linkCopied": "Link copied",
     "themeToggledDark": "Dark theme",
     "themeToggledLight": "Light theme",
-    "langSwitched": "Language: {lang}"
+    "langSwitched": "Language: {lang}",
+    "vcardSaved": "vCard downloaded — import it into your contacts",
+    "vcardFailed": "Could not generate the vCard"
   },
   "footer": {
     "madeWith": "Made with",

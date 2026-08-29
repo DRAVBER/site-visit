@@ -14,6 +14,7 @@ import { ScrollProgress } from "./scroll-progress";
 import { BackToTop } from "./back-to-top";
 import { CommandPalette } from "./command-palette";
 import { PaletteHint } from "./palette-hint";
+import { ShortcutsDialog } from "./shortcuts-dialog";
 
 /**
  * Client shell assembling all sections. Portfolio content comes from
@@ -57,6 +58,7 @@ export function PortfolioApp() {
         <BackToTop />
         <CommandPalette />
         <PaletteHint />
+        <ShortcutsDialog />
       </div>
     </MotionConfig>
   );
