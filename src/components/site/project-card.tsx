@@ -21,6 +21,7 @@ export function ProjectCard({
   locale,
   labels,
   index,
+  metaPending,
   onOpen,
   activeTag,
   onTagClick,
@@ -39,6 +40,8 @@ export function ProjectCard({
     tags?: string;
   };
   index: number;
+  /** while the live GitHub meta fetch is in flight the meta values pulse */
+  metaPending?: boolean;
   onOpen: (project: Project) => void;
   /** current search query — matching tags get highlighted */
   activeTag?: string | null;
@@ -125,7 +128,7 @@ export function ProjectCard({
             {project.title}
           </button>
           <span
-            className="mt-1 inline-flex shrink-0 items-center gap-1 text-[11px] font-medium tabular-nums text-muted-foreground/90"
+            className={`mt-1 inline-flex shrink-0 items-center gap-1 text-[11px] font-medium tabular-nums text-muted-foreground/90 ${metaPending ? "meta-pending" : ""}`}
             title={labels.stars}
           >
             <svg viewBox="0 0 24 24" fill="currentColor" className="h-3 w-3 text-amber-400" aria-hidden="true">
@@ -170,7 +173,9 @@ export function ProjectCard({
 
         {/* footer: language + last commit + repo link */}
         <div className="mt-auto flex items-center justify-between gap-2 pt-4 text-xs text-muted-foreground">
-          <span className="inline-flex min-w-0 items-center gap-1.5">
+          <span
+            className={`inline-flex min-w-0 items-center gap-1.5 ${metaPending ? "meta-pending" : ""}`}
+          >
             <span
               className="h-2 w-2 shrink-0 rounded-full"
               style={{ background: languageColor(project.language) }}

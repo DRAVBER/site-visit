@@ -44,7 +44,10 @@ export const metadata: Metadata = {
     canonical: "/",
     languages: { "en-US": "/", "ru-RU": "/" },
     types: {
-      "application/rss+xml": "/rss.xml",
+      "application/rss+xml": [
+        { url: "/rss.xml", title: `${profile.name} — Projects` },
+        { url: "/notes.xml", title: `${profile.name} — Notes` },
+      ],
     },
   },
   openGraph: {

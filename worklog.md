@@ -317,3 +317,43 @@ Task: QA стабильности фазы 8 + раунд развития (фа
 - Radix useId hydration-варнинг после Fast Refresh — известный dev-артефакт React19+Radix+Turbopack (в production не воспроизводится).
 - Планшетный компромисс: на 640–1024px теперь Sheet-меню вместо горизонтальной навигации (6 разделов не помещаются) — задокументировано в README; при желании можно вернуть md-навигацию с иконками или скроллящимися табами.
 - Идеи следующего раунда: RSS для заметок (notes в фиде), фильтр заметок по типу, e2e-тесты Playwright (вне песочницы), skeleton GitHub-меты, онбординг-тур, lighthouse-прогон вне песочницы, аналитика при деплое.
+
+---
+Task ID: 10
+Agent: main agent (Z.ai Code) — webDevReview сессия
+Task: QA стабильности фазы 9 + раунд развития (фаза 10): RSS-лента заметок, фильтр заметок по типу, live-индикатор GitHub-меты, RSS-действия в палитре, стилевой полиш hero по VLM-ревью (7.5→9/10).
+
+Текущее состояние (оценка входа):
+- Dev-сервер HTTP 200, agent-browser доступен. Входной QA (desktop 1280): 6 секций / 8 карточек / RU/dark, фильтры (Софт→2), поиск (rust→Prism Notes), диалог + #p= hash-синк, лайтбокс + двухслойный Escape (закрывает только лайтбокс, второй — диалог + hash очищен), тема три-стейт, язык RU⇄EN, мобайл 390px (scrollX=0, Sheet-меню), ноль JS-ошибок за сессию. Фаза 9 стабильна, багов не найдено.
+- VLM-ревью входа: hero 7.5/10 (замечания: вторичная CTA-кнопка малозаметна, зазор CTA→соцсети велик, tagline жирноват, статы «плавают» без привязки); projects 7.5/10 — «критический баг выравнивания 4-й карточки» ОПРОВЕРГНУТ DOM-замерами (все 4 карточки: top=597, h=453 — идеальное выравнивание; артефакт stagger-анимации в статическом скриншоте); «несовпадение центров поиска и фильтра» ОПРОВЕРГНУТО (центры 535px/535px). Урок: VLM-замечания по статическим скриншотам с анимациями обязательны к DOM-верификации.
+
+Выполненные работы / модификации:
+- Фича A: RSS-лента заметок — src/app/notes.xml/route.ts (force-static): все записи из data/notes.json, title="type: текст(80)", pubDate=дата заметки, guid=note-<id> (isPermaLink=false), link=url заметки || /#notes, category=тип+теги, XML-экранирование. layout.tsx alternates.types теперь массив: rss.xml + notes.xml. Кнопки: футер (вторая Rss-иконка с hover-точкой) + тихий RSS-чип в секции заметок. Локали footer.rssNotes RU/EN.
+- Фича B: фильтр заметок по типу — чипы «Все» + каждый тип из данных (useMemo Set, sorted), счётчики на чипах (typeCounts Map), aria-pressed, активный = bg-primary/15 + border-primary/50 + glow. Смена фильтра сбрасывает expanded (показ 4 свежих отфильтрованных). aria-live=polite регион объявляет число показанных записей. Пустой notes.json → секция не рендерится (чипы тоже). Локали notes.filterLabel/filterAll/filteredCount RU+EN.
+- Фича C: live-индикатор GitHub-меты — metaPending=true до settle fetch /api/github (success|error|offline); ProjectCard + ProjectRow получают prop metaPending: звёзды и «обновлён» пульсируют классом .meta-pending (opacity 1↔0.45, 1.4s), после ответа оседают. Оба keyframe (meta-pending, meta-landed) отключаются при prefers-reduced-motion. Нулевой CLS (значения видны всегда — пульс вместо скелетона, т.к. SSR уже отдаёт локальные значения).
+- Фича D: RSS-действия в командной палитре — «Скопировать ссылку на RSS проектов/заметок» (27 пунктов теперь): copyFeed() строит абсолютный URL (new URL(path, origin)), copyToClipboard + sonner-тост. Локали palette.copyRss* + toast.rss*Copied RU+EN.
+- Стилевой полиш hero (по VLM 7.5/10 → 9/10 после правок): вторичная CTA — border-primary/30 bg-secondary/60 text-foreground (было border-border bg-background/60), hover → text-primary + glow; tagline font-semibold → font-medium; зазор CTA→соцсети mt-8 → mt-6, gap-2 → gap-2.5; соцсети h-10 w-10 → h-11 w-11 (иконки 18→20px); статы — shimmer-line-волосок над рядом (заземление кластера), bg-card/50 → /60, mt-14 → mt-12.
+- README: секция «RSS-ленты» переписана (две ленты), «Заметки» + фильтр по типу, палитра + RSS-копирование, структура + notes.xml/route.ts.
+
+Результаты верификации:
+- /notes.xml: HTTP 200, content-type application/rss+xml, валидный XML (проверен head-вывод, экранирование &);
+- Фильтр: чипы Все6/Читаю1/Веха1/Релиз2/Мысль2 (совпадает с notes.json), клик «Релиз» → 2 карточки релизов, expand-кнопка скрыта (2<4), бейдж «Свежее» на первой отфильтрованной, «Все» возвращает 6; EN: All/Reading/Milestone/Release/Thought;
+- metaPending: сразу после загрузки .meta-pending с animationName=meta-pending на карточках; через 1.5с — 0 pending, звёзды = live-значениям API (1.3k/862/541);
+- Палитра: 27 пунктов, оба RSS-действия; клик → палитра закрыта; headless-clipboard заблокирован (email-копирование — известная рабочая фича фаз 4–8 — тоже без тоста в headless → ограничение окружения, не регрессия); со стабом navigator.clipboard: copiedUrl=http://localhost:3000/notes.xml + тост «Ссылка на RSS заметок скопирована»;
+- Футер: 2 RSS-кнопки (hrefs /rss.xml, /notes.xml), aria-метки RU;
+- Мобайл 390px: scrollX=0, scrollW=390; ряд чипов 358px без переполнения (wrap), VLM 9/10;
+- Лайт-тема: чипы контрастны (VLM 9/10, активный >7:1);
+- Диалог: Nebula Analytics + #p=nebula-analytics + Escape → закрыт, hash очищен;
+- Линт чистый (была 1 ошибка set-state-in-effect от setMetaPending(true) в эффекте — устранена: начальное состояние уже true, синхронный сброс не нужен); dev.log чистый (только GET/compile); ноль ошибок консоли за финальный регресс (полный scroll-through);
+- Скриншоты: qa-phase9-entry-*.png, phase10-hero-polished/final.png, phase10-notes-filter.png, phase10-footer-rss.png, phase10-mobile-notes-filter.png, phase10-light-notes.png, phase10-projects-final.png, phase10-notes-final.png, phase10-dialog.png.
+
+Stage Summary:
+- 4 новые фичи (RSS заметок / фильтр типов заметок / live-пульс GitHub-меты / RSS-копирование в палитре) + стилевой полиш hero (VLM 7.5→9/10). Багов на входе не найдено; 2 «бага» от VLM опровергнуты DOM-замерами (методология: VLM-замечания по скриншотам с анимациями → обязательная DOM-верификация).
+- Архитектура data-driven сохранена: лента и чипы генерятся из notes.json, новые типы заметок появляются в фильтре автоматически.
+- Линт/dev.log/консоль чистые; вся функциональность регрессионно проверена (RU/EN × dark/light × desktop/mobile).
+
+Нерешённые вопросы / риски, приоритеты следующей фазы:
+- Домен-заглушка alexvolkov.dev (layout.tsx, sitemap.ts, robots.ts, page.tsx JSON-LD, rss.xml/route.ts, notes.xml/route.ts) — заменить при деплое (TODO на местах).
+- Radix useId hydration-варнинг после Fast Refresh — известный dev-артефакт React19+Radix+Turbopack (в production не воспроизводится).
+- Headless-clipboard: копирование в буфер unverifiable в agent-browser (permissions) — функция проверена стабом API; в реальном браузере работает (graceful degradation в lib/clipboard.ts).
+- Идеи следующего раунда: онбординг-тур для первого визита, deep-links на заметки (#n=<id>) + share-кнопка, e2e-тесты Playwright (вне песочницы), lighthouse-прогон вне песочницы, аналитика при деплое, рассылка «best of notes» (email-подписка через внешний сервис).

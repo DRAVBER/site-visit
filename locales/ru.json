@@ -57,6 +57,8 @@
     "toggleTheme": "Переключить тему",
     "switchLanguage": "Переключить язык (EN)",
     "copyEmail": "Скопировать email",
+    "copyRssProjects": "Скопировать ссылку на RSS проектов",
+    "copyRssNotes": "Скопировать ссылку на RSS заметок",
     "openGithub": "Открыть GitHub",
     "openTelegram": "Открыть Telegram",
     "openDiscord": "Открыть Discord",
@@ -184,6 +186,8 @@
   },
   "toast": {
     "emailCopied": "Email скопирован в буфер обмена",
+    "rssProjectsCopied": "Ссылка на RSS проектов скопирована",
+    "rssNotesCopied": "Ссылка на RSS заметок скопирована",
     "commandsCopied": "Команды скопированы в буфер обмена",
     "linkCopied": "Ссылка скопирована",
     "themeToggledDark": "Тёмная тема",
@@ -198,7 +202,8 @@
     "rights": "Все права защищены.",
     "backToTop": "Наверх",
     "builtNote": "Собрано на Next.js, Tailwind CSS и shadcn/ui",
-    "rss": "RSS-лента — подписка на новые проекты"
+    "rss": "RSS-лента — подписка на новые проекты",
+    "rssNotes": "RSS-лента заметок — подписка на новые записи"
   },
   "notes": {
     "title": "Заметки",
@@ -210,7 +215,10 @@
     "readMore": "Читать",
     "latest": "Свежее",
     "expand": "Показать ещё ({count})",
-    "collapse": "Свернуть"
+    "collapse": "Свернуть",
+    "filterLabel": "Фильтр по типу заметок",
+    "filterAll": "Все",
+    "filteredCount": "{count} записей показано"
   },
   "testimonials": {
     "title": "Добрые слова",

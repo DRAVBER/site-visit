@@ -57,6 +57,8 @@
     "toggleTheme": "Toggle theme",
     "switchLanguage": "Switch language (RU)",
     "copyEmail": "Copy email address",
+    "copyRssProjects": "Copy projects RSS URL",
+    "copyRssNotes": "Copy notes RSS URL",
     "openGithub": "Open GitHub",
     "openTelegram": "Open Telegram",
     "openDiscord": "Open Discord",
@@ -184,6 +186,8 @@
   },
   "toast": {
     "emailCopied": "Email copied to clipboard",
+    "rssProjectsCopied": "Projects RSS URL copied",
+    "rssNotesCopied": "Notes RSS URL copied",
     "commandsCopied": "Commands copied to clipboard",
     "linkCopied": "Link copied",
     "themeToggledDark": "Dark theme",
@@ -198,7 +202,8 @@
     "rights": "All rights reserved.",
     "backToTop": "Back to top",
     "builtNote": "Built with Next.js, Tailwind CSS & shadcn/ui",
-    "rss": "RSS feed — subscribe to new projects"
+    "rss": "RSS feed — subscribe to new projects",
+    "rssNotes": "Notes RSS feed — subscribe to new notes"
   },
   "notes": {
     "title": "Notes",
@@ -210,7 +215,10 @@
     "readMore": "Read",
     "latest": "Latest",
     "expand": "Show {count} more",
-    "collapse": "Show less"
+    "collapse": "Show less",
+    "filterLabel": "Filter notes by type",
+    "filterAll": "All",
+    "filteredCount": "{count} notes shown"
   },
   "testimonials": {
     "title": "Kind words",

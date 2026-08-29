@@ -177,7 +177,7 @@ export function Hero() {
         </motion.h1>
         <motion.h2
           variants={item}
-          className="text-gradient mt-3 max-w-3xl text-xl font-semibold tracking-tight text-balance sm:text-2xl md:text-3xl xl:text-4xl"
+          className="text-gradient mt-3 max-w-3xl text-xl font-medium tracking-tight text-balance sm:text-2xl md:text-3xl xl:text-4xl"
         >
           {t("hero.tagline")}
         </motion.h2>
@@ -210,7 +210,7 @@ export function Hero() {
               asChild
               size="lg"
               variant="outline"
-              className="h-12 rounded-full border-border bg-background/60 px-8 text-base font-semibold backdrop-blur transition-all duration-300 hover:border-primary/50 hover:bg-accent hover:text-accent-foreground"
+              className="h-12 rounded-full border-primary/30 bg-secondary/60 px-8 text-base font-semibold text-foreground backdrop-blur transition-all duration-300 hover:border-primary/60 hover:bg-secondary hover:text-primary hover:shadow-[0_6px_24px_-8px_rgba(139,92,246,0.45)]"
             >
               <a href="#contact">{t("hero.contactMe")}</a>
             </Button>
@@ -218,7 +218,7 @@ export function Hero() {
         </motion.div>
 
         {/* socials — icon-only links are useless on paper */}
-        <motion.div variants={item} className="mt-8 flex items-center gap-2 print:hidden">
+        <motion.div variants={item} className="mt-6 flex items-center gap-2.5 print:hidden">
           {socials.map(({ href, label, icon: Icon }) => (
             <Tooltip key={label}>
               <TooltipTrigger asChild>
@@ -227,9 +227,9 @@ export function Hero() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="grid h-10 w-10 place-items-center rounded-full border border-border/70 bg-secondary/50 text-muted-foreground transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:text-primary hover:shadow-[0_8px_20px_-6px_rgba(139,92,246,0.5)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="grid h-11 w-11 place-items-center rounded-full border border-border/70 bg-secondary/50 text-muted-foreground transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:text-primary hover:shadow-[0_8px_20px_-6px_rgba(139,92,246,0.5)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
-                  <Icon className="h-[18px] w-[18px]" />
+                  <Icon className="h-5 w-5" />
                 </a>
               </TooltipTrigger>
               <TooltipContent side="bottom">{label}</TooltipContent>
@@ -237,15 +237,20 @@ export function Hero() {
           ))}
         </motion.div>
 
-        {/* stats */}
+        {/* stats — grounded by a shared hairline + container so they read
+            as one cluster instead of floating cards */}
         <motion.dl
           variants={item}
-          className="mt-14 grid w-full max-w-3xl grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4"
+          className="relative mt-12 grid w-full max-w-3xl grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4"
         >
+          <span
+            aria-hidden="true"
+            className="shimmer-line pointer-events-none absolute -top-5 left-1/2 h-px w-2/3 -translate-x-1/2 print:hidden"
+          />
           {stats.map((s) => (
             <div
               key={s.label}
-              className="group rounded-2xl border border-border/60 bg-card/50 px-4 py-5 backdrop-blur transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[0_10px_30px_-12px_rgba(139,92,246,0.35)]"
+              className="group rounded-2xl border border-border/60 bg-card/60 px-4 py-5 backdrop-blur transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[0_10px_30px_-12px_rgba(139,92,246,0.35)]"
             >
               <dt className="sr-only">{s.label}</dt>
               <dd className="text-gradient text-2xl font-bold tabular-nums sm:text-3xl">

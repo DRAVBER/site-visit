@@ -13,6 +13,7 @@ import {
   Monitor,
   Moon,
   Printer,
+  Rss,
   Sun,
   User,
 } from "lucide-react";
@@ -106,6 +107,13 @@ export function CommandPalette() {
   const copyEmail = async () => {
     const ok = await copyToClipboard(profile.socialLinks.email);
     if (ok) toast.success(t("toast.emailCopied"));
+    setPaletteOpen(false);
+  };
+
+  /** absolute feed URL — origin + path, so it can be pasted into any reader */
+  const copyFeed = async (path: string, messageKey: string) => {
+    const ok = await copyToClipboard(new URL(path, window.location.origin).href);
+    if (ok) toast.success(t(messageKey));
     setPaletteOpen(false);
   };
 
@@ -209,6 +217,20 @@ export function CommandPalette() {
           <CommandItem onSelect={copyEmail} className="gap-2.5 rounded-lg">
             <Mail className="text-primary/70" aria-hidden="true" />
             {t("palette.copyEmail")}
+          </CommandItem>
+          <CommandItem
+            onSelect={() => copyFeed("/rss.xml", "toast.rssProjectsCopied")}
+            className="gap-2.5 rounded-lg"
+          >
+            <Rss className="text-primary/70" aria-hidden="true" />
+            {t("palette.copyRssProjects")}
+          </CommandItem>
+          <CommandItem
+            onSelect={() => copyFeed("/notes.xml", "toast.rssNotesCopied")}
+            className="gap-2.5 rounded-lg"
+          >
+            <Rss className="text-primary/70" aria-hidden="true" />
+            {t("palette.copyRssNotes")}
           </CommandItem>
           <CommandItem onSelect={printResume} className="gap-2.5 rounded-lg">
             <Printer className="text-primary/70" aria-hidden="true" />

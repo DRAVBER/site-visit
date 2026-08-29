@@ -5,12 +5,14 @@
  * (the section disappears if the array is empty).
  *
  * - editorial single-column feed: type icon rail + date + text + tags
+ * - type filter chips (All + every type present in the data) narrow the feed;
+ *   the count is announced politely to screen readers
  * - shows the latest 4 notes, “show everything” expands the rest
  *   (AnimatePresence height animation)
  * - localized dates via Intl.DateTimeFormat, localized type labels
  * - print: every note is stacked compactly so the feed lands in the PDF
  */
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Award,
@@ -18,6 +20,7 @@ import {
   Lightbulb,
   Link2,
   Rocket,
+  Rss,
 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { notes, resolveLocalized, type Note, type NoteType } from "@/lib/portfolio";
@@ -152,11 +155,37 @@ function NoteRow({
 export function NotesSection() {
   const { t, locale } = useI18n();
   const [expanded, setExpanded] = useState(false);
+  const [filter, setFilter] = useState<NoteType | "all">("all");
+
+  /** types actually present in the data — chips are fully data-driven */
+  const availableTypes = useMemo(
+    () =>
+      Array.from(
+        new Set(notes.map((n) => n.type))
+      ).sort(),
+    []
+  );
+
+  /** per-type counts shown as tiny badges on the chips */
+  const typeCounts = useMemo(() => {
+    const map = new Map<NoteType, number>();
+    for (const n of notes) map.set(n.type, (map.get(n.type) ?? 0) + 1);
+    return map;
+  }, []);
+
+  const filtered = filter === "all" ? notes : notes.filter((n) => n.type === filter);
 
   if (notes.length === 0) return null;
 
-  const visible = expanded ? notes : notes.slice(0, COLLAPSED_COUNT);
-  const hiddenCount = notes.length - COLLAPSED_COUNT;
+  const visible = expanded ? filtered : filtered.slice(0, COLLAPSED_COUNT);
+  const hiddenCount = filtered.length - COLLAPSED_COUNT;
+
+  /** switching the filter resets the expand state — the newest 4 of the new
+   *  selection are the most useful starting point */
+  function applyFilter(next: NoteType | "all") {
+    setFilter(next);
+    setExpanded(false);
+  }
 
   return (
     <section
@@ -182,6 +211,63 @@ export function NotesSection() {
         />
 
         <div className="mx-auto max-w-3xl">
+          {/* type filter chips + notes RSS — data-driven, only types present */}
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3 print:hidden">
+            <div
+              role="group"
+              aria-label={t("notes.filterLabel")}
+              className="flex flex-wrap items-center gap-2"
+            >
+              <button
+                type="button"
+                onClick={() => applyFilter("all")}
+                aria-pressed={filter === "all"}
+                className={`inline-flex h-8 items-center gap-1.5 rounded-full border px-3.5 text-xs font-semibold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                  filter === "all"
+                    ? "border-primary/50 bg-primary/15 text-primary shadow-[0_4px_14px_-6px_rgba(139,92,246,0.5)]"
+                    : "border-border/70 bg-secondary/40 text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                }`}
+              >
+                {t("notes.filterAll")}
+                <span className="font-mono text-[10px] opacity-70 tabular-nums">
+                  {notes.length}
+                </span>
+              </button>
+              {availableTypes.map((type) => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => applyFilter(type)}
+                  aria-pressed={filter === type}
+                  className={`inline-flex h-8 items-center gap-1.5 rounded-full border px-3.5 text-xs font-semibold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                    filter === type
+                      ? "border-primary/50 bg-primary/15 text-primary shadow-[0_4px_14px_-6px_rgba(139,92,246,0.5)]"
+                      : "border-border/70 bg-secondary/40 text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                  }`}
+                >
+                  {t(`notes.type_${type}`)}
+                  <span className="font-mono text-[10px] opacity-70 tabular-nums">
+                    {typeCounts.get(type) ?? 0}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            {/* notes feed subscription — small, quiet, in the section itself */}
+            <a
+              href="/notes.xml"
+              aria-label={t("footer.rssNotes")}
+              title={t("footer.rssNotes")}
+              className="group inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full border border-border/70 bg-secondary/40 px-3 text-xs font-medium text-muted-foreground transition-all duration-300 hover:border-primary/50 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <Rss
+                className="h-3.5 w-3.5 transition-transform duration-300 group-hover:rotate-12"
+                aria-hidden="true"
+              />
+              RSS
+            </a>
+          </div>
+
           {/* screen feed */}
           <div className="card-ring-glow relative overflow-hidden rounded-3xl border border-border/70 bg-card/70 px-2 py-2 shadow-sm backdrop-blur-sm sm:px-4 print:hidden">
             {visible.map((note, i) => (
@@ -215,6 +301,11 @@ export function NotesSection() {
                 </button>
               </div>
             ) : null}
+
+            {/* live count for screen readers — mirrors the filter state */}
+            <p aria-live="polite" className="sr-only">
+              {t("notes.filteredCount").replace("{count}", String(filtered.length))}
+            </p>
           </div>
 
           {/* print fallback: compact stacked list */}

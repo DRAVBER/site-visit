@@ -41,6 +41,9 @@ export function ProjectsSection({
   const [liveMeta, setLiveMeta] = useState<
     Record<string, { stars?: number; lastCommit?: string }>
   >({});
+  /** true while the GitHub enrichment fetch is in flight — cards show a
+   *  subtle “refreshing” pulse on stars / updated, then settle */
+  const [metaPending, setMetaPending] = useState(true);
 
   /** grid/list lives in the shared ui-store (persisted, hydration-safe) */
   const view = useUiStore((s) => s.viewMode);
@@ -59,16 +62,20 @@ export function ProjectsSection({
   /** two-way sync: `#p=<id>` deep-links straight into the project dialog */
   useProjectHashSync(projects);
 
-  /** try to enrich cards with live GitHub data (silently falls back) */
+  /** try to enrich cards with live GitHub data (silently falls back).
+   *  metaPending starts true and flips once — no synchronous reset needed. */
   useEffect(() => {
     let cancelled = false;
     fetch("/api/github?ids=" + projects.map((p) => p.id).join(","))
       .then((r) => (r.ok ? r.json() : null))
       .then((data: Record<string, { stars?: number; lastCommit?: string }> | null) => {
-        if (!cancelled && data) setLiveMeta(data);
+        if (cancelled) return;
+        if (data) setLiveMeta(data);
+        setMetaPending(false);
       })
       .catch(() => {
         /* offline / rate-limited — local fallback data stays */
+        if (!cancelled) setMetaPending(false);
       });
     return () => {
       cancelled = true;
@@ -372,6 +379,7 @@ export function ProjectsSection({
                   category={categoriesById.get(project.category)}
                   locale={locale}
                   index={i}
+                  metaPending={metaPending}
                   onOpen={openProject}
                   activeTag={query.trim() || null}
                   onTagClick={filterByTag}
@@ -403,6 +411,7 @@ export function ProjectsSection({
                   category={categoriesById.get(project.category)}
                   locale={locale}
                   index={i}
+                  metaPending={metaPending}
                   onOpen={openProject}
                   activeTag={query.trim() || null}
                   onTagClick={filterByTag}

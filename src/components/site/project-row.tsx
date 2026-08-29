@@ -25,6 +25,7 @@ export function ProjectRow({
   category,
   locale,
   index,
+  metaPending,
   onOpen,
   activeTag,
   onTagClick,
@@ -36,6 +37,8 @@ export function ProjectRow({
   category?: Category;
   locale: Locale;
   index: number;
+  /** while the live GitHub meta fetch is in flight the meta values pulse */
+  metaPending?: boolean;
   onOpen: (project: Project) => void;
   activeTag?: string | null;
   onTagClick?: (tag: string) => void;
@@ -116,7 +119,7 @@ export function ProjectRow({
               {project.title}
             </span>
             <span
-              className="hidden shrink-0 items-center gap-1 text-[11px] font-medium tabular-nums text-muted-foreground/90 sm:inline-flex"
+              className={`hidden shrink-0 items-center gap-1 text-[11px] font-medium tabular-nums text-muted-foreground/90 sm:inline-flex ${metaPending ? "meta-pending" : ""}`}
               title={labels.source}
             >
               <Star className="h-3 w-3 text-amber-400" aria-hidden="true" />
@@ -170,7 +173,7 @@ export function ProjectRow({
               />
               {project.language}
             </span>
-            <span className="hidden items-center sm:inline-flex">
+            <span className={`hidden items-center sm:inline-flex ${metaPending ? "meta-pending" : ""}`}>
               <RelativeTime isoDate={project.lastCommit} prefix={updatedPrefix} />
             </span>
           </span>

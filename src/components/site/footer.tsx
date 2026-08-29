@@ -51,6 +51,17 @@ export function SiteFooter() {
               aria-hidden="true"
             />
           </a>
+          <a
+            href="/notes.xml"
+            aria-label={t("footer.rssNotes")}
+            title={t("footer.rssNotes")}
+            className="group grid h-9 w-9 place-items-center rounded-full border border-border/70 bg-secondary/40 text-muted-foreground transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/50 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <span className="relative" aria-hidden="true">
+              <Rss className="h-4 w-4 transition-transform duration-300 group-hover:rotate-12" />
+              <span className="absolute -top-1 -right-1 h-1.5 w-1.5 rounded-full bg-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+            </span>
+          </a>
         </div>
 
         {/* made with */}
