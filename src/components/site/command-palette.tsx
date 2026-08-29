@@ -5,14 +5,18 @@ import { useTheme } from "next-themes";
 import { toast } from "sonner";
 import {
   ArrowRight,
+  Award,
   Command as CommandIcon,
   History,
   Keyboard,
   Languages,
+  Lightbulb,
+  Link2,
   Mail,
   Monitor,
   Moon,
   Printer,
+  Rocket,
   Rss,
   Sun,
   User,
@@ -30,7 +34,15 @@ import {
 import { useI18n } from "@/lib/i18n";
 import { useUiStore } from "@/lib/ui-store";
 import { copyToClipboard } from "@/lib/clipboard";
-import { profile, projects, resolveLocalized, type Project } from "@/lib/portfolio";
+import {
+  notes,
+  profile,
+  projects,
+  resolveLocalized,
+  type Note,
+  type NoteType,
+  type Project,
+} from "@/lib/portfolio";
 import { useRecentProjectIds } from "@/lib/recent";
 import { DiscordIcon, GithubIcon, TelegramIcon } from "./icons";
 
@@ -42,6 +54,14 @@ const SECTIONS = [
   { id: "testimonials", key: "nav.testimonials" },
   { id: "contact", key: "nav.contact" },
 ] as const;
+
+/** type icons for the notes group — mirrors the notes section rail */
+const NOTE_ICON: Record<NoteType, typeof Lightbulb> = {
+  thought: Lightbulb,
+  release: Rocket,
+  link: Link2,
+  milestone: Award,
+};
 
 /**
  * ⌘K / Ctrl+K command palette.
@@ -86,6 +106,20 @@ export function CommandPalette() {
     openProject(project);
     requestAnimationFrame(() => {
       document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" });
+    });
+  };
+
+  /** jump to a note — writes `#n=<id>` so the notes section's deep-link
+   *  handler takes over: resets filter/expand, scrolls, glows the note.
+   *  The hash is cleared first so re-selecting the same note still fires. */
+  const jumpToNote = (note: Note) => {
+    setPaletteOpen(false);
+    requestAnimationFrame(() => {
+      if (window.location.hash === `#n=${note.id}`) {
+        window.dispatchEvent(new HashChangeEvent("hashchange"));
+      } else {
+        window.location.hash = `#n=${note.id}`;
+      }
     });
   };
 
@@ -195,6 +229,41 @@ export function CommandPalette() {
             </CommandItem>
           ))}
         </CommandGroup>
+
+        <CommandSeparator />
+
+        {/* notes — latest entries, jump straight to the entry in the feed */}
+        {notes.length > 0 ? (
+          <CommandGroup heading={t("palette.notesGroup")}>
+            {notes.slice(0, 6).map((n) => {
+              const Icon = NOTE_ICON[n.type] ?? Lightbulb;
+              return (
+                <CommandItem
+                  key={n.id}
+                  value={[
+                    n.id,
+                    n.type,
+                    t(`notes.type_${n.type}`),
+                    n.tags.join(" "),
+                    resolveLocalized(n.text, "en"),
+                    resolveLocalized(n.text, "ru"),
+                  ].join(" ")}
+                  onSelect={() => jumpToNote(n)}
+                  className="gap-2.5 rounded-lg"
+                >
+                  <Icon className="h-4 w-4 shrink-0 text-primary/70" aria-hidden="true" />
+                  <span className="truncate">{resolveLocalized(n.text, locale)}</span>
+                  <span className="ml-auto hidden shrink-0 pl-2 font-mono text-[11px] text-muted-foreground sm:inline">
+                    {new Intl.DateTimeFormat(locale === "ru" ? "ru-RU" : "en-US", {
+                      day: "2-digit",
+                      month: "2-digit",
+                    }).format(new Date(n.date))}
+                  </span>
+                </CommandItem>
+              );
+            })}
+          </CommandGroup>
+        ) : null}
 
         <CommandSeparator />
 

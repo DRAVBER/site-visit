@@ -110,6 +110,7 @@ export function ShortcutsDialog() {
     {
       title: t("shortcuts.dialogGroup"),
       items: [
+        { label: t("shortcuts.switchProject"), combos: [["←", "→"]] },
         { label: t("shortcuts.galleryMove"), combos: [["←", "→"]] },
         { label: t("shortcuts.closeAny"), combos: [["Esc"]] },
       ],

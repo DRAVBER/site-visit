@@ -9,11 +9,15 @@
  *   the count is announced politely to screen readers
  * - shows the latest 4 notes, “show everything” expands the rest
  *   (AnimatePresence height animation)
+ * - per-note share button copies `#n=<id>` deep links; opening such a URL
+ *   (or picking the note in the ⌘K palette) scrolls to the note, resets the
+ *   filter / expand state if it hides the target and flashes a violet glow
  * - localized dates via Intl.DateTimeFormat, localized type labels
  * - print: every note is stacked compactly so the feed lands in the PDF
  */
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 import {
   Award,
   ExternalLink,
@@ -21,13 +25,18 @@ import {
   Link2,
   Rocket,
   Rss,
+  Share2,
 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { copyToClipboard } from "@/lib/clipboard";
 import { notes, resolveLocalized, type Note, type NoteType } from "@/lib/portfolio";
 import { SectionHeading } from "./section-heading";
 
 /** notes shown before the “expand” button kicks in */
 const COLLAPSED_COUNT = 4;
+
+/** how long the deep-link highlight glow stays on (ms) */
+const HIGHLIGHT_MS = 2600;
 
 const TYPE_ICON: Record<NoteType, typeof Lightbulb> = {
   thought: Lightbulb,
@@ -61,12 +70,18 @@ function NoteRow({
   index,
   readLabel,
   latestLabel,
+  shareLabel,
+  highlighted,
+  onShare,
 }: {
   note: Note;
   locale: "en" | "ru";
   index: number;
   readLabel: string;
   latestLabel: string;
+  shareLabel: string;
+  highlighted: boolean;
+  onShare: (note: Note) => void;
 }) {
   const { t } = useI18n();
   const Icon = TYPE_ICON[note.type] ?? Lightbulb;
@@ -74,6 +89,7 @@ function NoteRow({
 
   return (
     <motion.article
+      id={`n-${note.id}`}
       initial={{ opacity: 0, y: 18 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
@@ -82,7 +98,9 @@ function NoteRow({
         delay: Math.min(index, 3) * 0.08,
         ease: [0.22, 1, 0.36, 1],
       }}
-      className="group relative flex gap-4 rounded-2xl px-3 py-6 transition-colors duration-300 hover:bg-secondary/30 sm:gap-6 sm:px-5 print:py-3 print:hover:bg-transparent"
+      className={`group relative flex scroll-mt-32 gap-4 rounded-2xl px-3 py-6 transition-colors duration-300 hover:bg-secondary/30 focus-within:bg-secondary/20 sm:gap-6 sm:px-5 print:py-3 print:hover:bg-transparent ${
+        highlighted ? "note-highlight" : ""
+      }`}
     >
       {/* hairline separator between notes */}
       {index > 0 ? (
@@ -103,7 +121,7 @@ function NoteRow({
       </div>
 
       <div className="min-w-0 flex-1">
-        <p className="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <p className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
           <span className="font-mono text-xs tracking-wide text-muted-foreground/80">
             {formatDate(note.date, locale)}
           </span>
@@ -119,6 +137,17 @@ function NoteRow({
               {latestLabel}
             </span>
           ) : null}
+          {/* per-note deep link — copies #n=<id>, revealed on hover (always
+              reachable on touch: visible, just quiet) */}
+          <button
+            type="button"
+            onClick={() => onShare(note)}
+            aria-label={shareLabel}
+            title={shareLabel}
+            className="ml-auto inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border/60 bg-secondary/40 text-muted-foreground/70 opacity-100 transition-all duration-300 hover:border-primary/50 hover:text-primary hover:shadow-[0_4px_12px_-4px_rgba(139,92,246,0.5)] focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:opacity-0 sm:group-hover:opacity-100 sm:group-hover:translate-x-0 print:hidden"
+          >
+            <Share2 className="h-3.5 w-3.5" aria-hidden="true" />
+          </button>
         </p>
         <p className="mt-2.5 text-pretty leading-relaxed text-foreground/90 transition-colors duration-300 group-hover:text-foreground sm:text-[1.05rem]">
           {resolveLocalized(note.text, locale)}
@@ -156,6 +185,9 @@ export function NotesSection() {
   const { t, locale } = useI18n();
   const [expanded, setExpanded] = useState(false);
   const [filter, setFilter] = useState<NoteType | "all">("all");
+  /** note id currently glowing because of a `#n=<id>` deep link */
+  const [highlightedId, setHighlightedId] = useState<string | null>(null);
+  const highlightTimer = useRef<number | null>(null);
 
   /** types actually present in the data — chips are fully data-driven */
   const availableTypes = useMemo(
@@ -175,17 +207,69 @@ export function NotesSection() {
 
   const filtered = filter === "all" ? notes : notes.filter((n) => n.type === filter);
 
-  if (notes.length === 0) return null;
-
-  const visible = expanded ? filtered : filtered.slice(0, COLLAPSED_COUNT);
-  const hiddenCount = filtered.length - COLLAPSED_COUNT;
-
   /** switching the filter resets the expand state — the newest 4 of the new
    *  selection are the most useful starting point */
   function applyFilter(next: NoteType | "all") {
     setFilter(next);
     setExpanded(false);
   }
+
+  /** copy `#n=<id>` deep link and reflect it in the address bar */
+  async function shareNote(note: Note) {
+    if (typeof window === "undefined") return;
+    const url = `${window.location.origin}${window.location.pathname}#n=${note.id}`;
+    const ok = await copyToClipboard(url);
+    if (ok) {
+      /* replaceState (not location.hash) — no navigation, no hashchange loop */
+      window.history.replaceState(null, "", `#n=${note.id}`);
+      toast.success(t("toast.noteLinkCopied"));
+    }
+  }
+
+  /**
+   * React to `#n=<id>` deep links (initial load, back/forward, palette jumps).
+   * If the active filter or the collapsed feed would hide the target note,
+   * both are reset first; then the note is scrolled into view and glows.
+   * All setters are unconditional — React bails out when the value is
+   * unchanged, so the handler needs no reactive deps (stable subscription).
+   */
+  useEffect(() => {
+    const jump = (hash: string) => {
+      const match = /^#n=([\w-]+)$/.exec(hash);
+      if (!match) return;
+      const id = match[1];
+      const note = notes.find((n) => n.id === id);
+      if (!note) return;
+      setFilter("all");
+      setExpanded(true);
+      requestAnimationFrame(() => {
+        document
+          .getElementById(`n-${id}`)
+          ?.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+      setHighlightedId(id);
+      if (highlightTimer.current) window.clearTimeout(highlightTimer.current);
+      highlightTimer.current = window.setTimeout(
+        () => setHighlightedId(null),
+        HIGHLIGHT_MS
+      );
+    };
+
+    /* rAF-wrapped so no state is set synchronously inside the effect body */
+    const raf = requestAnimationFrame(() => jump(window.location.hash));
+    const onHashChange = () => jump(window.location.hash);
+    window.addEventListener("hashchange", onHashChange);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("hashchange", onHashChange);
+      if (highlightTimer.current) window.clearTimeout(highlightTimer.current);
+    };
+  }, []);
+
+  if (notes.length === 0) return null;
+
+  const visible = expanded ? filtered : filtered.slice(0, COLLAPSED_COUNT);
+  const hiddenCount = filtered.length - COLLAPSED_COUNT;
 
   return (
     <section
@@ -278,6 +362,9 @@ export function NotesSection() {
                 index={i}
                 readLabel={t("notes.readMore")}
                 latestLabel={t("notes.latest")}
+                shareLabel={t("notes.shareNote")}
+                highlighted={highlightedId === note.id}
+                onShare={shareNote}
               />
             ))}
 

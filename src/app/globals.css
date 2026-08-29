@@ -460,6 +460,27 @@
   animation: meta-landed 0.7s ease-out;
 }
 
+/* deep-link target flash — a note reached via `#n=<id>` glows violet
+   for a moment so the visitor instantly sees which entry was shared */
+@keyframes note-highlight {
+  0% {
+    background-color: rgba(139, 92, 246, 0.22);
+    box-shadow: inset 0 0 0 1px rgba(139, 92, 246, 0.55);
+  }
+  60% {
+    background-color: rgba(139, 92, 246, 0.1);
+    box-shadow: inset 0 0 0 1px rgba(139, 92, 246, 0.25);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: inset 0 0 0 1px transparent;
+  }
+}
+
+.note-highlight {
+  animation: note-highlight 2.6s ease-out;
+}
+
 /* reduce motion politely */
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -471,8 +492,15 @@
   .shimmer-line,
   .meta-pending,
   .meta-landed,
+  .note-highlight,
   .text-gradient-animated {
     animation: none;
+  }
+  /* static tint instead of the animated flash — the landed-on note
+     stays visibly marked for reduced-motion visitors */
+  .note-highlight {
+    background-color: rgba(139, 92, 246, 0.12);
+    box-shadow: inset 0 0 0 1px rgba(139, 92, 246, 0.3);
   }
   .card-shine::after {
     display: none;

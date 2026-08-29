@@ -176,6 +176,18 @@ export function ProjectsSection({
       }));
   })();
 
+  /** position of the open project within the active (filtered + sorted)
+   *  view — powers the prev / next navigation in the dialog */
+  const selectedIndex = selected
+    ? visible.findIndex((p) => p.id === selected.id)
+    : -1;
+  const prevProject =
+    selectedIndex > 0 ? withMeta(visible[selectedIndex - 1]) : null;
+  const nextProject =
+    selectedIndex >= 0 && selectedIndex < visible.length - 1
+      ? withMeta(visible[selectedIndex + 1])
+      : null;
+
   /** roving arrow-key navigation across card/list triggers — the column
    *  count is read from the live computed grid so 1/2/3/4-col layouts all
    *  behave. Keys are only handled while focus is already inside the grid,
@@ -437,6 +449,14 @@ export function ProjectsSection({
         onOpenChange={(open) => (open ? undefined : closeDialog())}
         related={related}
         onSelectRelated={openProject}
+        prevProject={prevProject}
+        nextProject={nextProject}
+        position={
+          selectedIndex >= 0
+            ? { index: selectedIndex + 1, total: visible.length }
+            : undefined
+        }
+        onNavigate={openProject}
       />
     </section>
   );

@@ -357,3 +357,62 @@ Stage Summary:
 - Radix useId hydration-варнинг после Fast Refresh — известный dev-артефакт React19+Radix+Turbopack (в production не воспроизводится).
 - Headless-clipboard: копирование в буфер unverifiable в agent-browser (permissions) — функция проверена стабом API; в реальном браузере работает (graceful degradation в lib/clipboard.ts).
 - Идеи следующего раунда: онбординг-тур для первого визита, deep-links на заметки (#n=<id>) + share-кнопка, e2e-тесты Playwright (вне песочницы), lighthouse-прогон вне песочницы, аналитика при деплое, рассылка «best of notes» (email-подписка через внешний сервис).
+
+---
+
+Task ID: 11
+Agent: main agent (Z.ai Code)
+Task: Оценка статуса, QA через agent-browser, исправление найденного критического бага диалога, новые фичи (deep-links заметок, prev/next-навигация диалога, группа «Заметки» в палитре), стилевой полиш.
+
+Оценка статуса на входе:
+- Сервер здоров (dev.log: только GET 200 + компиляции), линт чистый, все фиды (/rss.xml, /notes.xml, /sitemap.xml, /robots.txt) отдают 200.
+- Входной QA (desktop 1280 + mobile 390): ноль ошибок консоли, ноль JS-ошибок, ноль горизонтального overflow, палитра 27 пунктов, диалог по хешу #p= работает, триггер темы (dark→light→system) работает, чипы фильтра заметок работают.
+- Принято решение: фаз стабильна → реализовать рекомендации прошлого этапа (deep-links заметок) + prev/next в диалоге.
+
+Выполненные работы / модификации:
+
+КРИТИЧЕСКИЙ БАГ (найден и исправлен): «Галерея диалога перекрывала тело диалога».
+- Симптомы: DialogContent — CSS-grid; дочерний блок галереи с aspect-[16/9] схлопывал свою grid-строку до 0px (grid-template-rows: "0px 846px" — контентный вклад img с h-full равен нулю), галерея (position:relative) рисуется ПОВЕРХ тела диалога и перехватывала клики. Реальные пользователи не видели и не могли кликнуть заголовок/бейджи/меты/описание/теги — elementFromPoint в центре кнопок возвращал IMG галереи.
+- Метод обнаружения: DOM-ректы говорили «всё на месте», но hit-test (elementFromPoint) и пиксельный анализ скриншотов (lime-маркер на заголовке не появлялся в кадре) вскрыли перекрытие. VLM по скриншотам много раз описывал «диалог как скриншот + код-блок», что и было сломанным видом (галерея + выглядывающий хвост контента).
+- Баг существовал во всех предыдущих фазах (структура Gallery+body не менялась с ранних коммитов) и маскировался: JS-клики (el.click()) обходят hit-testing, DOM-тесты проходили, VLM интерпретировал сломанный вид как «нормальный диалог».
+- Исправление (project-dialog.tsx): (1) DialogContent — grid → flex flex-col (tailwind-merge резолвит display-конфликт); (2) галерея — «padding-trick» вместо aspect-ratio: h-0 + pb-[56.25%], кнопка-обёртка и img — absolute inset-0 (абсолютные дети резолвятся против padding-box → полная видимая высота 503px); (3) фолбэк-монограмма: aspect-[16/7] → h-0 + pb-[43.75%] + span absolute inset-0 grid place-items-center.
+- Проверки после фикса: galleryH=503 (было 0/перекрытие), h3 ниже галереи, hit-test в центре nav-кнопок = NAV ✓ (было IMG), нативный click agent-browser по «Next project: Lumen Landing Kit» переключает проект, клик по галерее открывает лайтбокс, «Copy commands» кликабелен, related-кнопки кликабельны, mobile 390px: gallery 356×200, title ниже, navHit NAV ✓, нет overflow. VLM по скриншоту фикса: «title and text content visible BELOW the image, no overlap, 9/10».
+
+Фича A — deep-links и шаринг заметок (#n=<id>):
+- notes.tsx: каждой NoteRow присвоен id="n-<noteId>" + scroll-mt-32; кнопка Share2 в мета-строке (ml-auto; на десктопе opacity-0 → group-hover/focus-visible, на мобиле всегда видна) копирует absolute URL #n=<id> (toast.noteLinkCopied) и отражает хеш через replaceState.
+- Эффект в NotesSection: parse /^#n=([\w-]+)$/ на mount (внутри rAF — lint set-state-in-effect обойдён) + слушатель hashchange: сброс фильтра на "all" и expand=true, scrollIntoView(block:center), highlightedId на 2.6с. Сеттеры безусловные (React bailout) → эффект со стабильными deps [].
+- Подсветка: keyframes note-highlight (violet bg+inset-ring fade 2.6s) в globals.css; при prefers-reduced-motion — animation:none + статичная подсветка rgba(139,92,246,0.12).
+- Проверено: открытие /#n=no-interface-read → скролл+expand(6)+highlight; из фильтра «Релиз» (2 видимых) переход к thought-заметке → фильтр сброшен на «Все» (6), цель присутствует; EN: «Copy link to this note», All/Reading/Milestone/Release/Thought; кнопки всех 4 видимых заметок выровнены (rightGap=20 на каждой строке).
+
+Фича B — prev/next навигация в диалоге:
+- projects.tsx: selectedIndex/prevProject/nextProject (по visible — активный фильтр+сортировка), позиция {index,total}, prev/next обогащаются withMeta (live GitHub-звёзды при переключении).
+- project-dialog.tsx: nav-панель (rounded-2xl border bg-secondary/30 p-1.5): prev-кнопка ← + название (lg+), счётчик-чип «N / 8» (font-mono, bg-primary/10), next-кнопка; disabled на краях (opacity-35, cursor-not-allowed); локализованные aria-label/title с {title}.
+- Клавиатура: window-keydown ArrowLeft/Right при открытом диалоге, игнор если target внутри [data-gallery]/input/textarea/select/contenteditable (галерея сохраняет свои стрелки; лайтбокс перехватывает раньше capture-фазой). Хеш #p= синхронизируется автоматически (эффект write в use-project-hash-sync).
+- Проверено: counter 1/8 → click next → «Lumen Landing Kit» 2/8 + хеш #p=lumen-kit; ArrowRight → «Prism Notes» 3/8; ArrowLeft → назад; фокус в галерее + стрелка — проект НЕ меняется; 8× ArrowRight → «Pixel Forge» 8/8, next disabled; EN-локали («Next project: ship-it»).
+
+Фича C — группа «Заметки» в командной палитре:
+- command-palette.tsx: группа palette.notesGroup (после «Проекты»): 6 свежих заметок, иконка типа (Lightbulb/Rocket/Link2/Award — зеркало ленты), truncated текст + дата dd.MM (sm+); value = id+type+локализованный тип+теги+текст EN+RU (двуязычный поиск). onSelect: закрыть палитру → если хеш уже #n=<id> — dispatchEvent(HashChangeEvent) (повторный выбор той же заметки), иначе location.hash = #n=<id> (notes-обработчик делает остальное).
+- Проверено: группы «Недавние/Разделы/Проекты/Заметки/Действия»; поиск «perf» находит заметку; клик → палитра закрыта, хеш #n=perf-budgets-thought, заметка подсвечена и в кадре.
+
+Стилевой полиш:
+- shortcuts-dialog: новая строка «Предыдущий / следующий проект в диалоге ←→», уточнена подпись галереи («когда она в фокусе»).
+- focus-within:bg-secondary/20 на NoteRow (фокус с клавиатуры подсвечивает строку), translate-x-хинт на share-кнопке убран в пользу чистого hover-reveal.
+- README: секции «Deep-links и шаринг заметок», «Навигация prev/next в диалоге», «Исправление: схлопывание галереи» (полное тех-описание бага+фикса), обновлены списки палитры (группа Заметки, 01–06) и hotkeys.
+
+Результаты верификации:
+- Линт чистый; dev.log чистый; финальный smoke: #n=-deep-link ✓, диалог по #p= ✓ (galleryH 503), navCounter 3/8, ArrowLeft → Lumen Landing Kit, Escape закрывает, 0 ошибок консоли, 0 overflow.
+- Полный scroll-through desktop+mobile: 0 ошибок, 0 overflow (1280: totalH 8209; 390: totalH 13684).
+- RU/EN × dark/light × desktop/mobile все комбинации проверены на новых фичах.
+- Скриншоты: qa-phase11-entry, -note-highlight, -notes-en, -notes-final, -shortcuts, -dialog-fixed, -dialog-fixed-nav, -light-dialog, -mobile-hero/-mobile-notes/-mobile-bottom/-mobile-dialog-fixed, -final-hero.
+
+Stage Summary:
+- ГЛАВНОЕ: найден и исправлен давний критический визуальный баг (галерея диалога перекрывала и блокировала тело диалога) — flex + padding-trick для аспект-боксов. Методология: DOM-ректы недостаточно — обязательны hit-test (elementFromPoint) и пиксельная верификация скриншотов; JS-клики в QA обходят hit-testing и могут маскировать перекрытия.
+- 3 новые фичи: deep-links+шаринг заметок (#n=), prev/next-навигация диалога (кнопки+счётчик+клавиатура), группа «Заметки» в ⌘K-палитре.
+- Архитектура data-driven сохранена; lint/dev.log/консоль чистые; полная регрессия пройдена.
+
+Нерешённые вопросы / риски, приоритеты следующей фазы:
+- Домен-заглушка alexvolkov.dev (layout.tsx, sitemap.ts, robots.ts, page.tsx JSON-LD, rss.xml/route.ts, notes.xml/route.ts) — заменить при деплое (TODO на местах).
+- Headless-clipboard: копирование unverifiable в agent-browser (permissions) — все copy-функции проверены стабом navigator.clipboard; в реальном браузере работают (graceful degradation в lib/clipboard.ts).
+- Radix useId hydration-варнинг после Fast Refresh — известный dev-артефакт (production не воспроизводится).
+- VLM по скриншотам нестабилен (иногда возвращает HTML-мусор или галлюцинирует) — при сомнительных вердиктах повторять запрос и подтверждать DOM/pixel-проверками.
+- Идеи следующего раунда: he onboarding-тур первого визита, e2e-тесты Playwright вне песочницы, lighthouse-прогон вне песочницы, аналитика при деплое, «поделиться проектом» через Web Share API на мобильных, экспорт заметок в Markdown.

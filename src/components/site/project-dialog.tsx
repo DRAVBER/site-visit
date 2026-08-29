@@ -55,7 +55,12 @@ function Gallery({ shots, altBase, zoomLabel }: { shots: string[]; altBase: stri
 
   return (
     <div
-      className="group relative aspect-[16/9] w-full overflow-hidden bg-secondary sm:rounded-t-2xl"
+      data-gallery=""
+      /* padding-bottom aspect box (not `aspect-[16/9]`): percentage padding
+         resolves against the definite width, so the box keeps a REAL height
+         inside grid/flex containers — an `aspect-ratio`-only box collapses
+         its grid row / flex basis to 0px and paints over the dialog body */
+      className="group relative h-0 w-full overflow-hidden bg-secondary pb-[56.25%] sm:rounded-t-2xl"
       tabIndex={shots.length > 1 ? 0 : undefined}
       aria-label={shots.length > 1 ? altBase : undefined}
       onKeyDown={(e) => {
@@ -74,7 +79,7 @@ function Gallery({ shots, altBase, zoomLabel }: { shots: string[]; altBase: stri
         onClick={() => setLightboxOpen(true)}
         aria-label={zoomLabel}
         title={zoomLabel}
-        className="group/img relative block h-full w-full cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        className="group/img absolute inset-0 block cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       >
         <img
           key={shots[active]}
@@ -157,6 +162,10 @@ export function ProjectDialog({
   onOpenChange,
   related,
   onSelectRelated,
+  prevProject,
+  nextProject,
+  position,
+  onNavigate,
 }: {
   project: Project | null;
   category?: Category;
@@ -166,6 +175,13 @@ export function ProjectDialog({
   related?: RelatedProject[];
   /** opens a related project in place — the dialog content swaps */
   onSelectRelated?: (project: Project) => void;
+  /** previous / next project in the active (filtered + sorted) view */
+  prevProject?: Project | null;
+  nextProject?: Project | null;
+  /** 1-based position of the open project within the visible list */
+  position?: { index: number; total: number };
+  /** switches the dialog to another project in place */
+  onNavigate?: (project: Project) => void;
 }) {
   const { t, locale } = useI18n();
   const [copied, setCopied] = useState(false);
@@ -179,6 +195,34 @@ export function ProjectDialog({
       .querySelector("[data-slot='dialog-content']")
       ?.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
   }, [project?.id, open]);
+
+  /* ← / → switch to the previous / next project in the active view.
+     Skipped when the keypress originates inside the screenshot gallery
+     (its own arrows win) or any editable region; the fullscreen lightbox
+     intercepts arrows earlier via its capture-phase listener. */
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+      const target = e.target as HTMLElement | null;
+      if (
+        target?.closest(
+          "[data-gallery], input, textarea, select, [contenteditable=true]"
+        )
+      ) {
+        return;
+      }
+      if (e.key === "ArrowLeft" && prevProject) {
+        e.preventDefault();
+        onNavigate?.(prevProject);
+      } else if (e.key === "ArrowRight" && nextProject) {
+        e.preventDefault();
+        onNavigate?.(nextProject);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [open, prevProject, nextProject, onNavigate]);
 
   if (!project) return null;
 
@@ -211,7 +255,11 @@ export function ProjectDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-h-[92svh] gap-0 overflow-y-auto rounded-2xl border-border/70 bg-card p-0 sm:max-w-4xl"
+        /* flex (not the default grid): an aspect-ratio-only child (the
+           16:9 gallery) collapses its grid row to 0px in Chromium's track
+           sizing, making the gallery paint OVER the body and steal its
+           clicks. A column flexbox gives the gallery real layout space. */
+        className="flex max-h-[92svh] flex-col gap-0 overflow-y-auto rounded-2xl border-border/70 bg-card p-0 sm:max-w-4xl"
         aria-describedby={undefined}
       >
         <DialogTitle className="sr-only">{project.title}</DialogTitle>
@@ -238,8 +286,9 @@ export function ProjectDialog({
             zoomLabel={t("projectDialog.zoom")}
           />
         ) : (
-          <div className="flex aspect-[16/7] w-full items-center justify-center bg-gradient-to-br from-violet-600/30 via-purple-700/20 to-transparent">
-            <span className="text-6xl font-bold tracking-tight text-primary/50">
+          /* padding-bottom aspect box — same sizing fix as the gallery */
+          <div className="relative h-0 w-full overflow-hidden bg-gradient-to-br from-violet-600/30 via-purple-700/20 to-transparent pb-[43.75%]">
+            <span className="absolute inset-0 grid place-items-center text-6xl font-bold tracking-tight text-primary/50">
               {project.title.slice(0, 2).toUpperCase()}
             </span>
           </div>
@@ -287,6 +336,68 @@ export function ProjectDialog({
               </span>
             </div>
           </div>
+
+          {/* prev / next project navigation — follows the active filter +
+              sort of the section; arrow keys work too (outside the gallery) */}
+          {(prevProject || nextProject || position) && onNavigate ? (
+            <nav
+              aria-label={t("projectDialog.navLabel")}
+              className="flex items-center gap-2 rounded-2xl border border-border/60 bg-secondary/30 p-1.5 print:hidden"
+            >
+              <button
+                type="button"
+                onClick={() => prevProject && onNavigate(prevProject)}
+                disabled={!prevProject}
+                aria-label={
+                  prevProject
+                    ? t("projectDialog.navPrev").replace("{title}", prevProject.title)
+                    : undefined
+                }
+                title={
+                  prevProject
+                    ? t("projectDialog.navPrev").replace("{title}", prevProject.title)
+                    : undefined
+                }
+                className="inline-flex h-9 min-w-9 flex-1 items-center justify-center gap-1.5 rounded-xl px-2 text-xs font-medium text-muted-foreground transition-all duration-300 enabled:hover:bg-background/80 enabled:hover:text-primary enabled:hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <ChevronLeft className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <span className="hidden max-w-40 truncate lg:inline">
+                  {prevProject ? prevProject.title : ""}
+                </span>
+              </button>
+
+              {position ? (
+                <span
+                  aria-hidden="true"
+                  className="inline-flex h-9 shrink-0 items-center rounded-xl bg-primary/10 px-3 font-mono text-[11px] font-semibold tracking-wide text-primary tabular-nums"
+                >
+                  {position.index} / {position.total}
+                </span>
+              ) : null}
+
+              <button
+                type="button"
+                onClick={() => nextProject && onNavigate(nextProject)}
+                disabled={!nextProject}
+                aria-label={
+                  nextProject
+                    ? t("projectDialog.navNext").replace("{title}", nextProject.title)
+                    : undefined
+                }
+                title={
+                  nextProject
+                    ? t("projectDialog.navNext").replace("{title}", nextProject.title)
+                    : undefined
+                }
+                className="inline-flex h-9 min-w-9 flex-1 items-center justify-center gap-1.5 rounded-xl px-2 text-xs font-medium text-muted-foreground transition-all duration-300 enabled:hover:bg-background/80 enabled:hover:text-primary enabled:hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <span className="hidden max-w-40 truncate lg:inline">
+                  {nextProject ? nextProject.title : ""}
+                </span>
+                <ChevronRight className="h-4 w-4 shrink-0" aria-hidden="true" />
+              </button>
+            </nav>
+          ) : null}
 
           {/* description */}
           <section>

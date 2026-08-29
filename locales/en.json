@@ -44,8 +44,9 @@
     "gridHome": "First / last card",
     "gridOpen": "Open project",
     "dialogGroup": "Project dialog",
-    "galleryMove": "Browse screenshot gallery",
-    "footerHint": "Press ? anytime to reopen this cheat sheet"
+    "galleryMove": "Gallery screenshots (when focused)",
+    "footerHint": "Press ? anytime to reopen this cheat sheet",
+    "switchProject": "Previous / next project in the dialog"
   },
   "palette": {
     "placeholder": "Type a command or project…",
@@ -67,7 +68,8 @@
     "hint": "Press Ctrl+K anytime",
     "hintTitle": "Quick navigation",
     "hintBody": "Press Ctrl + K to jump to any project or section.",
-    "hintDismiss": "Got it"
+    "hintDismiss": "Got it",
+    "notesGroup": "Notes"
   },
   "hero": {
     "badge": "Available for new projects",
@@ -133,7 +135,10 @@
     "shareLabel": "Share this project",
     "zoom": "Open screenshot fullscreen",
     "related": "See also",
-    "relatedOpen": "Open {title} details"
+    "relatedOpen": "Open {title} details",
+    "navLabel": "Project navigation",
+    "navPrev": "Previous project: {title}",
+    "navNext": "Next project: {title}"
   },
   "lightbox": {
     "close": "Close viewer",
@@ -194,7 +199,8 @@
     "themeToggledLight": "Light theme",
     "langSwitched": "Language: {lang}",
     "vcardSaved": "vCard downloaded — import it into your contacts",
-    "vcardFailed": "Could not generate the vCard"
+    "vcardFailed": "Could not generate the vCard",
+    "noteLinkCopied": "Note link copied to clipboard"
   },
   "footer": {
     "madeWith": "Made with",
@@ -218,7 +224,8 @@
     "collapse": "Show less",
     "filterLabel": "Filter notes by type",
     "filterAll": "All",
-    "filteredCount": "{count} notes shown"
+    "filteredCount": "{count} notes shown",
+    "shareNote": "Copy link to this note"
   },
   "testimonials": {
     "title": "Kind words",
