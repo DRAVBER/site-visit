@@ -49,7 +49,12 @@ export function BioSection() {
       />
 
       <div className="mx-auto max-w-7xl">
-        <SectionHeading id="bio" title={t("bio.title")} subtitle={t("bio.subtitle")} />
+        <SectionHeading
+          id="bio"
+          number="03"
+          title={t("bio.title")}
+          subtitle={t("bio.subtitle")}
+        />
 
         <div className="grid gap-10 lg:grid-cols-[340px_1fr] lg:gap-14">
           {/* portrait card */}

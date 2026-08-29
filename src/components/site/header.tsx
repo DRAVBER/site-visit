@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -15,6 +15,7 @@ import { LanguageToggle } from "./language-toggle";
 import { useI18n } from "@/lib/i18n";
 import { profile } from "@/lib/portfolio";
 import { useScrollSpy } from "@/hooks/use-scrollspy";
+import { useUiStore } from "@/lib/ui-store";
 
 const NAV_SECTIONS = [
   { id: "hero", key: "nav.home" },
@@ -31,6 +32,10 @@ export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const activeSection = useScrollSpy(SECTION_IDS);
+  const setPaletteOpen = useUiStore((s) => s.setPaletteOpen);
+  const isMac =
+    typeof window !== "undefined" &&
+    /Mac|iPhone|iPad/.test(window.navigator.userAgent);
 
   // glass background appears once the page is scrolled
   useEffect(() => {
@@ -90,6 +95,34 @@ export function SiteHeader() {
 
         {/* controls */}
         <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* command palette trigger */}
+          <button
+            type="button"
+            onClick={() => setPaletteOpen(true)}
+            aria-label={t("nav.openPalette")}
+            title={t("palette.hint")}
+            className="group hidden h-9 items-center gap-2 rounded-full border border-border/70 bg-secondary/40 px-3.5 text-xs font-medium text-muted-foreground transition-all duration-300 hover:border-primary/45 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:flex"
+          >
+            <Search
+              className="h-3.5 w-3.5 transition-colors group-hover:text-primary"
+              aria-hidden="true"
+            />
+            <span className="sr-only sm:not-sr-only">{t("palette.placeholder")}</span>
+            <kbd className="pointer-events-none ml-1 hidden select-none items-center gap-0.5 rounded border border-border bg-background px-1.5 py-0.5 font-mono text-[10px] font-semibold text-muted-foreground/80 lg:flex">
+              {isMac ? "⌘" : "Ctrl"}K
+            </kbd>
+          </button>
+          {/* palette trigger (mobile) — icon only */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setPaletteOpen(true)}
+            aria-label={t("nav.openPalette")}
+            className="h-9 w-9 rounded-full text-muted-foreground hover:bg-accent hover:text-accent-foreground md:hidden"
+          >
+            <Search className="h-4.5 w-4.5" />
+          </Button>
+
           <LanguageToggle />
           <ThemeToggle />
 

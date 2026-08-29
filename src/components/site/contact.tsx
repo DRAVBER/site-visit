@@ -76,6 +76,7 @@ export function ContactSection() {
       <div className="relative mx-auto max-w-5xl">
         <SectionHeading
           id="contact"
+          number="04"
           title={t("contact.title")}
           subtitle={t("contact.subtitle")}
         />

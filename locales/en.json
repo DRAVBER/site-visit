@@ -12,7 +12,22 @@
     "closeMenu": "Close menu",
     "toggleTheme": "Toggle theme",
     "switchLanguage": "Switch language",
-    "goTo": "Go to"
+    "goTo": "Go to",
+    "openPalette": "Open command palette"
+  },
+  "palette": {
+    "placeholder": "Type a command or project…",
+    "empty": "No results found",
+    "sectionsGroup": "Sections",
+    "projectsGroup": "Projects",
+    "actionsGroup": "Actions",
+    "toggleTheme": "Toggle theme",
+    "switchLanguage": "Switch language (RU)",
+    "copyEmail": "Copy email address",
+    "openGithub": "Open GitHub",
+    "openTelegram": "Open Telegram",
+    "openDiscord": "Open Discord",
+    "hint": "Press Ctrl+K anytime"
   },
   "hero": {
     "badge": "Available for new projects",
@@ -44,7 +59,14 @@
     "searchClear": "Clear search",
     "resultsFound": "projects found",
     "noResults": "Nothing found for",
-    "noResultsHint": "Try a different keyword or clear the search"
+    "noResultsHint": "Try a different keyword or clear the search",
+    "sortLabel": "Sort by",
+    "sortFeatured": "Featured",
+    "sortStars": "Most stars",
+    "sortName": "Name A–Z",
+    "sortUpdated": "Recently updated",
+    "tagsLabel": "Tags",
+    "filterByTag": "Filter by tag"
   },
   "projectDialog": {
     "overview": "Overview",

@@ -1,8 +1,8 @@
 # Alex Volkov — Portfolio
 
-Премиальный сайт-визитка независимого разработчика: тёмная/светлая тема, RU/EN локализация, категории проектов, метаданные из GitHub API.
+Премиальный сайт-визитка независимого разработчика: тёмная/светлая тема, RU/EN локализация, категории проектов, метаданные из GitHub API, командная палитра (⌘K), поиск, сортировка и тег-фильтры.
 
-**Стек:** Next.js (App Router) · TypeScript · Tailwind CSS 4 · shadcn/ui · Framer Motion · next-themes
+**Стек:** Next.js (App Router) · TypeScript · Tailwind CSS 4 · shadcn/ui · Framer Motion · next-themes · zustand · cmdk
 
 ---
 
@@ -27,6 +27,22 @@ bun run build && bun run start
 - Опционально: `GITHUB_TOKEN=ghp_...` в `.env` — поднимает лимит GitHub API с 60 до 5000 запросов/час.
 
 ---
+
+## ⌨️ Командная палитра (Ctrl+K / ⌘K)
+
+Нажмите `Ctrl+K` (или `⌘K` на Mac) в любой момент — откроется палитра с командами:
+
+- **Разделы** — быстрый переход к Hero / Проектам / BIO / Контактам (горячие клавиши 01–04);
+- **Проекты** — поиск по названию или тегу, Enter открывает карточку проекта;
+- **Действия** — переключение темы, смена языка RU⇄EN, копирование email, переходы в GitHub / Telegram / Discord.
+
+Палитра полностью локализована (ключи `palette.*` в `locales/*.json`).
+
+## 🔎 Поиск, сортировка и теги
+
+- **Поиск** — живой фильтр по названию, описанию и тегам (комбинируется с фильтром категорий); счётчик результатов в бейдже.
+- **Сортировка** — селектор рядом с поиском: Избранные / По звёздам / По названию / По обновлению.
+- **Тег-чипы** — клик по тегу на карточке фильтрует сетку по этому тегу (повторный клик снимает фильтр); активный тег подсвечивается фиолетовым.
 
 ## ➕ Как добавить проект (≈ 2 минуты)
 
@@ -80,7 +96,7 @@ bun run build && bun run start
 
 ## ✏️ Как менять тексты
 
-- **UI-тексты** (меню, кнопки, заголовки, BIO-абзацы, контакты, футер): [`locales/ru.json`](locales/ru.json) и [`locales/en.json`](locales/en.json). Структура файлов одинаковая — ключ `hero.viewProjects` и т.п.
+- **UI-тексты** (меню, кнопки, заголовки, BIO-абзацы, контакты, футер, палитра, сортировка): [`locales/ru.json`](locales/ru.json) и [`locales/en.json`](locales/en.json). Структура файлов одинаковая — ключ `hero.viewProjects` и т.п.
 - **Профиль** (имя, аватар, соцссылки, статистика в hero, навыки, опыт): [`data/profile.json`](data/profile.json). Локализуемые поля (`role`, `company`, `description`…) принимают либо строку, либо `{ "en": "...", "ru": "..." }`.
 - **SEO/метаданные:** `src/app/layout.tsx` (title, description, Open Graph) + домен в `src/app/layout.tsx`, `src/app/sitemap.ts`, `src/app/robots.ts`.
 
@@ -116,20 +132,25 @@ src/
     api/github/      # обогащение данных из GitHub API (кэш 1ч, fallback)
     sitemap.ts robots.ts
   components/site/   # header, hero, projects, project-card, project-dialog,
-                     # bio, contact, footer, toggles, icons
+                     # bio, contact, footer, toggles, icons,
+                     # command-palette, sort-select, project-search,
+                     # scroll-progress, back-to-top, count-up
   lib/
     portfolio.ts     # типы + загрузка data/*.json
     i18n.tsx         # RU/EN провайдер (useSyncExternalStore)
+    ui-store.ts      # zustand-стор: палитра + диалог проекта
 ```
 
 **Заметка по архитектуре:** детали проекта открываются в полноэкранном диалоге (lazy-загружаемом через `next/dynamic`), а не отдельным маршрутом — это мгновенное открытие без навигации и меньше JS в первом чанке. `description` в карточках поддерживает `{en, ru}` — просто поставьте однострочную строку, если перевод не нужен.
 
-## ⚡ Производительность
+## ⚡ Производительность и доступность
 
 - Шрифты Geist через `next/font` (self-hosted, zero CLS).
 - Диалог проекта и галерея — code-split (`next/dynamic`), изображения `loading="lazy"`.
 - Framer Motion — только `whileInView` с `once: true` (нет рендер-петель).
 - Данные GitHub — кэш 1 час (`revalidate` + `s-maxage`), fallback на локальный JSON.
+- `prefers-reduced-motion` — все анимации отключаются (CSS + `MotionConfig reducedMotion="user"`).
+- SEO: Open Graph, `sitemap.xml`, `robots.txt`, JSON-LD Person-схема (`page.tsx`).
 
 ## 🧪 Адаптивность
 

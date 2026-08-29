@@ -87,7 +87,7 @@ export function Hero() {
         </motion.p>
         <motion.h1
           variants={item}
-          className="mt-2 text-5xl font-bold tracking-tight text-balance sm:text-6xl md:text-7xl xl:text-8xl"
+          className="text-gradient-animated mt-2 text-5xl font-bold tracking-tight text-balance sm:text-6xl md:text-7xl xl:text-8xl"
         >
           {profile.name}
           <span className="text-primary">.</span>

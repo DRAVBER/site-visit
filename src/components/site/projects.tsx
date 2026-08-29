@@ -6,9 +6,11 @@ import { AnimatePresence, motion } from "framer-motion";
 import { FolderOpen, SearchX } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { resolveLocalized, type Project } from "@/lib/portfolio";
+import { useUiStore } from "@/lib/ui-store";
 import { SectionHeading } from "./section-heading";
 import { ProjectCard, CategoryTabs } from "./project-card";
 import { ProjectSearch } from "./project-search";
+import { SortSelect, type SortMode } from "./sort-select";
 
 /** heavy dialog is code-split to keep first paint fast */
 const ProjectDialog = dynamic(
@@ -31,11 +33,17 @@ export function ProjectsSection({
   const { t, locale } = useI18n();
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [query, setQuery] = useState("");
-  const [selected, setSelected] = useState<Project | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [sortMode, setSortMode] = useState<SortMode>("featured");
   const [liveMeta, setLiveMeta] = useState<
     Record<string, { stars?: number; lastCommit?: string }>
   >({});
+
+  /** dialog state lives in the shared ui-store so the ⌘K palette can open
+   *  any project from anywhere (no prop drilling / effect syncing) */
+  const selected = useUiStore((s) => s.selectedProject);
+  const dialogOpen = useUiStore((s) => s.dialogOpen);
+  const openProject = useUiStore((s) => s.openProject);
+  const closeDialog = useUiStore((s) => s.closeDialog);
 
   /** try to enrich cards with live GitHub data (silently falls back) */
   useEffect(() => {
@@ -58,15 +66,25 @@ export function ProjectsSection({
     [categories]
   );
 
-  /** featured first, then by stars */
-  const sorted = useMemo(
-    () =>
-      [...projects].sort((a, b) => {
-        if (!!b.featured !== !!a.featured) return b.featured ? 1 : -1;
-        return b.stars - a.stars;
-      }),
-    [projects]
-  );
+  /** ordering follows the sort select — featured first by default */
+  const sorted = useMemo(() => {
+    const bySort = (a: Project, b: Project) => {
+      switch (sortMode) {
+        case "stars":
+          return b.stars - a.stars;
+        case "name":
+          return a.title.localeCompare(b.title);
+        case "updated":
+          return (
+            new Date(b.lastCommit).getTime() - new Date(a.lastCommit).getTime()
+          );
+        default:
+          if (!!b.featured !== !!a.featured) return b.featured ? 1 : -1;
+          return b.stars - a.stars;
+      }
+    };
+    return [...projects].sort(bySort);
+  }, [projects, sortMode]);
 
   /** category filter + full-text search (title / description / tags) */
   const visible = useMemo(() => {
@@ -88,9 +106,15 @@ export function ProjectsSection({
   const counts = (id: string | null) =>
     id ? projects.filter((p) => p.category === id).length : projects.length;
 
-  const openProject = (project: Project) => {
-    setSelected(project);
-    setDialogOpen(true);
+  /** clicking a tag chip on a card fills the search box with that tag */
+  const filterByTag = (tag: string) => {
+    setQuery((q) => (q.trim() === tag ? "" : tag));
+    /* bring the search box into view on small screens */
+    if (window.innerWidth < 640) {
+      document
+        .querySelector("#projects input[type=search]")
+        ?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
   };
 
   /** merge live GitHub meta over local fallback values */
@@ -123,6 +147,7 @@ export function ProjectsSection({
       <div className="mx-auto max-w-7xl">
         <SectionHeading
           id="projects"
+          number="02"
           title={t("projects.title")}
           subtitle={t("projects.subtitle")}
         />
@@ -136,14 +161,27 @@ export function ProjectsSection({
           counts={counts}
         />
 
-        <ProjectSearch
-          value={query}
-          onChange={setQuery}
-          placeholder={t("projects.searchPlaceholder")}
-          clearLabel={t("projects.searchClear")}
-          resultCount={visible.length}
-          resultLabel={t("projects.resultsFound")}
-        />
+        <div className="mb-8 flex flex-col items-center justify-center gap-3 sm:mb-10 sm:flex-row sm:gap-4">
+          <ProjectSearch
+            value={query}
+            onChange={setQuery}
+            placeholder={t("projects.searchPlaceholder")}
+            clearLabel={t("projects.searchClear")}
+            resultCount={visible.length}
+            resultLabel={t("projects.resultsFound")}
+          />
+          <SortSelect
+            value={sortMode}
+            onChange={setSortMode}
+            label={t("projects.sortLabel")}
+            options={[
+              { value: "featured", label: t("projects.sortFeatured") },
+              { value: "stars", label: t("projects.sortStars") },
+              { value: "name", label: t("projects.sortName") },
+              { value: "updated", label: t("projects.sortUpdated") },
+            ]}
+          />
+        </div>
 
         {visible.length === 0 ? (
           <motion.div
@@ -180,12 +218,16 @@ export function ProjectsSection({
                   locale={locale}
                   index={i}
                   onOpen={openProject}
+                  activeTag={query.trim() || null}
+                  onTagClick={filterByTag}
+                  tagAriaLabel={t("projects.filterByTag")}
                   labels={{
                     featured: t("projects.featured"),
                     stars: t("projects.stars"),
                     updated: t("projects.updated"),
                     demo: t("projects.details"),
                     source: t("projects.source"),
+                    tags: t("projects.tagsLabel"),
                   }}
                 />
               ))}
@@ -198,7 +240,7 @@ export function ProjectsSection({
         project={selected}
         category={selected ? categoriesById.get(selected.category) : undefined}
         open={dialogOpen}
-        onOpenChange={setDialogOpen}
+        onOpenChange={(open) => (open ? undefined : closeDialog())}
       />
     </section>
   );

@@ -197,6 +197,28 @@
   color: transparent;
 }
 
+/* animated gradient wash for the hero name — slow, subtle, premium */
+.text-gradient-animated {
+  background: linear-gradient(
+    110deg,
+    #c4b5fd 0%,
+    #8b5cf6 25%,
+    #e879f9 50%,
+    #8b5cf6 75%,
+    #c4b5fd 100%
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradient-slide 7s ease-in-out infinite;
+}
+
+@keyframes gradient-slide {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
 /* subtle blueprint grid used behind hero */
 .bg-grid {
   background-image:
@@ -241,6 +263,40 @@
 .card-ring-glow:hover::before,
 .card-ring-glow:focus-within::before {
   opacity: 1;
+}
+
+/* diagonal light sweep across the card cover image on hover.
+   The ::after overlay is a thin rotated highlight bar that glides once
+   per hover — a classic premium micro-interaction. */
+.card-shine::after {
+  content: "";
+  position: absolute;
+  top: -60%;
+  left: -80%;
+  width: 55%;
+  height: 220%;
+  transform: rotate(24deg) translateX(0);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.16) 45%,
+    rgba(255, 255, 255, 0.28) 50%,
+    rgba(255, 255, 255, 0.16) 55%,
+    transparent 100%
+  );
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.card-shine:hover::after {
+  opacity: 1;
+  animation: shine-sweep 0.9s ease-out;
+}
+
+@keyframes shine-sweep {
+  from { transform: rotate(24deg) translateX(0); }
+  to { transform: rotate(24deg) translateX(320%); }
 }
 
 /* fixed header glass background */
@@ -306,7 +362,18 @@
   .animate-aurora,
   .animate-float-soft,
   .animate-scroll-dot,
-  .shimmer-line {
+  .shimmer-line,
+  .text-gradient-animated {
     animation: none;
+  }
+  .card-shine::after {
+    display: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

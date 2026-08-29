@@ -12,7 +12,22 @@
     "closeMenu": "Закрыть меню",
     "toggleTheme": "Переключить тему",
     "switchLanguage": "Переключить язык",
-    "goTo": "Перейти к"
+    "goTo": "Перейти к",
+    "openPalette": "Открыть командную палитру"
+  },
+  "palette": {
+    "placeholder": "Команда или проект…",
+    "empty": "Ничего не найдено",
+    "sectionsGroup": "Разделы",
+    "projectsGroup": "Проекты",
+    "actionsGroup": "Действия",
+    "toggleTheme": "Переключить тему",
+    "switchLanguage": "Переключить язык (EN)",
+    "copyEmail": "Скопировать email",
+    "openGithub": "Открыть GitHub",
+    "openTelegram": "Открыть Telegram",
+    "openDiscord": "Открыть Discord",
+    "hint": "Нажмите Ctrl+K в любой момент"
   },
   "hero": {
     "badge": "Открыт для новых проектов",
@@ -44,7 +59,14 @@
     "searchClear": "Очистить поиск",
     "resultsFound": "проектов найдено",
     "noResults": "Ничего не найдено по запросу",
-    "noResultsHint": "Попробуйте другое ключевое слово или сбросьте поиск"
+    "noResultsHint": "Попробуйте другое ключевое слово или сбросьте поиск",
+    "sortLabel": "Сортировка",
+    "sortFeatured": "Избранные",
+    "sortStars": "По звёздам",
+    "sortName": "По названию",
+    "sortUpdated": "По обновлению",
+    "tagsLabel": "Теги",
+    "filterByTag": "Фильтровать по тегу"
   },
   "projectDialog": {
     "overview": "Описание",

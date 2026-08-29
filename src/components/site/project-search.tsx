@@ -20,7 +20,7 @@ export function ProjectSearch({
   resultLabel: string;
 }) {
   return (
-    <div className="relative mx-auto mb-8 w-full max-w-md">
+    <div className="relative mx-auto w-full max-w-md">
       <Search
         className="pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-muted-foreground"
         aria-hidden="true"

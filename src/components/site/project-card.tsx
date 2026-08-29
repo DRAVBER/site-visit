@@ -20,6 +20,9 @@ export function ProjectCard({
   labels,
   index,
   onOpen,
+  activeTag,
+  onTagClick,
+  tagAriaLabel,
 }: {
   project: Project;
   category?: Category;
@@ -30,9 +33,15 @@ export function ProjectCard({
     updated: string;
     demo: string;
     source: string;
+    tags?: string;
   };
   index: number;
   onOpen: (project: Project) => void;
+  /** current search query — matching tags get highlighted */
+  activeTag?: string | null;
+  /** click on a tag chip filters the grid by that tag */
+  onTagClick?: (tag: string) => void;
+  tagAriaLabel?: string;
 }) {
   const [imageError, setImageError] = useState(false);
   const cover = project.screenshots[0];
@@ -50,7 +59,7 @@ export function ProjectCard({
       <button
         type="button"
         onClick={() => onOpen(project)}
-        className="relative block aspect-[16/10] w-full cursor-pointer overflow-hidden bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className="card-shine relative block aspect-[16/10] w-full cursor-pointer overflow-hidden bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         aria-label={`${project.title} — ${labels.demo}`}
       >
         {cover && !imageError ? (
@@ -116,16 +125,28 @@ export function ProjectCard({
           {resolveLocalized(project.description, locale)}
         </p>
 
-        {/* tags */}
-        <ul className="mt-3 flex flex-wrap gap-1.5" aria-label="tags">
-          {project.tags.slice(0, 4).map((tag) => (
-            <li
-              key={tag}
-              className="rounded-md bg-secondary px-2 py-0.5 font-mono text-[11px] text-muted-foreground transition-colors group-hover:text-secondary-foreground"
-            >
-              {tag}
-            </li>
-          ))}
+        {/* tags — clickable, act as one-tap filters */}
+        <ul className="mt-3 flex flex-wrap gap-1.5" aria-label={labels.tags}>
+          {project.tags.slice(0, 4).map((tag) => {
+            const isActive = activeTag?.toLowerCase() === tag.toLowerCase();
+            return (
+              <li key={tag}>
+                <button
+                  type="button"
+                  onClick={() => onTagClick?.(tag)}
+                  aria-label={`${tagAriaLabel ?? "Filter by tag"}: ${tag}`}
+                  aria-pressed={isActive}
+                  className={`rounded-md border px-2 py-0.5 font-mono text-[11px] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                    isActive
+                      ? "border-primary/60 bg-primary/15 text-primary"
+                      : "border-transparent bg-secondary text-muted-foreground hover:-translate-y-0.5 hover:border-primary/40 hover:text-primary"
+                  }`}
+                >
+                  {tag}
+                </button>
+              </li>
+            );
+          })}
           {project.tags.length > 4 ? (
             <li className="rounded-md px-1 py-0.5 font-mono text-[11px] text-muted-foreground/70">
               +{project.tags.length - 4}
