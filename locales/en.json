@@ -1,0 +1,95 @@
+{
+  "meta": {
+    "title": "Alex Volkov — Independent Developer",
+    "description": "Portfolio of Alex Volkov, independent developer: web platforms, desktop software, CLI tools and open source."
+  },
+  "nav": {
+    "home": "Home",
+    "projects": "Projects",
+    "bio": "About",
+    "contact": "Contact",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "toggleTheme": "Toggle theme",
+    "switchLanguage": "Switch language",
+    "goTo": "Go to"
+  },
+  "hero": {
+    "badge": "Available for new projects",
+    "greeting": "Hi, I'm",
+    "tagline": "I craft fast, beautiful software for the web",
+    "subtitle": "Independent developer with 6 years of experience. Web platforms, desktop apps, CLI tools — from the first commit to production.",
+    "viewProjects": "View projects",
+    "contactMe": "Contact me",
+    "scroll": "Scroll",
+    "stats": {
+      "years": "Years of experience",
+      "projects": "Projects shipped",
+      "openSource": "Open-source repos",
+      "stars": "GitHub stars"
+    }
+  },
+  "projects": {
+    "title": "Projects",
+    "subtitle": "Things I build and maintain — from production web platforms to tiny CLI helpers.",
+    "all": "All",
+    "empty": "No projects in this category yet",
+    "featured": "Featured",
+    "details": "Details",
+    "source": "Source code",
+    "demo": "Live demo",
+    "stars": "stars",
+    "updated": "Updated"
+  },
+  "projectDialog": {
+    "overview": "Overview",
+    "tech": "Tech stack",
+    "run": "How to run",
+    "gallery": "Gallery",
+    "openRepo": "Open on GitHub",
+    "openDemo": "Open live demo",
+    "close": "Close project",
+    "lastCommit": "Last commit",
+    "screenshot": "Project screenshot",
+    "copyCommands": "Copy commands"
+  },
+  "bio": {
+    "title": "About me",
+    "subtitle": "Code, coffee and curiosity.",
+    "paragraphs": [
+      "I'm an independent developer. For the last 6 years I've been turning ideas into production software: web platforms processing millions of events, desktop apps used daily by thousands, and tiny scripts that save people hours.",
+      "I care about the craft: clean architecture, honest performance budgets and interfaces that feel instant. Every project I ship is something I'd gladly use myself."
+    ],
+    "principlesTitle": "What drives me",
+    "principles": [
+      "Ship small, ship often — momentum beats perfection",
+      "Performance is a feature, not an afterthought",
+      "Open source by default — share what you learn",
+      "Details are not details — they make the design"
+    ],
+    "experienceTitle": "Experience",
+    "skillsTitle": "Tech stack",
+    "present": "present"
+  },
+  "contact": {
+    "title": "Let's build something together",
+    "subtitle": "Have an idea, a project or just want to talk tech? My DMs are always open.",
+    "github": "GitHub",
+    "githubDesc": "Code, issues and releases",
+    "discord": "Discord",
+    "discordDesc": "Fastest way to reach me",
+    "telegram": "Telegram",
+    "telegramDesc": "For project inquiries",
+    "email": "Email",
+    "emailDesc": "For everything formal",
+    "copyEmail": "Copy email address",
+    "copied": "Email copied to clipboard"
+  },
+  "footer": {
+    "madeWith": "Made with",
+    "by": "by",
+    "rights": "All rights reserved.",
+    "backToTop": "Back to top",
+    "builtNote": "Built with Next.js, Tailwind CSS & shadcn/ui"
+  }
+}

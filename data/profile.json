@@ -1,0 +1,65 @@
+{
+  "name": "Alex Volkov",
+  "handle": "alexvolkov",
+  "initials": "AV",
+  "avatarUrl": "/images/profile/avatar.png",
+  "socialLinks": {
+    "github": "https://github.com/alexvolkov",
+    "discord": "https://discord.com/users/284701628193622112",
+    "telegram": "https://t.me/alexvolkov",
+    "email": "hello@alexvolkov.dev"
+  },
+  "stats": {
+    "years": 6,
+    "projects": 40,
+    "openSource": 25,
+    "stars": 2400
+  },
+  "skills": [
+    {
+      "label": { "en": "Frontend", "ru": "Фронтенд" },
+      "items": ["React", "Next.js", "TypeScript", "Tailwind CSS", "Framer Motion"]
+    },
+    {
+      "label": { "en": "Backend", "ru": "Бэкенд" },
+      "items": ["Node.js", "Bun", "PostgreSQL", "Prisma", "Redis"]
+    },
+    {
+      "label": { "en": "Languages", "ru": "Языки" },
+      "items": ["TypeScript", "JavaScript", "Python", "Rust", "Go"]
+    },
+    {
+      "label": { "en": "Tools", "ru": "Инструменты" },
+      "items": ["Git", "Docker", "Linux", "Figma", "CI/CD"]
+    }
+  ],
+  "experience": [
+    {
+      "period": "2021 — now",
+      "role": { "en": "Independent Developer", "ru": "Независимый разработчик" },
+      "company": { "en": "Freelance & Open Source", "ru": "Фриланс и Open Source" },
+      "description": {
+        "en": "Building web platforms, developer tools and automation scripts for clients around the world. 25+ open-source projects.",
+        "ru": "Создаю веб-платформы, инструменты для разработчиков и скрипты автоматизации для клиентов по всему миру. 25+ open-source проектов."
+      }
+    },
+    {
+      "period": "2019 — 2021",
+      "role": { "en": "Full-stack Developer", "ru": "Full-stack разработчик" },
+      "company": { "en": "Product Studio «Codex»", "ru": "Продуктовая студия «Codex»" },
+      "description": {
+        "en": "Shipped 12 client products: from landing pages to high-load dashboards with real-time data.",
+        "ru": "Выпустил 12 клиентских продуктов: от лендингов до высоконагруженных дашбордов с данными в реальном времени."
+      }
+    },
+    {
+      "period": "2018 — 2019",
+      "role": { "en": "Frontend Developer", "ru": "Frontend-разработчик" },
+      "company": { "en": "Startup «Zenith»", "ru": "Стартап «Zenith»" },
+      "description": {
+        "en": "First commercial experience: built the MVP of a fintech app and fell in love with UI engineering.",
+        "ru": "Первый коммерческий опыт: собрал MVP финтех-приложения и влюбился в UI-инженерию."
+      }
+    }
+  ]
+}

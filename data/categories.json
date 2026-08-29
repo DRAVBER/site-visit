@@ -1,0 +1,26 @@
+[
+  {
+    "id": "web",
+    "label": { "en": "Web Sites", "ru": "Веб-сайты" },
+    "order": 1,
+    "icon": "globe"
+  },
+  {
+    "id": "software",
+    "label": { "en": "Software", "ru": "Софт" },
+    "order": 2,
+    "icon": "monitor"
+  },
+  {
+    "id": "scripts",
+    "label": { "en": "Scripts", "ru": "Скрипты" },
+    "order": 3,
+    "icon": "terminal"
+  },
+  {
+    "id": "others",
+    "label": { "en": "Others", "ru": "Другое" },
+    "order": 4,
+    "icon": "sparkles"
+  }
+]

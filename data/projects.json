@@ -1,0 +1,148 @@
+[
+  {
+    "id": "nebula-analytics",
+    "title": "Nebula Analytics",
+    "description": {
+      "en": "Privacy-first real-time web analytics platform. Cookieless tracking, live visitor stream, custom dashboards and 1s refresh — all self-hosted in a single Docker container.",
+      "ru": "Платформа веб-аналитики в реальном времени с уважением к приватности. Трекинг без cookies, живой поток посетителей, кастомные дашборды и обновление раз в секунду — всё self-hosted в одном Docker-контейнере."
+    },
+    "category": "web",
+    "githubUrl": "https://github.com/alexvolkov/nebula-analytics",
+    "demoUrl": "https://nebula.alexvolkov.dev",
+    "tags": ["Next.js", "TypeScript", "ClickHouse", "Tailwind CSS", "WebSockets"],
+    "screenshots": [
+      "/images/projects/nebula-analytics-1.png",
+      "/images/projects/nebula-analytics-2.png"
+    ],
+    "featured": true,
+    "stars": 1284,
+    "language": "TypeScript",
+    "lastCommit": "2025-11-18",
+    "run": "git clone https://github.com/alexvolkov/nebula-analytics\ncd nebula-analytics\ncp .env.example .env\ndocker compose up -d\n# open http://localhost:3000"
+  },
+  {
+    "id": "lumen-kit",
+    "title": "Lumen Landing Kit",
+    "description": {
+      "en": "Open-source landing page kit with 16 production-ready sections: hero, pricing, testimonials, FAQ. Themeable via CSS variables, 100/100 Lighthouse out of the box.",
+      "ru": "Open-source набор для лендингов с 16 production-секциями: герой, тарифы, отзывы, FAQ. Темизация через CSS-переменные и 100/100 в Lighthouse из коробки."
+    },
+    "category": "web",
+    "githubUrl": "https://github.com/alexvolkov/lumen-kit",
+    "demoUrl": "https://lumen.alexvolkov.dev",
+    "tags": ["Astro", "Tailwind CSS", "MDX", "Framer Motion"],
+    "screenshots": [
+      "/images/projects/lumen-kit-1.png",
+      "/images/projects/lumen-kit-2.png"
+    ],
+    "featured": true,
+    "stars": 862,
+    "language": "Astro",
+    "lastCommit": "2025-10-02",
+    "run": "git clone https://github.com/alexvolkov/lumen-kit\ncd lumen-kit\nbun install\nbun run dev\n# open http://localhost:4321"
+  },
+  {
+    "id": "prism-notes",
+    "title": "Prism Notes",
+    "description": {
+      "en": "Minimalist cross-platform markdown notes app with instant full-text search, backlinks and local-first sync. Built with Tauri — 8 MB binary, starts in 40ms.",
+      "ru": "Минималистичное кроссплатформенное приложение для markdown-заметок с мгновенным полнотекстовым поиском, бэклинками и локальным-first синком. Собрано на Tauri — бинарник 8 МБ, старт за 40мс."
+    },
+    "category": "software",
+    "githubUrl": "https://github.com/alexvolkov/prism-notes",
+    "tags": ["Tauri", "Rust", "React", "SQLite", "Markdown"],
+    "screenshots": ["/images/projects/prism-notes-1.png"],
+    "featured": false,
+    "stars": 541,
+    "language": "Rust",
+    "lastCommit": "2025-09-14",
+    "run": "git clone https://github.com/alexvolkov/prism-notes\ncd prism-notes\nbun install\nbun run tauri dev"
+  },
+  {
+    "id": "vaultdrop",
+    "title": "VaultDrop",
+    "description": {
+      "en": "Encrypted file transfer desktop app. End-to-end AES-256, files never touch a server — direct P2P transfer with a 6-digit pairing code.",
+      "ru": "Десктоп-приложение для шифрованной передачи файлов. Сквозное AES-256 шифрование, файлы не попадают на сервер — прямой P2P-обмен по 6-значному коду."
+    },
+    "category": "software",
+    "githubUrl": "https://github.com/alexvolkov/vaultdrop",
+    "tags": ["Electron", "WebRTC", "TypeScript", "Crypto"],
+    "screenshots": ["/images/projects/vaultdrop-1.png"],
+    "featured": false,
+    "stars": 318,
+    "language": "TypeScript",
+    "lastCommit": "2025-08-05",
+    "run": "git clone https://github.com/alexvolkov/vaultdrop\ncd vaultdrop\nbun install\nbun run dev"
+  },
+  {
+    "id": "ship-it",
+    "title": "ship-it",
+    "description": {
+      "en": "One-command deployment CLI: builds, tags, pushes and announces releases to Telegram/Discord. Zero-config for Next.js, Bun and Vite projects.",
+      "ru": "CLI для деплоя одной командой: сборка, тег, пуш и анонс релиза в Telegram/Discord. Zero-config для Next.js, Bun и Vite проектов."
+    },
+    "category": "scripts",
+    "githubUrl": "https://github.com/alexvolkov/ship-it",
+    "demoUrl": "https://npmjs.com/package/ship-it",
+    "tags": ["Node.js", "CLI", "CI/CD", "Automation"],
+    "screenshots": ["/images/projects/ship-it-1.png"],
+    "featured": false,
+    "stars": 429,
+    "language": "TypeScript",
+    "lastCommit": "2025-11-01",
+    "run": "npm i -g @alexvolkov/ship-it\ncd your-project\nship-it --prod"
+  },
+  {
+    "id": "repo-sweep",
+    "title": "repo-sweep",
+    "description": {
+      "en": "Python toolkit that keeps GitHub repos tidy: finds stale branches, dead links in READMEs, and generates a monthly activity report as a markdown file.",
+      "ru": "Python-тулкит для чистоты GitHub-репозиториев: ищет устаревшие ветки, битые ссылки в README и генерирует ежемесячный отчёт об активности в markdown."
+    },
+    "category": "scripts",
+    "githubUrl": "https://github.com/alexvolkov/repo-sweep",
+    "tags": ["Python", "GitHub API", "Automation", "CLI"],
+    "screenshots": ["/images/projects/repo-sweep-1.png"],
+    "featured": false,
+    "stars": 156,
+    "language": "Python",
+    "lastCommit": "2025-07-22",
+    "run": "git clone https://github.com/alexvolkov/repo-sweep\ncd repo-sweep\npip install -e .\nrepo-sweep --org your-org"
+  },
+  {
+    "id": "dotfiles-plus",
+    "title": "Dotfiles+",
+    "description": {
+      "en": "Battle-tested dotfiles for zsh, tmux, neovim and git. One install script turns a fresh Linux/macOS into a fully-loaded dev environment in 5 minutes.",
+      "ru": "Обкатанные в боях dotfiles для zsh, tmux, neovim и git. Один установочный скрипт превращает свежий Linux/macOS в полностью готовое окружение разработчика за 5 минут."
+    },
+    "category": "others",
+    "githubUrl": "https://github.com/alexvolkov/dotfiles-plus",
+    "tags": ["zsh", "neovim", "tmux", "Linux", "macOS"],
+    "screenshots": ["/images/projects/dotfiles-plus-1.png"],
+    "featured": false,
+    "stars": 203,
+    "language": "Shell",
+    "lastCommit": "2025-10-27",
+    "run": "git clone https://github.com/alexvolkov/dotfiles-plus ~/.dotfiles\ncd ~/.dotfiles\n./install.sh"
+  },
+  {
+    "id": "pixel-forge",
+    "title": "Pixel Forge",
+    "description": {
+      "en": "Free pack of 240 pixel-perfect icons and 30 gradient wallpapers for developer tools and dark UI. MIT licensed, Figma + SVG sources included.",
+      "ru": "Бесплатный набор из 240 pixel-perfect иконок и 30 градиентных обоев для dev-инструментов и тёмных интерфейсов. MIT-лицензия, исходники Figma + SVG."
+    },
+    "category": "others",
+    "githubUrl": "https://github.com/alexvolkov/pixel-forge",
+    "demoUrl": "https://pixelforge.alexvolkov.dev",
+    "tags": ["Design", "SVG", "Figma", "Open Source"],
+    "screenshots": ["/images/projects/pixel-forge-1.png"],
+    "featured": false,
+    "stars": 97,
+    "language": "SVG",
+    "lastCommit": "2025-06-11",
+    "run": "git clone https://github.com/alexvolkov/pixel-forge\n# icons in /svg, wallpapers in /wallpapers"
+  }
+]
