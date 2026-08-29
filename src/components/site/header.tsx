@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -47,7 +48,7 @@ export function SiteHeader() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+      className={`fixed inset-x-0 top-0 z-50 print:hidden transition-all duration-500 ${
         scrolled
           ? "header-glass border-b border-border/60 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.25)]"
           : "border-b border-transparent bg-transparent"
@@ -146,6 +147,9 @@ export function SiteHeader() {
                   </span>
                   {profile.name}
                 </SheetTitle>
+                <SheetDescription className="sr-only">
+                  {t("nav.menuDescription")}
+                </SheetDescription>
               </SheetHeader>
               <nav aria-label="Mobile" className="mt-6">
                 <ul className="flex flex-col gap-1">

@@ -15,6 +15,40 @@
     "openSource": 25,
     "stars": 2400
   },
+  "timezone": "Europe/Moscow",
+  "now": [
+    {
+      "emoji": "🚀",
+      "label": {
+        "en": "Shipping Nebula Analytics v2 — real-time dashboards & alerting",
+        "ru": "Выпускаю Nebula Analytics v2 — дашборды и алерты в реальном времени"
+      }
+    },
+    {
+      "emoji": "📝",
+      "label": {
+        "en": "Writing a blog series: “Frontend performance without magic”",
+        "ru": "Пишу цикл статей: «Фронтенд-производительность без магии»"
+      }
+    },
+    {
+      "emoji": "🦀",
+      "label": {
+        "en": "Rewriting my CLI toolbox in Rust — repo-sweep is next",
+        "ru": "Переписываю свой CLI-набор на Rust — следующий repo-sweep"
+      }
+    },
+    {
+      "emoji": "🎯",
+      "label": {
+        "en": "Open for 1 freelance slot starting next month",
+        "ru": "Открыт 1 фриланс-слот со следующего месяца"
+      }
+    }
+  ],
+  "activity": {
+    "seed": 1337
+  },
   "skills": [
     {
       "label": { "en": "Frontend", "ru": "Фронтенд" },

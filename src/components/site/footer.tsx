@@ -24,7 +24,7 @@ export function SiteFooter() {
       />
       <div className="mx-auto flex max-w-7xl flex-col items-center gap-6 px-4 py-10 sm:px-6 lg:px-8">
         {/* socials */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 print:hidden">
           {socials.map(({ href, label, icon: Icon }) => (
             <a
               key={label}
@@ -69,7 +69,7 @@ export function SiteFooter() {
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           aria-label={t("footer.backToTop")}
           title={t("footer.backToTop")}
-          className="group inline-flex items-center gap-2 rounded-full border border-border/70 bg-secondary/40 px-4 py-2 text-xs font-medium text-muted-foreground transition-all duration-300 hover:border-primary/50 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="group inline-flex items-center gap-2 rounded-full border border-border/70 bg-secondary/40 px-4 py-2 text-xs font-medium text-muted-foreground transition-all duration-300 hover:border-primary/50 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring print:hidden"
         >
           <ArrowUp
             className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5"

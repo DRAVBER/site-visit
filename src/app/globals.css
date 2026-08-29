@@ -342,6 +342,11 @@
   animation: scroll-dot 1.8s ease-in-out infinite;
 }
 
+/* film-grain noise overlay (very low opacity, fixed, pointer-transparent) */
+.bg-noise {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
 /* shimmering gradient hairline (section dividers) */
 .shimmer-line {
   background: linear-gradient(
@@ -375,5 +380,92 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Print styles — the page doubles as a printable one-page resume
+   (⌘K → “Print / save as PDF”). Decorative chrome is hidden via Tailwind
+   `print:hidden` on the components; colors/spacing are normalized here.
+--------------------------------------------------------------------------- */
+/* page margins for the printed resume (top-level — some CSS minifiers
+   drop @page when it is nested inside @media) */
+@page {
+  margin: 12mm;
+}
+
+@media print {
+  /* framer-motion whileInView content may never have fired if the visitor
+     prints without scrolling — force every animated element to its final
+     state (inline opacity/transform are overridden with !important) */
+  main [style*="opacity"],
+  main [style*="transform"] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* force the light palette regardless of the active theme */
+  :root,
+  .dark {
+    --background: #ffffff !important;
+    --foreground: #111827 !important;
+    --card: #ffffff !important;
+    --card-foreground: #111827 !important;
+    --muted-foreground: #4b5563 !important;
+    --border: #d1d5db !important;
+    --primary: #6d28d9 !important;
+    --secondary: #f3f4f6 !important;
+    --glow: transparent !important;
+    --grid-line: transparent !important;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #111827 !important;
+    font-size: 10.5pt !important;
+  }
+
+  /* the full-height hero would waste the first page */
+  #hero {
+    min-height: 0 !important;
+    padding-top: 4rem !important;
+    padding-bottom: 1.5rem !important;
+  }
+
+  section {
+    padding-top: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
+  }
+
+  /* tighten section headings */
+  .shimmer-line {
+    display: none;
+  }
+
+  /* cards: flat borders, no shadows, never split across pages */
+  article,
+  [data-card] {
+    break-inside: avoid;
+    box-shadow: none !important;
+    border-radius: 6px !important;
+    border-color: #e5e7eb !important;
+  }
+
+  /* colored text stays readable on white */
+  .text-gradient,
+  .text-gradient-animated {
+    color: #6d28d9 !important;
+    background: none !important;
+    -webkit-text-fill-color: #6d28d9 !important;
+  }
+
+  /* keep violet accents but drop the glow effects */
+  * {
+    text-shadow: none !important;
+  }
+
+  a {
+    text-decoration: none;
   }
 }

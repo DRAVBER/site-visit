@@ -13,7 +13,11 @@
     "toggleTheme": "Переключить тему",
     "switchLanguage": "Переключить язык",
     "goTo": "Перейти к",
-    "openPalette": "Открыть командную палитру"
+    "openPalette": "Открыть командную палитру",
+    "menuDescription": "Навигация по разделам сайта"
+  },
+  "a11y": {
+    "skipToContent": "Перейти к содержимому"
   },
   "palette": {
     "placeholder": "Команда или проект…",
@@ -27,6 +31,7 @@
     "openGithub": "Открыть GitHub",
     "openTelegram": "Открыть Telegram",
     "openDiscord": "Открыть Discord",
+    "printResume": "Печать / сохранить как PDF",
     "hint": "Нажмите Ctrl+K в любой момент"
   },
   "hero": {
@@ -66,7 +71,12 @@
     "sortName": "По названию",
     "sortUpdated": "По обновлению",
     "tagsLabel": "Теги",
-    "filterByTag": "Фильтровать по тегу"
+    "filterByTag": "Фильтровать по тегу",
+    "updatedAgoPrefix": "Обновлён",
+    "viewMode": "Режим отображения",
+    "viewGrid": "Сетка",
+    "viewList": "Список",
+    "listOpen": "Открыть проект"
   },
   "projectDialog": {
     "overview": "Описание",
@@ -96,7 +106,15 @@
     ],
     "experienceTitle": "Опыт",
     "skillsTitle": "Технологии",
-    "present": "наст. время"
+    "present": "наст. время",
+    "nowTitle": "Сейчас в работе",
+    "nowStatus": "в сети",
+    "localTime": "Локальное время",
+    "activityTitle": "Активность",
+    "activitySummary": "коммитов за последний год",
+    "activityLess": "меньше",
+    "activityMore": "больше",
+    "activityContributions": "коммитов"
   },
   "contact": {
     "title": "Давайте создадим что-то вместе",

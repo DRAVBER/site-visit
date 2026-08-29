@@ -70,7 +70,7 @@ export function ContactSection() {
       {/* glow */}
       <div
         aria-hidden="true"
-        className="animate-aurora pointer-events-none absolute bottom-0 left-1/2 h-[380px] w-[640px] -translate-x-1/2 rounded-full bg-violet-600/12 blur-[130px] dark:bg-violet-700/20"
+        className="animate-aurora pointer-events-none absolute bottom-0 left-1/2 h-[380px] w-[640px] -translate-x-1/2 rounded-full bg-violet-600/12 blur-[130px] print:hidden dark:bg-violet-700/20"
       />
 
       <div className="relative mx-auto max-w-5xl">

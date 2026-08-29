@@ -93,3 +93,56 @@ Unresolved issues / risks, приоритеты следующей фазы:
 - Clipboard API в headless-браузере запрещён (копирование email/команд проверялось ранее моком execCommand) — в реальных браузерах работает.
 - Домен-заглушка alexvolkov.dev в layout.tsx/sitemap.ts/robots.ts/page.tsx (JSON-LD) — заменить при деплое (TODO-комментарии на месте).
 - Идеи следующего раунда: секция «Сейчас в работе» (now) в BIO, keyboard-навигация по сетке проектов (roving tabindex), git-хистори/график активности, печать/PDF-резюме, PWA-манифест, 404-страница.
+
+---
+Task ID: 4
+Agent: webDevReview cron (round 4)
+Task: QA-оценка стабильной фазы 3 + раунд развития: «Сейчас в работе» + график активности в BIO, режим сетка/список, относительное время, roving-клавиатурная навигация, PWA-манифест, печать/PDF-резюме, стилевые детали (тултипы, прогресс-кольцо, noise-текстура, print-стили).
+
+Work Log:
+- Входной QA: smoke-тест (4 секции, 8 карточек, RU/dark), фильтры, поиск, диалог, палитра, тема/язык — всё работает; lint чистый, dev.log чистый.
+- Найден и исправлен a11y-баг: мобильное Sheet-меню без Description → Radix-варнинг «Missing Description» (добавлена sr-only SheetDescription, ключ nav.menuDescription RU+EN).
+- Фича: секция «Сейчас в работе» (BIO) — data-driven из data/profile.json → now[] (4 пункта: релиз Nebula v2, цикл статей, Rust-переписывание, фриланс-слот), пульсирующий статус-индикатор, градиентная карточка с 2×2 сеткой.
+- Фича: график активности GitHub-style (activity-graph.tsx) — 53 недели × 7 дней, детерминированный PRNG mulberry32 по сиду из profile.json (activity.seed), будни/выходные взвешены, 5 уровней фиолетовой интенсивности, staggered-анимация колонок при скролле, тултипы (N коммитов + дата), локализованные подписи месяцев (П/С/П и M/W/F), легенда меньше/больше, горизонтальный скролл на мобильных, sr-only summary; рендер за useMounted (даты = «сегодня», нет SSR-мисматчей). Итог: «1 678 коммитов за последний год».
+- Фича: локальное время владельца в карточке портрета (profile.timezone, Intl с IANA-зоной, обновление раз в 30 c) — через общую минутную подписку lib/clock.ts (useNow, useSyncExternalStore: один interval на все тикающие элементы страницы).
+- Фича: режим сетка/список проектов — сегментированный переключатель (LayoutGrid/List иконки, aria-pressed), ProjectRow (project-row.tsx): компактная строка с миниатюрой, звёздами, категорией, 1-строчным описанием, тегами, стрелкой на hover; stretched-link паттерн (overlay-кнопка открывает диалог, теги поверх с pointer-events-auto); выбор сохраняется в localStorage (portfolio-view) через zustand (ui-store: viewMode + hydrateViewMode — hydration-safe, без setState-in-effect).
+- Фича: относительное время «Обновлён 3 дня назад» на карточках и строках (relative-time.tsx, Intl.RelativeTimeFormat RU/EN, обновление раз в минуту через общий clock-стор; до монтирования — детерминированная абсолютная дата). Даты lastCommit в projects.json освежены до 2026 года.
+- Фича: roving-клавиатурная навигация по сетке (стрелки ←→↑↓ + Home/End, число колонок читается из getComputedStyle — работает в 1/2/3/4-колоночных сетках и в list-режиме; фокус только внутри грида — ввод в поиске не перехватывается).
+- Фича: PWA — manifest.webmanifest (standalone, тема #8B5CF6), иконки icon-192/512 + maskable-192/512 + apple-touch-icon (180), растеризованы из favicon.svg через canvas в headless-браузере; подключены в layout.tsx (icons + manifest + apple).
+- Фича: печать/PDF-резюме — действие «Печать / сохранить как PDF» в командной палитре (⌘K), @media print: форс светлой палитры (переген var-токенов с !important), @page 12mm, #hero без 100svh, скрытие хрома (header, прогресс-бар, back-to-top, орбы, CTA, соц-иконки, обложки карточек, график активности, теги-фильтры, поиск/сортировка) через Tailwind print:hidden, break-inside: avoid для карточек, force-reveal для framer-motion элементов (opacity/transform в inline-стилях перекрываются !important — контент виден даже если whileInView не сработал).
+- Стиль: тултипы (shadcn Tooltip) на соцссылках hero; прогресс-кольцо вокруг back-to-top (SVG stroke-dashoffset по скроллу); film-grain noise-текстура (feTurbulence data-URI, opacity 3.5%/5%, fixed, pointer-events-none, print:hidden); анимированная стрелка ArrowRight в hover-вейле карточек; print-полировка карточек (radius 6px, светлые границы).
+- Рефакторинг под lint (react-hooks/set-state-in-effect): hooks/use-mounted.ts (useSyncExternalStore-паттерн «после гидрации»), lib/clock.ts (общая минутная подписка вместо 8+ интервалов), viewMode в zustand-сторе.
+- Локали: nav.menuDescription, a11y.skipToContent, palette.printResume, projects.updatedAgoPrefix/viewMode/viewGrid/viewList/listOpen, bio.nowTitle/nowStatus/localTime/activityTitle/activitySummary/activityLess/activityMore/activityContributions — RU + EN.
+- A11y: skip-link «Перейти к содержимому» (sr-only → focus:fixed) в portfolio-app.
+- README: секции «Поиск, сортировка, теги и режимы отображения», «Сейчас в работе и график активности», «Печать/PDF-резюме», обновлены тексты/структура/стек.
+
+Баги, найденные и исправленные в процессе:
+- КРИТИЧЕСКИЙ: горизонтальный оверфлоу на мобильных (390px → scrollWidth 881) — график активности растягивал всю BIO-колонку до 865px: flex-item'ы с min-width:auto пропускали min-content (~820px) 53-недельного ряда. Фикс: min-w-0 на правой колонке BIO и на wrapper'е графика; график получил честный внутренний горизонтальный скролл (324px контейнер / 808px контент).
+- @media print-блок молча выпадал из компиляции (Turbopack/LightningCSS не переваривает @page, вложенный в @media) — весь блок был потерян, PDF печатался в тёмной теме. Фикс: @page вынесен на верхний уровень.
+- ReferenceError updatedPrefix (забыли деструктурировать пропс) — найден по 500 в dev.log, исправлен.
+- Устаревшие даты проектов («9 месяцев назад») — освежены до актуальных.
+
+QA итоговое (agent-browser):
+- Список: переключение сетка⇄список (8 строк), тег-клик в строке (Next.js → 2), клик строки → диалог, Escape, персистентность режима после reload (localStorage).
+- Roving: фокус 1-й карточки → ArrowRight (Nebula→Lumen), ArrowDown (+3 колонки → Dotfiles+), End (Pixel Forge), Home (Nebula), Enter открывает диалог.
+- BIO: «Сейчас в работе» (4 пункта, 2×2), график (371 ячейка, сводка «1 678 коммитов»), локальное время 15:16 (тикает).
+- Мобайл 390px: вертикальный стек, график скроллится внутри карточки, тач-таргеты 32px+, горизонтальный скролл невозможен (scrollX=0 при попытке).
+- Light/EN: «Now» + «Activity» + «1,678 commits in the last year» + «Updated 1 week ago» — корректно.
+- Печать: PDF 5 страниц, белый фон (пиксельная проверка 255,255,255), палитра инвертирована, хром скрыт.
+- Палитра: действие «Печать» находится и выполняется, палитра закрывается.
+- Sheet: варнинг Description исчез.
+- Манифест/иконки: /manifest.webmanifest 200, 4 иконки + apple-touch 200.
+- Линт чистый, dev.log чистый (только GET/compile).
+- VLM-ревью: Now-карточка 9/10 (desktop dark), мобильный Now 9/10, мобильный график 8/10, light Now 10/10, список 9/10, hero 9/10, print-страницы — читаемы (частные замечания по «карточному» виду резюме — осознанный дизайн-компромисс, не баг).
+
+Stage Summary:
+- Добавлено 8 крупных фич (Now, график активности, локальное время, сетка/список, относительное время, roving-навигация, PWA, печать/PDF) + 5 стилевых улучшений (тултипы, прогресс-кольцо, noise, стрелки, print-полировка); исправлены 1 критический layout-баг, 1 compile-loss баг, 1 a11y-варнинг.
+- Архитектура: всё по-прежнему data-driven (now[]/activity.seed/timezone в profile.json), новые хуки use-mounted/useNow переиспользуемы, zustand-стор расширен.
+- Скриншоты: screenshots/*-v4.png + print-page-*.png + print-resume-preview.pdf.
+
+Unresolved issues / risks, приоритеты следующей фазы:
+- Radix useId hydration-варнинг (aria-controls) — известный артефакт React19+Radix+Turbopack в dev-режиме после Fast Refresh перезагрузок; в production-сборке не воспроизводится (детерминированные useId). Не влияет на функциональность.
+- Clipboard API в headless-браузере запрещён (проверялось моком) — в реальных браузерах работает.
+- Домен-заглушка alexvolkov.dev (TODO в layout.tsx/sitemap.ts/robots.ts/page.tsx) — заменить при деплое.
+- График активности декоративный (генерится по сиду); при желании можно заменить на реальные данные GitHub contributions API (нужен токен).
+- Идеи следующего раунда: 404/not-found страница, testimonials-секция (data-driven), фильтр «только featured», RSS/blog-микросекция, анимация появления тултипов при первом визите (onboarding-хинт), e2e-тесты Playwright.

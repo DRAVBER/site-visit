@@ -1,16 +1,42 @@
 "use client";
 
 import { motion, type Variants } from "framer-motion";
-import { Briefcase, MapPin, Quote } from "lucide-react";
+import { Briefcase, Clock, MapPin, Quote, Radio } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { profile, resolveLocalized } from "@/lib/portfolio";
+import { useNow } from "@/lib/clock";
 import { SectionHeading } from "./section-heading";
+import { ActivityGraph } from "./activity-graph";
 import { DiscordIcon, GithubIcon, TelegramIcon } from "./icons";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 26 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] } },
 };
+
+/** Owner's wall-clock time — client-only (server clock would differ). */
+function LocalTimeChip() {
+  const { t } = useI18n();
+  const now = useNow();
+
+  const time = now
+    ? new Intl.DateTimeFormat("ru-RU", {
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: profile.timezone ?? "UTC",
+      }).format(now)
+    : null;
+
+  return (
+    <span
+      className="inline-flex items-center gap-1.5"
+      title={`${t("bio.localTime")} (UTC+3)`}
+    >
+      <Clock className="h-3.5 w-3.5" aria-hidden="true" />
+      {time ? <span className="tabular-nums">{time}</span> : "—:—"}
+    </span>
+  );
+}
 
 /** BIO: portrait card + story, principles, experience timeline, skill groups. */
 export function BioSection() {
@@ -45,7 +71,7 @@ export function BioSection() {
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute top-1/3 -right-40 h-[420px] w-[420px] rounded-full bg-purple-600/10 blur-[120px] dark:bg-purple-700/15"
+        className="pointer-events-none absolute top-1/3 -right-40 h-[420px] w-[420px] rounded-full bg-purple-600/10 blur-[120px] print:hidden dark:bg-purple-700/15"
       />
 
       <div className="mx-auto max-w-7xl">
@@ -94,13 +120,17 @@ export function BioSection() {
               <p className="text-gradient mt-1 text-center text-sm font-semibold">
                 {t("hero.tagline")}
               </p>
-              <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground">
-                <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
-                Europe · UTC+3
+              <p className="mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-center text-xs text-muted-foreground">
+                <span className="inline-flex items-center gap-1.5">
+                  <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
+                  Europe · UTC+3
+                </span>
+                <span aria-hidden="true" className="text-muted-foreground/40">·</span>
+                <LocalTimeChip />
               </p>
 
-              {/* socials */}
-              <div className="mt-5 flex items-center justify-center gap-2 border-t border-border/60 pt-5">
+              {/* socials — icon-only, hidden on paper (handles live in Contact) */}
+              <div className="mt-5 flex items-center justify-center gap-2 border-t border-border/60 pt-5 print:hidden">
                 {socials.map(({ href, label, icon: Icon }) => (
                   <a
                     key={label}
@@ -118,8 +148,11 @@ export function BioSection() {
             </div>
           </motion.aside>
 
-          {/* story + principles + experience */}
-          <div className="flex flex-col gap-10">
+          {/* story + principles + experience
+              min-w-0 lets the grid/flex tracks shrink below content size —
+              without it the activity graph's 53-week row (≈820px min-content)
+              blows out the whole BIO column on small screens */}
+          <div className="flex min-w-0 flex-col gap-10">
             {/* story */}
             <motion.div
               variants={fadeUp}
@@ -152,6 +185,58 @@ export function BioSection() {
                   ))}
                 </ul>
               </div>
+            </motion.div>
+
+            {/* NOW — what I'm currently working on (data/profile.json → now[]) */}
+            {profile.now?.length ? (
+              <motion.div
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-80px" }}
+                className="relative overflow-hidden rounded-2xl border border-primary/25 bg-gradient-to-br from-primary/8 via-card to-card p-5 sm:p-6"
+              >
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-primary/15 blur-3xl print:hidden"
+                />
+                <h3 className="relative flex items-center gap-2.5 text-sm font-semibold tracking-[0.18em] text-primary/80 uppercase">
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-60" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+                  </span>
+                  <Radio className="h-4 w-4" aria-hidden="true" />
+                  {t("bio.nowTitle")}
+                </h3>
+                <ul className="relative mt-4 grid gap-2 sm:grid-cols-2">
+                  {profile.now.map((item, i) => (
+                    <li
+                      key={i}
+                      className="flex items-start gap-2.5 rounded-xl border border-border/50 bg-background/50 px-3.5 py-3 text-sm leading-snug backdrop-blur transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40"
+                    >
+                      {item.emoji ? (
+                        <span aria-hidden="true" className="text-base leading-5">
+                          {item.emoji}
+                        </span>
+                      ) : (
+                        <span aria-hidden="true" className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                      )}
+                      {resolveLocalized(item.label, locale)}
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            ) : null}
+
+            {/* activity graph (decorative, seeded from data/profile.json) */}
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+              className="min-w-0"
+            >
+              <ActivityGraph />
             </motion.div>
 
             {/* experience timeline */}

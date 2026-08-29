@@ -66,6 +66,16 @@ export interface ExperienceItem {
   description: Localized;
 }
 
+export interface NowItem {
+  emoji?: string;
+  label: Localized;
+}
+
+export interface ActivityConfig {
+  /** PRNG seed — change it to reshuffle the decorative graph */
+  seed: number;
+}
+
 export interface Profile {
   name: string;
   handle: string;
@@ -83,6 +93,12 @@ export interface Profile {
     openSource: number;
     stars: number;
   };
+  /** IANA timezone used for the "local time" chip in BIO */
+  timezone?: string;
+  /** "Now" section — what the owner is currently working on */
+  now?: NowItem[];
+  /** decorative contribution graph config */
+  activity?: ActivityConfig;
   skills: SkillGroup[];
   experience: ExperienceItem[];
 }
@@ -100,6 +116,31 @@ export const profile: Profile = profileJson as Profile;
 
 /** number of screenshots across all projects (used for stats / alt text) */
 export const projectIds = projects.map((p) => p.id);
+
+/** relative time like “3 days ago” in the active locale (client-side only) */
+export function formatRelativeTime(
+  isoDate: string,
+  locale: Locale,
+  now: Date = new Date()
+): string {
+  const rtf = new Intl.RelativeTimeFormat(locale === "ru" ? "ru-RU" : "en-US", {
+    numeric: "always",
+  });
+  const diffMs = new Date(isoDate).getTime() - now.getTime();
+  const absMs = Math.abs(diffMs);
+  const MIN = 60_000;
+  const HOUR = 60 * MIN;
+  const DAY = 24 * HOUR;
+  const WEEK = 7 * DAY;
+  const MONTH = 30 * DAY;
+  const YEAR = 365 * DAY;
+  if (absMs >= YEAR) return rtf.format(Math.round(diffMs / YEAR), "year");
+  if (absMs >= MONTH) return rtf.format(Math.round(diffMs / MONTH), "month");
+  if (absMs >= WEEK) return rtf.format(Math.round(diffMs / WEEK), "week");
+  if (absMs >= DAY) return rtf.format(Math.round(diffMs / DAY), "day");
+  if (absMs >= HOUR) return rtf.format(Math.round(diffMs / HOUR), "hour");
+  return rtf.format(Math.round(diffMs / MIN), "minute");
+}
 
 export function getProject(id: string): Project | undefined {
   return projects.find((p) => p.id === id);

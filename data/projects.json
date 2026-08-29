@@ -17,7 +17,7 @@
     "featured": true,
     "stars": 1284,
     "language": "TypeScript",
-    "lastCommit": "2025-11-18",
+    "lastCommit": "2026-08-21",
     "run": "git clone https://github.com/alexvolkov/nebula-analytics\ncd nebula-analytics\ncp .env.example .env\ndocker compose up -d\n# open http://localhost:3000"
   },
   {
@@ -38,7 +38,7 @@
     "featured": true,
     "stars": 862,
     "language": "Astro",
-    "lastCommit": "2025-10-02",
+    "lastCommit": "2026-07-30",
     "run": "git clone https://github.com/alexvolkov/lumen-kit\ncd lumen-kit\nbun install\nbun run dev\n# open http://localhost:4321"
   },
   {
@@ -55,7 +55,7 @@
     "featured": false,
     "stars": 541,
     "language": "Rust",
-    "lastCommit": "2025-09-14",
+    "lastCommit": "2026-06-14",
     "run": "git clone https://github.com/alexvolkov/prism-notes\ncd prism-notes\nbun install\nbun run tauri dev"
   },
   {
@@ -72,7 +72,7 @@
     "featured": false,
     "stars": 318,
     "language": "TypeScript",
-    "lastCommit": "2025-08-05",
+    "lastCommit": "2026-05-08",
     "run": "git clone https://github.com/alexvolkov/vaultdrop\ncd vaultdrop\nbun install\nbun run dev"
   },
   {
@@ -90,7 +90,7 @@
     "featured": false,
     "stars": 429,
     "language": "TypeScript",
-    "lastCommit": "2025-11-01",
+    "lastCommit": "2026-08-12",
     "run": "npm i -g @alexvolkov/ship-it\ncd your-project\nship-it --prod"
   },
   {
@@ -107,7 +107,7 @@
     "featured": false,
     "stars": 156,
     "language": "Python",
-    "lastCommit": "2025-07-22",
+    "lastCommit": "2026-04-19",
     "run": "git clone https://github.com/alexvolkov/repo-sweep\ncd repo-sweep\npip install -e .\nrepo-sweep --org your-org"
   },
   {
@@ -124,7 +124,7 @@
     "featured": false,
     "stars": 203,
     "language": "Shell",
-    "lastCommit": "2025-10-27",
+    "lastCommit": "2026-07-05",
     "run": "git clone https://github.com/alexvolkov/dotfiles-plus ~/.dotfiles\ncd ~/.dotfiles\n./install.sh"
   },
   {
@@ -142,7 +142,7 @@
     "featured": false,
     "stars": 97,
     "language": "SVG",
-    "lastCommit": "2025-06-11",
+    "lastCommit": "2026-02-15",
     "run": "git clone https://github.com/alexvolkov/pixel-forge\n# icons in /svg, wallpapers in /wallpapers"
   }
 ]

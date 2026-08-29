@@ -3,6 +3,11 @@
 import { motion, type Variants } from "framer-motion";
 import { ArrowDown, ArrowRight, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useI18n } from "@/lib/i18n";
 import { profile } from "@/lib/portfolio";
 import { DiscordIcon, GithubIcon, TelegramIcon } from "./icons";
@@ -47,18 +52,18 @@ export function Hero() {
       className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-4 pt-16 pb-10 sm:px-6 lg:px-8"
     >
       {/* ambience: blueprint grid + two drifting aurora orbs */}
-      <div aria-hidden="true" className="absolute inset-0 bg-grid [mask-image:radial-gradient(ellipse_75%_65%_at_50%_40%,black,transparent)]" />
+      <div aria-hidden="true" className="absolute inset-0 bg-grid print:hidden [mask-image:radial-gradient(ellipse_75%_65%_at_50%_40%,black,transparent)]" />
       <div
         aria-hidden="true"
-        className="animate-aurora absolute -top-32 left-1/2 h-[480px] w-[680px] -translate-x-[70%] rounded-full bg-violet-600/25 blur-[130px] dark:bg-violet-600/30"
+        className="animate-aurora absolute -top-32 left-1/2 h-[480px] w-[680px] -translate-x-[70%] rounded-full bg-violet-600/25 blur-[130px] print:hidden dark:bg-violet-600/30"
       />
       <div
         aria-hidden="true"
-        className="animate-aurora absolute top-1/3 left-1/2 h-[420px] w-[560px] -translate-x-[15%] rounded-full bg-fuchsia-500/15 blur-[130px] [animation-delay:-6s] dark:bg-fuchsia-500/20"
+        className="animate-aurora absolute top-1/3 left-1/2 h-[420px] w-[560px] -translate-x-[15%] rounded-full bg-fuchsia-500/15 blur-[130px] print:hidden [animation-delay:-6s] dark:bg-fuchsia-500/20"
       />
       <div
         aria-hidden="true"
-        className="animate-aurora absolute -bottom-40 left-1/2 h-[380px] w-[520px] -translate-x-1/2 rounded-full bg-indigo-500/10 blur-[120px] [animation-delay:-12s] dark:bg-violet-800/30"
+        className="animate-aurora absolute -bottom-40 left-1/2 h-[380px] w-[520px] -translate-x-1/2 rounded-full bg-indigo-500/10 blur-[120px] print:hidden [animation-delay:-12s] dark:bg-violet-800/30"
       />
 
       <motion.div
@@ -108,7 +113,7 @@ export function Hero() {
         {/* CTAs */}
         <motion.div
           variants={item}
-          className="mt-9 flex flex-col items-center gap-3 sm:flex-row"
+          className="mt-9 flex flex-col items-center gap-3 print:hidden sm:flex-row"
         >
           <Button
             asChild
@@ -130,20 +135,23 @@ export function Hero() {
           </Button>
         </motion.div>
 
-        {/* socials */}
-        <motion.div variants={item} className="mt-8 flex items-center gap-2">
+        {/* socials — icon-only links are useless on paper */}
+        <motion.div variants={item} className="mt-8 flex items-center gap-2 print:hidden">
           {socials.map(({ href, label, icon: Icon }) => (
-            <a
-              key={label}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={label}
-              title={label}
-              className="grid h-10 w-10 place-items-center rounded-full border border-border/70 bg-secondary/50 text-muted-foreground transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:text-primary hover:shadow-[0_8px_20px_-6px_rgba(139,92,246,0.5)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            >
-              <Icon className="h-[18px] w-[18px]" />
-            </a>
+            <Tooltip key={label}>
+              <TooltipTrigger asChild>
+                <a
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="grid h-10 w-10 place-items-center rounded-full border border-border/70 bg-secondary/50 text-muted-foreground transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:text-primary hover:shadow-[0_8px_20px_-6px_rgba(139,92,246,0.5)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <Icon className="h-[18px] w-[18px]" />
+                </a>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">{label}</TooltipContent>
+            </Tooltip>
           ))}
         </motion.div>
 
@@ -176,7 +184,7 @@ export function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.4, duration: 1 }}
-        className="relative z-10 mt-10 flex flex-col items-center gap-2 text-muted-foreground transition-colors hover:text-primary"
+        className="relative z-10 mt-10 flex flex-col items-center gap-2 text-muted-foreground transition-colors hover:text-primary print:hidden"
       >
         <span className="text-[11px] font-medium tracking-[0.2em] uppercase">
           {t("hero.scroll")}

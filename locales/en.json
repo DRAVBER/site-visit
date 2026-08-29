@@ -13,7 +13,11 @@
     "toggleTheme": "Toggle theme",
     "switchLanguage": "Switch language",
     "goTo": "Go to",
-    "openPalette": "Open command palette"
+    "openPalette": "Open command palette",
+    "menuDescription": "Site section navigation"
+  },
+  "a11y": {
+    "skipToContent": "Skip to content"
   },
   "palette": {
     "placeholder": "Type a command or project…",
@@ -27,6 +31,7 @@
     "openGithub": "Open GitHub",
     "openTelegram": "Open Telegram",
     "openDiscord": "Open Discord",
+    "printResume": "Print / save as PDF",
     "hint": "Press Ctrl+K anytime"
   },
   "hero": {
@@ -66,7 +71,12 @@
     "sortName": "Name A–Z",
     "sortUpdated": "Recently updated",
     "tagsLabel": "Tags",
-    "filterByTag": "Filter by tag"
+    "filterByTag": "Filter by tag",
+    "updatedAgoPrefix": "Updated",
+    "viewMode": "View mode",
+    "viewGrid": "Grid",
+    "viewList": "List",
+    "listOpen": "Open project"
   },
   "projectDialog": {
     "overview": "Overview",
@@ -96,7 +106,15 @@
     ],
     "experienceTitle": "Experience",
     "skillsTitle": "Tech stack",
-    "present": "present"
+    "present": "present",
+    "nowTitle": "Now",
+    "nowStatus": "online",
+    "localTime": "Local time",
+    "activityTitle": "Activity",
+    "activitySummary": "commits in the last year",
+    "activityLess": "less",
+    "activityMore": "more",
+    "activityContributions": "commits"
   },
   "contact": {
     "title": "Let's build something together",

@@ -34,15 +34,28 @@ bun run build && bun run start
 
 - **Разделы** — быстрый переход к Hero / Проектам / BIO / Контактам (горячие клавиши 01–04);
 - **Проекты** — поиск по названию или тегу, Enter открывает карточку проекта;
-- **Действия** — переключение темы, смена языка RU⇄EN, копирование email, переходы в GitHub / Telegram / Discord.
+- **Действия** — переключение темы, смена языка RU⇄EN, копирование email, печать/PDF-резюме, переходы в GitHub / Telegram / Discord.
 
 Палитра полностью локализована (ключи `palette.*` в `locales/*.json`).
 
-## 🔎 Поиск, сортировка и теги
+## 🔎 Поиск, сортировка, теги и режимы отображения
 
 - **Поиск** — живой фильтр по названию, описанию и тегам (комбинируется с фильтром категорий); счётчик результатов в бейдже.
 - **Сортировка** — селектор рядом с поиском: Избранные / По звёздам / По названию / По обновлению.
 - **Тег-чипы** — клик по тегу на карточке фильтрует сетку по этому тегу (повторный клик снимает фильтр); активный тег подсвечивается фиолетовым.
+- **Сетка / Список** — переключатель режимов (иконки справа от сортировки): компактные строки с миниатюрой для быстрого обзора или карточки-плитки; выбор запоминается в localStorage (`portfolio-view`).
+- **Клавиатурная навигация** — стрелки ←→↑↓ / Home / End перемещают фокус между карточками (учитывается текущее число колонок); Escape закрывает диалог.
+- **Относительное время** — «Обновлён 3 дня назад» на карточках обновляется каждую минуту (`Intl.RelativeTimeFormat`, RU/EN).
+
+## 📌 Секция «Сейчас в работе» и график активности (BIO)
+
+- **«Сейчас в работе»** — что владелец делает прямо сейчас: пункты лежат в `data/profile.json` → `now[]` (эмодзи + текст `en`/`ru`). Отредактируйте список — секция обновится сама.
+- **График активности** — декоративный GitHub-style график коммитов за год. Управляется сидом: `data/profile.json` → `activity.seed` (смените число — график «перетасуется»). Локализованные подписи месяцев, тултипы с числом коммитов, горизонтальный скролл на мобильных.
+- **Локальное время** — живые часы владельца в карточке портрета (`profile.timezone`, IANA-формат), обновляются каждые 30 секунд.
+
+## 🖨️ Печать / PDF-резюме
+
+Нажмите `Ctrl+K` → «Печать / сохранить как PDF» (или `Ctrl+P`) — страница печатается как аккуратное светлое резюме: тёмная тема автоматически инвертируется в светлую, скрываются кнопки, обложки проектов, декоративные элементы и UI-хром, карточки не разрываются между страницами.
 
 ## ➕ Как добавить проект (≈ 2 минуты)
 
@@ -96,9 +109,9 @@ bun run build && bun run start
 
 ## ✏️ Как менять тексты
 
-- **UI-тексты** (меню, кнопки, заголовки, BIO-абзацы, контакты, футер, палитра, сортировка): [`locales/ru.json`](locales/ru.json) и [`locales/en.json`](locales/en.json). Структура файлов одинаковая — ключ `hero.viewProjects` и т.п.
-- **Профиль** (имя, аватар, соцссылки, статистика в hero, навыки, опыт): [`data/profile.json`](data/profile.json). Локализуемые поля (`role`, `company`, `description`…) принимают либо строку, либо `{ "en": "...", "ru": "..." }`.
-- **SEO/метаданные:** `src/app/layout.tsx` (title, description, Open Graph) + домен в `src/app/layout.tsx`, `src/app/sitemap.ts`, `src/app/robots.ts`.
+- **UI-тексты** (меню, кнопки, заголовки, BIO-абзацы, контакты, футер, палитра, сортировка, режимы отображения): [`locales/ru.json`](locales/ru.json) и [`locales/en.json`](locales/en.json). Структура файлов одинаковая — ключ `hero.viewProjects` и т.п.
+- **Профиль** (имя, аватар, соцссылки, статистика в hero, навыки, опыт, «Сейчас в работе», сид графика активности, часовой пояс): [`data/profile.json`](data/profile.json). Локализуемые поля (`role`, `company`, `description`…) принимают либо строку, либо `{ "en": "...", "ru": "..." }`.
+- **SEO/метаданные:** `src/app/layout.tsx` (title, description, Open Graph, PWA-манифест) + домен в `src/app/layout.tsx`, `src/app/sitemap.ts`, `src/app/robots.ts`.
 
 ## 🎨 Дизайн-токены
 
@@ -118,27 +131,34 @@ bun run build && bun run start
 data/
   projects.json      # проекты — контент сетки
   categories.json    # категории — вкладки фильтров
-  profile.json       # владелец: имя, аватар, соцсети, навыки, опыт
+  profile.json       # владелец: имя, аватар, соцсети, навыки, опыт, now[], activity.seed
 locales/
   ru.json / en.json  # все тексты интерфейса
 public/
   favicon.svg
+  manifest.webmanifest        # PWA-манифест (installable)
+  icon-*.png                  # иконки PWA (any + maskable) и apple-touch-icon
   images/profile/    # avatar.png, og-image.png
   images/projects/   # скриншоты проектов
 src/
   app/
-    layout.tsx       # SEO-метаданные, шрифты (next/font), провайдеры
-    page.tsx         # единственная страница-лендинг
+    layout.tsx       # SEO-метаданные, шрифты (next/font), PWA, провайдеры
+    page.tsx         # единственная страница-лендинг (+ JSON-LD)
     api/github/      # обогащение данных из GitHub API (кэш 1ч, fallback)
     sitemap.ts robots.ts
-  components/site/   # header, hero, projects, project-card, project-dialog,
-                     # bio, contact, footer, toggles, icons,
+  components/site/   # header, hero, projects, project-card, project-row (список),
+                     # project-dialog, bio, contact, footer, toggles, icons,
                      # command-palette, sort-select, project-search,
-                     # scroll-progress, back-to-top, count-up
+                     # activity-graph, relative-time, scroll-progress,
+                     # back-to-top (с прогресс-кольцом), count-up
+  hooks/
+    use-mounted.ts   # клиент-онли рендер без hydration-мисматчей
+    use-scrollspy.ts
   lib/
-    portfolio.ts     # типы + загрузка data/*.json
+    portfolio.ts     # типы + загрузка data/*.json + formatRelativeTime
     i18n.tsx         # RU/EN провайдер (useSyncExternalStore)
-    ui-store.ts      # zustand-стор: палитра + диалог проекта
+    ui-store.ts      # zustand-стор: палитра, диалог проекта, режим сетка/список
+    clock.ts         # общая минутная подписка (useNow) для всех таймстемпов
 ```
 
 **Заметка по архитектуре:** детали проекта открываются в полноэкранном диалоге (lazy-загружаемом через `next/dynamic`), а не отдельным маршрутом — это мгновенное открытие без навигации и меньше JS в первом чанке. `description` в карточках поддерживает `{en, ru}` — просто поставьте однострочную строку, если перевод не нужен.
@@ -150,7 +170,8 @@ src/
 - Framer Motion — только `whileInView` с `once: true` (нет рендер-петель).
 - Данные GitHub — кэш 1 час (`revalidate` + `s-maxage`), fallback на локальный JSON.
 - `prefers-reduced-motion` — все анимации отключаются (CSS + `MotionConfig reducedMotion="user"`).
-- SEO: Open Graph, `sitemap.xml`, `robots.txt`, JSON-LD Person-схема (`page.tsx`).
+- SEO: Open Graph, `sitemap.xml`, `robots.txt`, JSON-LD Person-схема (`page.tsx`), PWA-манифест + иконки (в т.ч. maskable).
+- A11y: skip-link «Перейти к содержимому», roving-навигация стрелками по сетке проектов, `aria-pressed` на тегах/режимах, тултипы на соцссылках hero, `aria-current` в навигации, sr-only описания для графика активности и мобильного меню.
 
 ## 🧪 Адаптивность
 

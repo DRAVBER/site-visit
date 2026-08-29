@@ -9,6 +9,7 @@ import {
   Languages,
   Mail,
   Moon,
+  Printer,
   Sun,
   User,
 } from "lucide-react";
@@ -91,6 +92,12 @@ export function CommandPalette() {
     setPaletteOpen(false);
   };
 
+  const printResume = () => {
+    setPaletteOpen(false);
+    /* let the dialog unmount before the print preview renders */
+    requestAnimationFrame(() => window.print());
+  };
+
   return (
     <CommandDialog
       open={paletteOpen}
@@ -159,6 +166,10 @@ export function CommandPalette() {
           <CommandItem onSelect={copyEmail} className="gap-2.5 rounded-lg">
             <Mail className="text-primary/70" aria-hidden="true" />
             {t("palette.copyEmail")}
+          </CommandItem>
+          <CommandItem onSelect={printResume} className="gap-2.5 rounded-lg">
+            <Printer className="text-primary/70" aria-hidden="true" />
+            {t("palette.printResume")}
           </CommandItem>
           <CommandItem
             onSelect={() => window.open(profile.socialLinks.github, "_blank")}
