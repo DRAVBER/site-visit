@@ -13,6 +13,7 @@ import { ProjectRow } from "./project-row";
 import { ProjectSearch } from "./project-search";
 import { SortSelect, type SortMode } from "./sort-select";
 import { useProjectHashSync } from "@/hooks/use-project-hash-sync";
+import type { RelatedProject } from "./project-dialog";
 
 /** heavy dialog is code-split to keep first paint fast */
 const ProjectDialog = dynamic(
@@ -141,6 +142,32 @@ export function ProjectsSection({
       lastCommit: meta.lastCommit ?? p.lastCommit,
     };
   };
+
+  /** up to 3 related projects for the open dialog — same category first,
+   *  then most shared tags; falls back to the most-starred others.
+   *  (plain computation — the React compiler memoizes it automatically) */
+  const related: RelatedProject[] = (() => {
+    if (!selected) return [];
+    const scored = projects
+      .filter((p) => p.id !== selected.id)
+      .map((p) => {
+        const sharedTags = p.tags.filter((tag) =>
+          selected.tags.includes(tag)
+        ).length;
+        const sameCategory = p.category === selected.category ? 1 : 0;
+        return { p, score: sameCategory * 10 + sharedTags };
+      })
+      .sort((a, b) => b.score - a.score || b.p.stars - a.p.stars);
+    const matched = scored.filter((s) => s.score > 0);
+    return (matched.length > 0 ? matched : scored)
+      .slice(0, 3)
+      .map(({ p }) => ({
+        project: withMeta(p),
+        categoryLabel: categoriesById.has(p.category)
+          ? resolveLocalized(categoriesById.get(p.category)!.label, locale)
+          : p.category,
+      }));
+  })();
 
   /** roving arrow-key navigation across card/list triggers — the column
    *  count is read from the live computed grid so 1/2/3/4-col layouts all
@@ -393,6 +420,8 @@ export function ProjectsSection({
         category={selected ? categoriesById.get(selected.category) : undefined}
         open={dialogOpen}
         onOpenChange={(open) => (open ? undefined : closeDialog())}
+        related={related}
+        onSelectRelated={openProject}
       />
     </section>
   );

@@ -11,6 +11,10 @@
     "openMenu": "Открыть меню",
     "closeMenu": "Закрыть меню",
     "toggleTheme": "Переключить тему",
+    "themeDark": "тёмная",
+    "themeLight": "светлая",
+    "themeSystem": "системная",
+    "themeCurrent": "Тема: {mode} — нажмите для переключения",
     "switchLanguage": "Переключить язык",
     "goTo": "Перейти к",
     "openPalette": "Открыть командную палитру",
@@ -46,6 +50,7 @@
     "placeholder": "Команда или проект…",
     "empty": "Ничего не найдено",
     "sectionsGroup": "Разделы",
+    "recentGroup": "Недавно просмотренные",
     "projectsGroup": "Проекты",
     "actionsGroup": "Действия",
     "toggleTheme": "Переключить тему",
@@ -118,7 +123,9 @@
     "screenshot": "Скриншот проекта",
     "copyCommands": "Скопировать команды",
     "copyLink": "Скопировать ссылку",
-    "shareLabel": "Поделиться проектом"
+    "shareLabel": "Поделиться проектом",
+    "related": "Смотрите также",
+    "relatedOpen": "Открыть {title}"
   },
   "bio": {
     "title": "Обо мне",
@@ -179,7 +186,8 @@
     "by": "— это",
     "rights": "Все права защищены.",
     "backToTop": "Наверх",
-    "builtNote": "Собрано на Next.js, Tailwind CSS и shadcn/ui"
+    "builtNote": "Собрано на Next.js, Tailwind CSS и shadcn/ui",
+    "rss": "RSS-лента — подписка на новые проекты"
   },
   "testimonials": {
     "title": "Добрые слова",

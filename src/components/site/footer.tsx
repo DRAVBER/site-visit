@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUp, Heart, Keyboard } from "lucide-react";
+import { ArrowUp, Heart, Keyboard, Rss } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { profile } from "@/lib/portfolio";
 import { useUiStore } from "@/lib/ui-store";
@@ -25,7 +25,7 @@ export function SiteFooter() {
         className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"
       />
       <div className="mx-auto flex max-w-7xl flex-col items-center gap-6 px-4 py-10 sm:px-6 lg:px-8">
-        {/* socials */}
+        {/* socials + RSS */}
         <div className="flex items-center gap-2 print:hidden">
           {socials.map(({ href, label, icon: Icon }) => (
             <a
@@ -40,6 +40,17 @@ export function SiteFooter() {
               <Icon className="h-4 w-4" />
             </a>
           ))}
+          <a
+            href="/rss.xml"
+            aria-label={t("footer.rss")}
+            title={t("footer.rss")}
+            className="group grid h-9 w-9 place-items-center rounded-full border border-border/70 bg-secondary/40 text-muted-foreground transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/50 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <Rss
+              className="h-4 w-4 transition-transform duration-300 group-hover:rotate-12"
+              aria-hidden="true"
+            />
+          </a>
         </div>
 
         {/* made with */}

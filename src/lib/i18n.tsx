@@ -15,6 +15,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useSyncExternalStore,
 } from "react";
@@ -101,6 +102,15 @@ function lookup(dict: Dictionary, path: string): string {
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const locale = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+
+  // Keep <html lang> in sync with the *effective* locale — including the
+  // auto-detected one (navigator.language) and explicit toggles alike.
+  // writeLocale() already sets it for user actions; this effect covers the
+  // hydration path where the client snapshot (auto-detect) diverges from the
+  // server default ("ru"), which previously left a stale lang attribute.
+  useEffect(() => {
+    document.documentElement.lang = locale;
+  }, [locale]);
 
   const setLocale = useCallback((next: Locale) => writeLocale(next), []);
   const toggleLocale = useCallback(

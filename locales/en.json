@@ -11,6 +11,10 @@
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "toggleTheme": "Toggle theme",
+    "themeDark": "dark",
+    "themeLight": "light",
+    "themeSystem": "system",
+    "themeCurrent": "Theme: {mode} — click to switch",
     "switchLanguage": "Switch language",
     "goTo": "Go to",
     "openPalette": "Open command palette",
@@ -46,6 +50,7 @@
     "placeholder": "Type a command or project…",
     "empty": "No results found",
     "sectionsGroup": "Sections",
+    "recentGroup": "Recently viewed",
     "projectsGroup": "Projects",
     "actionsGroup": "Actions",
     "toggleTheme": "Toggle theme",
@@ -118,7 +123,9 @@
     "screenshot": "Project screenshot",
     "copyCommands": "Copy commands",
     "copyLink": "Copy link",
-    "shareLabel": "Share this project"
+    "shareLabel": "Share this project",
+    "related": "See also",
+    "relatedOpen": "Open {title} details"
   },
   "bio": {
     "title": "About me",
@@ -179,7 +186,8 @@
     "by": "by",
     "rights": "All rights reserved.",
     "backToTop": "Back to top",
-    "builtNote": "Built with Next.js, Tailwind CSS & shadcn/ui"
+    "builtNote": "Built with Next.js, Tailwind CSS & shadcn/ui",
+    "rss": "RSS feed — subscribe to new projects"
   },
   "testimonials": {
     "title": "Kind words",

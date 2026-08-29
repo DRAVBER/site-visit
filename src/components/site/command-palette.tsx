@@ -6,9 +6,11 @@ import { toast } from "sonner";
 import {
   ArrowRight,
   Command as CommandIcon,
+  History,
   Keyboard,
   Languages,
   Mail,
+  Monitor,
   Moon,
   Printer,
   Sun,
@@ -28,6 +30,7 @@ import { useI18n } from "@/lib/i18n";
 import { useUiStore } from "@/lib/ui-store";
 import { copyToClipboard } from "@/lib/clipboard";
 import { profile, projects, resolveLocalized, type Project } from "@/lib/portfolio";
+import { useRecentProjectIds } from "@/lib/recent";
 import { DiscordIcon, GithubIcon, TelegramIcon } from "./icons";
 
 const SECTIONS = [
@@ -48,6 +51,13 @@ export function CommandPalette() {
   const { t, locale, toggleLocale } = useI18n();
   const { paletteOpen, setPaletteOpen, openProject, setShortcutsOpen } = useUiStore();
   const { theme, setTheme } = useTheme();
+
+  /** recently-viewed projects (localStorage-backed external store) */
+  const recentIds = useRecentProjectIds();
+  const recentProjects: Project[] = recentIds
+    .map((id) => projects.find((p) => p.id === id))
+    .filter((p): p is Project => Boolean(p))
+    .slice(0, 3);
 
   /* global Ctrl+K / Cmd+K — registered on window so it works everywhere */
   useEffect(() => {
@@ -78,7 +88,11 @@ export function CommandPalette() {
   };
 
   const toggleTheme = () => {
-    const next = theme === "dark" ? "light" : "dark";
+    /* same tri-state cycle as the header: dark → light → system */
+    const current =
+      theme === "light" || theme === "system" ? theme : "dark";
+    const next =
+      current === "dark" ? "light" : current === "light" ? "system" : "dark";
     setTheme(next);
     setPaletteOpen(false);
   };
@@ -117,6 +131,24 @@ export function CommandPalette() {
       <CommandInput placeholder={t("palette.placeholder")} />
       <CommandList className="max-h-[340px]">
         <CommandEmpty>{t("palette.empty")}</CommandEmpty>
+
+        {/* recently viewed projects (localStorage) */}
+        {recentProjects.length > 0 ? (
+          <CommandGroup heading={t("palette.recentGroup")}>
+            {recentProjects.map((p) => (
+              <CommandItem
+                key={p.id}
+                value={`${p.title} ${p.tags.join(" ")}`}
+                onSelect={() => openProjectFromPalette(p)}
+                className="gap-2.5 rounded-lg"
+              >
+                <History className="text-primary/70" aria-hidden="true" />
+                <span className="truncate">{p.title}</span>
+              </CommandItem>
+            ))}
+            <CommandSeparator />
+          </CommandGroup>
+        ) : null}
 
         {/* navigation */}
         <CommandGroup heading={t("palette.sectionsGroup")}>
@@ -160,10 +192,12 @@ export function CommandPalette() {
         {/* actions */}
         <CommandGroup heading={t("palette.actionsGroup")}>
           <CommandItem onSelect={toggleTheme} className="gap-2.5 rounded-lg">
-            {theme === "dark" ? (
+            {theme === "dark" || theme === undefined ? (
+              <Moon className="text-violet-500" aria-hidden="true" />
+            ) : theme === "light" ? (
               <Sun className="text-amber-500" aria-hidden="true" />
             ) : (
-              <Moon className="text-violet-500" aria-hidden="true" />
+              <Monitor className="text-primary/70" aria-hidden="true" />
             )}
             {t("palette.toggleTheme")}
           </CommandItem>

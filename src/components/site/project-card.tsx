@@ -61,7 +61,7 @@ export function ProjectCard({
       transition={{ duration: 0.45, delay: Math.min(index * 0.06, 0.3), ease: [0.22, 1, 0.36, 1] }}
       data-card=""
       {...spotlight}
-      className="card-ring-glow card-spotlight group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/45 hover:shadow-[0_20px_50px_-16px_rgba(139,92,246,0.4)] focus-within:border-primary/45"
+      className="card-ring-glow card-spotlight group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/45 hover:shadow-[0_20px_50px_-16px_rgba(139,92,246,0.4)] focus-within:border-primary/45 dark:shadow-[0_1px_2px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.06)]"
     >
       {/* cover image — hidden on paper (screenshots are ink-heavy and
           carry no resume value) */}
@@ -125,10 +125,10 @@ export function ProjectCard({
             {project.title}
           </button>
           <span
-            className="mt-1 inline-flex shrink-0 items-center gap-1 text-xs font-medium text-muted-foreground"
+            className="mt-1 inline-flex shrink-0 items-center gap-1 text-[11px] font-medium tabular-nums text-muted-foreground/90"
             title={labels.stars}
           >
-            <svg viewBox="0 0 24 24" fill="currentColor" className="h-3.5 w-3.5 text-amber-400" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor" className="h-3 w-3 text-amber-400" aria-hidden="true">
               <path d="M12 2l2.9 6.26 6.6.56-5 4.36 1.5 6.45L12 16.9 5.99 19.63l1.5-6.45-5-4.36 6.6-.56L12 2z" />
             </svg>
             {formatStars(project.stars)}
@@ -153,7 +153,7 @@ export function ProjectCard({
                   className={`rounded-md border px-2 py-0.5 font-mono text-[11px] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                     isActive
                       ? "border-primary/60 bg-primary/15 text-primary"
-                      : "border-transparent bg-secondary text-muted-foreground hover:-translate-y-0.5 hover:border-primary/40 hover:text-primary"
+                      : "border-transparent bg-secondary text-foreground/75 hover:-translate-y-0.5 hover:border-primary/40 hover:text-primary"
                   }`}
                 >
                   {tag}

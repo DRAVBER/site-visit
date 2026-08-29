@@ -65,7 +65,7 @@ export function ProjectRow({
       }}
       data-card=""
       {...spotlight}
-      className="card-spotlight group relative overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm transition-all duration-300 hover:border-primary/45 hover:shadow-[0_14px_40px_-16px_rgba(139,92,246,0.45)] focus-within:border-primary/45"
+      className="card-spotlight group relative overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm transition-all duration-300 hover:border-primary/45 hover:shadow-[0_14px_40px_-16px_rgba(139,92,246,0.45)] focus-within:border-primary/45 dark:shadow-[0_1px_2px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.06)]"
     >
       {/* gradient wash on hover */}
       <span
@@ -116,7 +116,7 @@ export function ProjectRow({
               {project.title}
             </span>
             <span
-              className="hidden shrink-0 items-center gap-1 text-xs font-medium text-muted-foreground sm:inline-flex"
+              className="hidden shrink-0 items-center gap-1 text-[11px] font-medium tabular-nums text-muted-foreground/90 sm:inline-flex"
               title={labels.source}
             >
               <Star className="h-3 w-3 text-amber-400" aria-hidden="true" />
@@ -154,7 +154,7 @@ export function ProjectRow({
                     className={`cursor-pointer rounded-md border px-1.5 py-0.5 font-mono transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                       isActive
                         ? "border-primary/60 bg-primary/15 text-primary"
-                        : "border-transparent bg-secondary text-muted-foreground hover:border-primary/40 hover:text-primary"
+                        : "border-transparent bg-secondary text-foreground/75 hover:border-primary/40 hover:text-primary"
                     }`}
                   >
                     {tag}

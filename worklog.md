@@ -249,3 +249,40 @@ Task: QA стабильности фазы 6 + раунд развития: сп
 - Clipboard в headless запрещён (vCard-скачивание проверено по отсутствию исключений и toast; в реальных браузерах Blob-download не требует clipboard).
 - Гидратация: Radix useId-варнинг после Fast Refresh — известный dev-артефакт React19+Radix+Turbopack, в production не воспроизводится.
 - Идеи следующего раунда: e2e-тесты Playwright, RSS/blog-микросекция, skeleton для GitHub-меты при медленном API, onboarding-туториал по первым шагам, лайтхаус-прогон вне песочницы, аналитика (plausible/umami) при деплое.
+
+---
+Task ID: 8
+Agent: main agent (Z.ai Code)
+Task: QA стабильности фазы 7 + раунд развития (фаза 8): RSS-лента, «Смотрите также» в диалоге проекта, три-стейт тема, «Недавно просмотренные» в палитре, стилевой полиш карточек; исправлены 3 бага (2 из них — до этого незамеченные).
+
+Текущее состояние (оценка входа):
+- Dev-сервер: HTTP 200; входной smoke-тест (agent-browser, desktop 1280 + mobile 390): 5 секций / 8 карточек / RU-SSR / dark, фильтры (Софт→2), поиск (rust→1), диалог + #p=hash + Escape, тема, палитра (21 пункт), testimonials (5 точек), zero ошибок консоли при взаимодействиях. Фаза 7 стабильна.
+
+Выполненные работы / модификации:
+- BUGFIX #1 (a11y/SEO, реальный): при автодетекте языка (navigator.language → en) UI рендерился по-английски, но <html lang> оставался "ru" из SSR — writeLocale() синкал атрибут только при явном переключении. Фикс: useEffect в LanguageProvider синкает document.documentElement.lang с эффективной локалью (покрывает и гидрационный путь автодетекта). Проверено: чистый localStorage + en-US → lang="en" при англ. UI; явное переключение → lang="ru" + persist.
+- Фича A: RSS 2.0-лента — src/app/rss.xml/route.ts (force-static): все проекты из data/projects.json, title/description(EN)/pubDate=lastCommit/category+теги/guid=permalink на deep-link `/#p=<id>`, atom:link self, XML-экранирование. Кнопка RSS в футере (lucide Rss, hover rotate-12, aria из footer.rss), alternates.types["application/rss+xml"] в layout.tsx. Проверено: HTTP 200, content-type application/rss+xml, валидный XML.
+- Фича B: «Смотрите также» в диалоге проекта — до 3 related (скоринг: sameCategory×10 + sharedTags; фолбэк — топ по звёздам), компактные карточки (миниатюра 56×40 или монограмма, title+truncate, звёзды+категория), stagger-появление, клик = открытие в том же диалоге (openProject из ui-store: контент меняется, #p= обновляется хеш-синком, скролл диалога сбрасывается эффектом на project.id — проверено scrollTop 600→0). RelatedProject-тип экспортирован из project-dialog (type-only import — не ломает code-splitting).
+- Фича C: три-стейт тема dark→light→system — theme-toggle.tsx переписан: цикл NEXT-мапа, иконки Moon/Sun/Monitor отражают ТЕКУЩИЙ режим, AnimatePresence-морфинг (rotate ±60°, scale 0.6), aria-label «Тема: {режим} — нажмите для переключения» (nav.themeDark/Light/System/themeCurrent RU+EN). Командная палитра — тот же цикл + иконка Monitor для system. Проверено: 3 клика → dark→light→system→dark с persist (localStorage theme), html-класс "system dark" при системной.
+- Фича D: «Недавно просмотренные» в палитре — src/lib/recent.ts: внешнее хранилище на useSyncExternalStore (lazy-cache, subscribe/notify; паттерн как в i18n-сторе), pushRecentId (дедуп, кап 5, localStorage "portfolio-recent"), useRecentProjectIds(). ui-store.openProject пишет id (единая точка: карточки/палитра/related/deep-link). Палитра: группа в самом верху (History-иконка, топ-3), persist между сессиями. Линт-ошибка react-hooks/set-state-in-effect от первой реализации (useState+useEffect) — устранена переходом на внешний стор.
+- Стилевой полиш (по VLM-ревью 8.2/10 → 8.5/10 после правок): карточки сетки и списка получили глубину в dark (inset 1px верхний хайлайт rgba(255,255,255,.06) + ambient drop rgba(0,0,0,.35)), тег-чипы контрастнее (text-muted-foreground → text-foreground/75), звёзды де-эмфазированы (text-xs→text-[11px], h-3.5→h-3, tabular-nums, /90). VLM подтвердил: «cards no longer look flat», «tag legibility excellent», «title dominance clear».
+- BUGFIX #2 (найден при мобильном QA, pre-existing): диалог проекта на 390px имел горизонтальный оверфлоу (контент 543px > 358px) — grid-item body-див DialogContent имел min-width:auto, длинная строка git-clone в «Как запустить» задавала min-content. Фикс: min-w-0 на body-диве → 356px, pre скроллится внутри (overflow-x-auto). Локализован hide-по-элементам.
+- BUGFIX #3 (pre-existing, критичный для мобильных): страница позволяла горизонтальный скролл (scrollTo(120) → scrollX=120 при htmlScrollW=550 на 390px) — одного body overflow-x:clip было недостаточно (quirk распространения overflow на viewport). Фикс: html + body оба overflow-x: clip. Проверено: scrollX=0 при попытке, htmlScrollW=390, после диалога тоже чисто.
+- README: новые секции «Три-стейт тема», «RSS-лента», «Похожие проекты», обновлены палитра (recent-группа) и структура (rss.xml/route.ts, recent.ts).
+
+Результаты верификации:
+- agent-browser: полный регресс — 5 секций/8 карточек/RU/dark, фильтры Софт→2 и Софт+Избранное→0 (пустое состояние рендерится), поиск rust→1, диалог+#p=+Escape, related-клик (Nebula→Lumen, hash #p=lumen-kit, scroll reset), палитра (группы: Недавно просмотренные/Разделы/Проекты/Действия; клик по recent → диалог+hash), тема три-стейт×3 клика, язык RU⇄EN (+persist), RSS-кнопка aria RU/EN, ?-справка, vCard-кнопка, testimonials 5 точек, якоря+scrollspy, BackToTop, мобильное Sheet-меню. Мобильный 390px: scrollX=0 при scrollTo(120) (до и после диалога), диалог без оверфлоу, pre скроллится внутренне. Console/page-errors: 0 за сессию.
+- Линт чистый (исправлены в ходе: set-state-in-effect → внешний стор; preserve-manual-memoization → IIFE вместо useMemo; убран лишний eslint-disable). dev.log чистый (только GET/compile).
+- VLM: hero 9/10; карточки после полиша 8.5/10 (глубина/контраст/иерархия подтверждены); related-лента 8/10 (выравнивание/тема/читаемость — ок; замечания про «разные миниатюры» — by design: скриншот vs монограмма).
+- Скриншоты: phase8-full-dark.png, phase8-projects-polished.png, phase8-related-projects.png, phase8-light-hero.png, phase8-mobile-final.png, phase8-hero-final.png, qa-phase8-mobile-390.png.
+- Важный методологический урок: проверка «scrollX после scrollTo» обязана проводиться с бОльшим смещением (120px) и ПОСЛЕ полного перекомпайла CSS (ранние reload-проверки ловили устаревший CSS); scrollWidth>clientWidth сам по себе — ложный сигнал (клипнутые орбы), решающий тест — реальный scrollTo.
+
+Stage Summary:
+- 4 новые фичи (RSS / related-проекты / три-стейт тема / recent-группа) + 3 багфикса (html-lang синк, мобильный оверфлоу диалога, мобильный горизонтальный скролл страницы — два последних существовали с ранних фаз и не ловились прежними QA-методиками).
+- Архитектура data-driven сохранена: RSS генерится из projects.json, related — из категорий/тегов, recent — единая точка записи в ui-store.
+- Все известные мобильные layout-проблемы закрыты; lint/dev.log/консоль чистые.
+
+Нерешённые вопросы / риски, приоритеты следующей фазы:
+- Домен-заглушка alexvolkov.dev (layout.tsx, sitemap.ts, robots.ts, page.tsx JSON-LD, rss.xml/route.ts) — заменить при деплое (TODO на местах).
+- Radix useId hydration-варнинг после Fast Refresh — известный dev-артефакт React19+Radix+Turbopack (в production не воспроизводится).
+- RSS description только EN (by design — фид один); при желании можно добавить atom:link с hreflang или два фида.
+- Идеи следующего раунда: skeleton для GitHub-меты, e2e-тесты Playwright (вне песочницы), секция «заметки/микро-блог», onboarding-тур, lighthouse-прогон вне песочницы, аналитика при деплое.

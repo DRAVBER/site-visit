@@ -138,6 +138,10 @@
     scroll-behavior: smooth;
     /* keep anchored sections clear of the fixed header */
     scroll-padding-top: 5.5rem;
+    /* pair with body below: html-level clip guarantees the viewport itself
+       never gains a horizontal scrollbar even when clipped decorative orbs
+       extend the scrollable overflow area (Safari/Chromium quirk) */
+    overflow-x: clip;
   }
 
   body {

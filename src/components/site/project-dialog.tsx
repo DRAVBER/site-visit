@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Calendar,
@@ -30,6 +30,13 @@ import {
   type Category,
 } from "@/lib/portfolio";
 import { CategoryGlyph, GithubIcon } from "./icons";
+
+/** compact card shown in the "See also" strip at the bottom of the dialog */
+export interface RelatedProject {
+  project: Project;
+  /** localized category label (or raw category id as fallback) */
+  categoryLabel: string;
+}
 
 /** Gallery with dots — remounts per project (key) which resets the selection.
  *  Arrow keys ← → move between shots when the gallery is focused. */
@@ -115,15 +122,30 @@ export function ProjectDialog({
   category,
   open,
   onOpenChange,
+  related,
+  onSelectRelated,
 }: {
   project: Project | null;
   category?: Category;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  /** up to 3 similar projects (same category / shared tags) */
+  related?: RelatedProject[];
+  /** opens a related project in place — the dialog content swaps */
+  onSelectRelated?: (project: Project) => void;
 }) {
   const { t, locale } = useI18n();
   const [copied, setCopied] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
+
+  // when a related project is opened in place, rewind the scrollable
+  // dialog body so the new project starts from its gallery
+  useEffect(() => {
+    if (!open) return;
+    document
+      .querySelector("[data-slot='dialog-content']")
+      ?.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+  }, [project?.id, open]);
 
   if (!project) return null;
 
@@ -189,8 +211,10 @@ export function ProjectDialog({
           </div>
         )}
 
-        {/* body */}
-        <div className="flex flex-col gap-6 p-5 sm:p-8">
+        {/* body — min-w-0 kills the grid-item automatic minimum so the
+            "how to run" code block scrolls internally instead of blowing
+            the dialog out horizontally on narrow screens */}
+        <div className="flex min-w-0 flex-col gap-6 p-5 sm:p-8">
           {/* title row */}
           <div>
             <div className="flex flex-wrap items-center gap-2">
@@ -328,6 +352,71 @@ export function ProjectDialog({
               </span>
             </button>
           </div>
+
+          {/* related projects — same category / shared tags first */}
+          {related && related.length > 0 ? (
+            <section
+              aria-label={t("projectDialog.related")}
+              className="border-t border-border/60 pt-5"
+            >
+              <h4 className="text-xs font-semibold tracking-[0.18em] text-primary/80 uppercase">
+                {t("projectDialog.related")}
+              </h4>
+              <ul className="mt-3 grid gap-2 sm:grid-cols-3">
+                {related.map(({ project: rel, categoryLabel }, i) => {
+                  const thumb = rel.screenshots[0];
+                  return (
+                    <motion.li
+                      key={rel.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        duration: 0.35,
+                        delay: 0.08 + i * 0.07,
+                        ease: [0.22, 1, 0.36, 1],
+                      }}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => onSelectRelated?.(rel)}
+                        aria-label={t("projectDialog.relatedOpen").replace(
+                          "{title}",
+                          rel.title
+                        )}
+                        className="group flex w-full items-center gap-3 rounded-xl border border-border/70 bg-secondary/40 p-2.5 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/50 hover:bg-secondary/70 hover:shadow-[0_8px_22px_-10px_rgba(139,92,246,0.45)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      >
+                        {thumb ? (
+                          <img
+                            src={thumb}
+                            alt=""
+                            loading="lazy"
+                            decoding="async"
+                            className="h-10 w-14 shrink-0 rounded-lg border border-border/60 object-cover"
+                          />
+                        ) : (
+                          <span className="grid h-10 w-14 shrink-0 place-items-center rounded-lg border border-border/60 bg-gradient-to-br from-violet-600/30 to-purple-700/20 text-xs font-bold text-primary/70">
+                            {rel.title.slice(0, 2).toUpperCase()}
+                          </span>
+                        )}
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-sm font-semibold text-foreground transition-colors group-hover:text-primary">
+                            {rel.title}
+                          </span>
+                          <span className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground">
+                            <Star
+                              className="h-3 w-3 text-amber-400"
+                              aria-hidden="true"
+                            />
+                            {formatStars(rel.stars)} · {categoryLabel}
+                          </span>
+                        </span>
+                      </button>
+                    </motion.li>
+                  );
+                })}
+              </ul>
+            </section>
+          ) : null}
         </div>
       </DialogContent>
     </Dialog>

@@ -10,6 +10,7 @@
  */
 import { create } from "zustand";
 import type { Project } from "./portfolio";
+import { pushRecentId } from "./recent";
 
 export type ViewMode = "grid" | "list";
 const VIEW_STORAGE_KEY = "portfolio-view";
@@ -48,8 +49,10 @@ export const useUiStore = create<UiState>((set) => ({
   togglePalette: () => set((s) => ({ paletteOpen: !s.paletteOpen })),
   setShortcutsOpen: (open) => set({ shortcutsOpen: open }),
 
-  openProject: (project) =>
-    set({ selectedProject: project, dialogOpen: true, paletteOpen: false }),
+  openProject: (project) => {
+    pushRecentId(project.id);
+    set({ selectedProject: project, dialogOpen: true, paletteOpen: false });
+  },
 
   closeDialog: () => set({ dialogOpen: false }),
 
