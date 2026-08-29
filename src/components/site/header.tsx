@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { Menu, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -81,13 +82,21 @@ export function SiteHeader() {
                   <a
                     href={`#${id}`}
                     aria-current={isActive ? "true" : undefined}
-                    className={`relative rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                    className={`relative rounded-full px-4 py-1.5 text-sm font-medium transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                       isActive
-                        ? "bg-primary/90 text-primary-foreground shadow-[0_2px_14px_-2px_rgba(139,92,246,0.6)]"
+                        ? "text-primary-foreground"
                         : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
-                    {t(key)}
+                    {isActive ? (
+                      <motion.span
+                        layoutId="nav-active-pill"
+                        aria-hidden="true"
+                        className="absolute inset-0 rounded-full bg-primary/90 shadow-[0_2px_14px_-2px_rgba(139,92,246,0.6)]"
+                        transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                      />
+                    ) : null}
+                    <span className="relative">{t(key)}</span>
                   </a>
                 </li>
               );

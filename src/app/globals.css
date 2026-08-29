@@ -299,6 +299,13 @@
   to { transform: rotate(24deg) translateX(320%); }
 }
 
+/* hide the hero cursor-glow on touch devices (no mousemove → no point rendering) */
+@media (hover: none) {
+  .hero-cursor-glow {
+    display: none !important;
+  }
+}
+
 /* cursor spotlight — a soft radial glow that follows the pointer across a
    card. Coordinates arrive as --mx/--my (px, relative to the element) via
    the spotlightProps hook; the overlay itself is pure CSS. Touch devices

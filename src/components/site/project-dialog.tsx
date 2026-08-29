@@ -5,8 +5,11 @@ import { motion } from "framer-motion";
 import {
   Calendar,
   Check,
+  ChevronLeft,
+  ChevronRight,
   Copy,
   ExternalLink,
+  Link2,
   Star,
   Terminal,
   X,
@@ -28,14 +31,32 @@ import {
 } from "@/lib/portfolio";
 import { CategoryGlyph, GithubIcon } from "./icons";
 
-/** Gallery with dots — remounts per project (key) which resets the selection. */
+/** Gallery with dots — remounts per project (key) which resets the selection.
+ *  Arrow keys ← → move between shots when the gallery is focused. */
 function Gallery({ shots, altBase }: { shots: string[]; altBase: string }) {
   const [active, setActive] = useState(0);
 
   if (shots.length === 0) return null;
 
+  const go = (delta: number) =>
+    setActive((i) => (i + delta + shots.length) % shots.length);
+
   return (
-    <div className="relative aspect-[16/9] w-full overflow-hidden bg-secondary sm:rounded-t-2xl">
+    <div
+      className="group relative aspect-[16/9] w-full overflow-hidden bg-secondary sm:rounded-t-2xl"
+      tabIndex={shots.length > 1 ? 0 : undefined}
+      aria-label={shots.length > 1 ? altBase : undefined}
+      onKeyDown={(e) => {
+        if (shots.length <= 1) return;
+        if (e.key === "ArrowRight") {
+          e.preventDefault();
+          go(1);
+        } else if (e.key === "ArrowLeft") {
+          e.preventDefault();
+          go(-1);
+        }
+      }}
+    >
       <img
         key={shots[active]}
         src={shots[active]}
@@ -45,22 +66,41 @@ function Gallery({ shots, altBase }: { shots: string[]; altBase: string }) {
         decoding="async"
       />
       {shots.length > 1 ? (
-        <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-2 rounded-full border border-white/15 bg-black/55 p-1.5 backdrop-blur-md">
-          {shots.map((shot, i) => (
-            <button
-              key={shot}
-              type="button"
-              onClick={() => setActive(i)}
-              aria-label={`${altBase} ${i + 1}`}
-              aria-current={i === active}
-              className={`h-2.5 w-2.5 rounded-full transition-all duration-300 ${
-                i === active
-                  ? "w-6 bg-primary shadow-[0_0_10px_rgba(139,92,246,0.8)]"
-                  : "bg-white/40 hover:bg-white/70"
-              }`}
-            />
-          ))}
-        </div>
+        <>
+          {/* arrow controls — visible on hover/focus, keyboard via the wrapper */}
+          <button
+            type="button"
+            onClick={() => go(-1)}
+            aria-label={`${altBase} — previous`}
+            className="absolute top-1/2 left-2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full border border-white/15 bg-black/55 text-white opacity-0 backdrop-blur-md transition-opacity duration-300 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 group-hover:opacity-100"
+          >
+            <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            onClick={() => go(1)}
+            aria-label={`${altBase} — next`}
+            className="absolute top-1/2 right-2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full border border-white/15 bg-black/55 text-white opacity-0 backdrop-blur-md transition-opacity duration-300 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 group-hover:opacity-100"
+          >
+            <ChevronRight className="h-4 w-4" aria-hidden="true" />
+          </button>
+          <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-2 rounded-full border border-white/15 bg-black/55 p-1.5 backdrop-blur-md">
+            {shots.map((shot, i) => (
+              <button
+                key={shot}
+                type="button"
+                onClick={() => setActive(i)}
+                aria-label={`${altBase} ${i + 1}`}
+                aria-current={i === active}
+                className={`h-2.5 w-2.5 rounded-full transition-all duration-300 ${
+                  i === active
+                    ? "w-6 bg-primary shadow-[0_0_10px_rgba(139,92,246,0.8)]"
+                    : "bg-white/40 hover:bg-white/70"
+                }`}
+              />
+            ))}
+          </div>
+        </>
       ) : null}
     </div>
   );
@@ -83,6 +123,7 @@ export function ProjectDialog({
 }) {
   const { t, locale } = useI18n();
   const [copied, setCopied] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
 
   if (!project) return null;
 
@@ -93,6 +134,17 @@ export function ProjectDialog({
       setCopied(true);
       toast.success(t("toast.commandsCopied"));
       setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const copyShareLink = async () => {
+    if (typeof window === "undefined") return;
+    const url = `${window.location.origin}${window.location.pathname}#p=${project.id}`;
+    const ok = await copyToClipboard(url);
+    if (ok) {
+      setLinkCopied(true);
+      toast.success(t("toast.linkCopied"));
+      setTimeout(() => setLinkCopied(false), 2000);
     }
   };
 
@@ -258,6 +310,23 @@ export function ProjectDialog({
                 {t("projectDialog.openDemo")}
               </motion.a>
             ) : null}
+            {/* copy shareable deep link (#p=<id>) — works with the hash-sync hook */}
+            <button
+              type="button"
+              onClick={copyShareLink}
+              aria-label={t("projectDialog.copyLink")}
+              title={t("projectDialog.shareLabel")}
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-border bg-background px-5 text-sm font-semibold transition-all hover:border-primary/50 hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              {linkCopied ? (
+                <Check className="h-4 w-4 text-emerald-500" aria-hidden="true" />
+              ) : (
+                <Link2 className="h-4 w-4" aria-hidden="true" />
+              )}
+              <span className="hidden sm:inline">
+                {t("projectDialog.copyLink")}
+              </span>
+            </button>
           </div>
         </div>
       </DialogContent>

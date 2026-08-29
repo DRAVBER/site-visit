@@ -12,6 +12,7 @@ import { ProjectCard, CategoryTabs } from "./project-card";
 import { ProjectRow } from "./project-row";
 import { ProjectSearch } from "./project-search";
 import { SortSelect, type SortMode } from "./sort-select";
+import { useProjectHashSync } from "@/hooks/use-project-hash-sync";
 
 /** heavy dialog is code-split to keep first paint fast */
 const ProjectDialog = dynamic(
@@ -53,6 +54,9 @@ export function ProjectsSection({
   const dialogOpen = useUiStore((s) => s.dialogOpen);
   const openProject = useUiStore((s) => s.openProject);
   const closeDialog = useUiStore((s) => s.closeDialog);
+
+  /** two-way sync: `#p=<id>` deep-links straight into the project dialog */
+  useProjectHashSync(projects);
 
   /** try to enrich cards with live GitHub data (silently falls back) */
   useEffect(() => {

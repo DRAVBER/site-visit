@@ -93,7 +93,9 @@
     "close": "Закрыть проект",
     "lastCommit": "Последний коммит",
     "screenshot": "Скриншот проекта",
-    "copyCommands": "Скопировать команды"
+    "copyCommands": "Скопировать команды",
+    "copyLink": "Скопировать ссылку",
+    "shareLabel": "Поделиться проектом"
   },
   "bio": {
     "title": "Обо мне",
@@ -138,7 +140,11 @@
   },
   "toast": {
     "emailCopied": "Email скопирован в буфер обмена",
-    "commandsCopied": "Команды скопированы в буфер обмена"
+    "commandsCopied": "Команды скопированы в буфер обмена",
+    "linkCopied": "Ссылка скопирована",
+    "themeToggledDark": "Тёмная тема",
+    "themeToggledLight": "Светлая тема",
+    "langSwitched": "Язык: {lang}"
   },
   "footer": {
     "madeWith": "Сделано с",

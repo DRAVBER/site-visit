@@ -93,7 +93,9 @@
     "close": "Close project",
     "lastCommit": "Last commit",
     "screenshot": "Project screenshot",
-    "copyCommands": "Copy commands"
+    "copyCommands": "Copy commands",
+    "copyLink": "Copy link",
+    "shareLabel": "Share this project"
   },
   "bio": {
     "title": "About me",
@@ -138,7 +140,11 @@
   },
   "toast": {
     "emailCopied": "Email copied to clipboard",
-    "commandsCopied": "Commands copied to clipboard"
+    "commandsCopied": "Commands copied to clipboard",
+    "linkCopied": "Link copied",
+    "themeToggledDark": "Dark theme",
+    "themeToggledLight": "Light theme",
+    "langSwitched": "Language: {lang}"
   },
   "footer": {
     "madeWith": "Made with",

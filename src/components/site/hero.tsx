@@ -1,6 +1,13 @@
 "use client";
 
-import { motion, type Variants } from "framer-motion";
+import { useRef } from "react";
+import {
+  motion,
+  useMotionValue,
+  useSpring,
+  useReducedMotion,
+  type Variants,
+} from "framer-motion";
 import { ArrowDown, ArrowRight, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,9 +34,46 @@ const item: Variants = {
   },
 };
 
+/** Wraps a CTA in a magnetic pull toward the cursor (desktop, motion-ok). */
+function Magnetic({ children }: { children: React.ReactNode }) {
+  const reduce = useReducedMotion();
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const xs = useSpring(x, { stiffness: 200, damping: 14, mass: 0.4 });
+  const ys = useSpring(y, { stiffness: 200, damping: 14, mass: 0.4 });
+  return (
+    <motion.div
+      style={{ x: xs, y: ys }}
+      onMouseMove={(e) => {
+        if (reduce) return;
+        const r = e.currentTarget.getBoundingClientRect();
+        x.set((e.clientX - r.left - r.width / 2) * 0.25);
+        y.set((e.clientY - r.top - r.height / 2) * 0.25);
+      }}
+      onMouseLeave={() => {
+        x.set(0);
+        y.set(0);
+      }}
+      className="inline-block"
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 /** Full-viewport hero: aurora orbs + blueprint grid, gradient headline, CTAs, stats. */
 export function Hero() {
   const { t } = useI18n();
+  const reduce = useReducedMotion();
+
+  // cursor-following ambient glow (desktop + motion-ok only)
+  const glowX = useMotionValue(-300);
+  const glowY = useMotionValue(-300);
+  const glowXs = useSpring(glowX, { stiffness: 120, damping: 24, mass: 0.5 });
+  const glowYs = useSpring(glowY, { stiffness: 120, damping: 24, mass: 0.5 });
+
+  // unused for now, reserved for future parallax orbs
+  const heroRef = useRef<HTMLElement>(null);
 
   const stats = [
     { value: profile.stats.years, suffix: "+", label: t("hero.stats.years"), format: "plain" as const },
@@ -47,8 +91,15 @@ export function Hero() {
 
   return (
     <section
+      ref={heroRef}
       id="hero"
       aria-label={t("nav.home")}
+      onMouseMove={(e) => {
+        if (reduce) return;
+        const r = e.currentTarget.getBoundingClientRect();
+        glowX.set(e.clientX - r.left);
+        glowY.set(e.clientY - r.top);
+      }}
       className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-4 pt-16 pb-10 sm:px-6 lg:px-8"
     >
       {/* ambience: blueprint grid + two drifting aurora orbs */}
@@ -63,8 +114,19 @@ export function Hero() {
       />
       <div
         aria-hidden="true"
-        className="animate-aurora absolute -bottom-40 left-1/2 h-[380px] w-[520px] -translate-x-1/2 rounded-full bg-indigo-500/10 blur-[120px] print:hidden [animation-delay:-12s] dark:bg-violet-800/30"
+        className="animate-aurora absolute -bottom-40 left-1/2 h-[380px] w-[520px] -translate-x-1/2 rounded-full bg-violet-700/15 blur-[120px] print:hidden [animation-delay:-12s] dark:bg-violet-800/30"
       />
+
+      {/* cursor-following ambient glow — a soft violet halo that tracks the
+          pointer across the hero. Centered via negative margin (not transform,
+          which framer-motion would overwrite). Inert on touch + reduced-motion. */}
+      {!reduce ? (
+        <motion.div
+          aria-hidden="true"
+          style={{ left: glowXs, top: glowYs, marginLeft: -170, marginTop: -170 }}
+          className="hero-cursor-glow pointer-events-none absolute z-[2] h-[340px] w-[340px] rounded-full bg-violet-500/15 blur-[90px] print:hidden dark:bg-violet-500/20"
+        />
+      ) : null}
 
       <motion.div
         variants={container}
@@ -115,24 +177,28 @@ export function Hero() {
           variants={item}
           className="mt-9 flex flex-col items-center gap-3 print:hidden sm:flex-row"
         >
-          <Button
-            asChild
-            size="lg"
-            className="h-12 rounded-full bg-gradient-to-r from-violet-600 to-purple-600 px-8 text-base font-semibold shadow-[0_8px_30px_-8px_rgba(139,92,246,0.7)] transition-all duration-300 hover:shadow-[0_10px_40px_-6px_rgba(139,92,246,0.85)] hover:brightness-110"
-          >
-            <a href="#projects">
-              {t("hero.viewProjects")}
-              <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
-            </a>
-          </Button>
-          <Button
-            asChild
-            size="lg"
-            variant="outline"
-            className="h-12 rounded-full border-border bg-background/60 px-8 text-base font-semibold backdrop-blur transition-all duration-300 hover:border-primary/50 hover:bg-accent hover:text-accent-foreground"
-          >
-            <a href="#contact">{t("hero.contactMe")}</a>
-          </Button>
+          <Magnetic>
+            <Button
+              asChild
+              size="lg"
+              className="h-12 rounded-full bg-gradient-to-r from-violet-600 to-purple-600 px-8 text-base font-semibold shadow-[0_8px_30px_-8px_rgba(139,92,246,0.7)] transition-all duration-300 hover:shadow-[0_10px_40px_-6px_rgba(139,92,246,0.85)] hover:brightness-110"
+            >
+              <a href="#projects">
+                {t("hero.viewProjects")}
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
+              </a>
+            </Button>
+          </Magnetic>
+          <Magnetic>
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="h-12 rounded-full border-border bg-background/60 px-8 text-base font-semibold backdrop-blur transition-all duration-300 hover:border-primary/50 hover:bg-accent hover:text-accent-foreground"
+            >
+              <a href="#contact">{t("hero.contactMe")}</a>
+            </Button>
+          </Magnetic>
         </motion.div>
 
         {/* socials — icon-only links are useless on paper */}

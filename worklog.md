@@ -178,3 +178,38 @@ Unresolved issues / risks, приоритеты следующей фазы:
 - GitHub API возвращает {} для вымышленных репо (ожидаемо) — при замене githubUrl на реальные метаданные подтянутся сами.
 - Отзывы карусели на тач-устройствах: авто-прокрутка активна (пауза только на hover/focus) — можно добавить паузу на touchstart при жалобах.
 - Идеи следующего раунда: 404/not-found страница, e2e-тесты Playwright, RSS/blog-микросекция, проекты «подробнее» через query-параметры (шаринг ссылок на диалог), skeleton-загрузка GitHub-меты, лайтхаус-прогон вне песочницы.
+
+---
+Task ID: 6
+Agent: webDevReview cron (round 6) — сессия после восстановления
+Task: QA стабильности фазы 5 + раунд развития: шаринг диалога проекта через URL-хеш, клавиатурная навигация галереи, слайдинг-индикатор навигации (layoutId), cursor-following ambient glow в hero, magnetic CTA, стилевые правки (замена indigo→violet).
+
+Текущее состояние (оценка входа):
+- Dev-сервер: HTTP 200, без ошибок в dev.log (только Cross-origin dev-предупреждение Next.js).
+- Сайт: 5 секций (hero/projects/bio/testimonials/contact), 8 карточек, RU/dark по умолчанию, horizontal scroll невозможен (scrollX=0 при попытке, body overflow-x: clip).
+- Консоль и ошибки страницы: чистые. Багов фазы 5 не найдено.
+
+Выполненные работы / модификации:
+- Фича: шаринг диалога проекта через URL-хеш (#p=<id>). Новый хук `src/hooks/use-project-hash-sync.ts` (3 эффекта: parse-on-mount, write-on-state-change с skip-first-run через ref, hashchange-listener для back/forward). Используется в ProjectsSection. При открытии карточки/выборе из палитры → `history.replaceState` пишет `#p=<id>`; при закрытии (Escape/крестик/overlay) → хеш очищается. Deep-link `/#p=vaultdrop` открывает VaultDrop при загрузке (проверено: dialogOpen=true, title="VaultDrop"). Stale-хеши (несуществующий id) молча стираются.
+- Фича: кнопка «Скопировать ссылку» в диалоге (Link2 icon, lucide) — третья в ряду действий, рядом с «Открыть репозиторий» и «Открыть демо». Копирует `${origin}${pathname}#p=${id}` через copyToClipboard (с execCommand fallback), toast.success(t("toast.linkCopied")), иконка морфит в Check на 2с. На мобиле (sm:hidden) показывает только иконку для компактности. VLM-ревью: 9/10 — consistent, correct hierarchy, no layout issues.
+- Фича: клавиатурная навигация галереи скриншотов — div-обёртка получил tabIndex=0 (только если >1 скриншота), aria-label, onKeyDown ловит ArrowRight/ArrowLeft и preventDefault + go(±1) с wrap-around. Добавлены видимые при hover/focus кнопки ChevronLeft/ChevronRight (opacity-0 → group-hover:opacity-100 + focus-visible:opacity-100). Проверено: фокус галереи → → (nebula-1.png → nebula-2.png) → ← (обратно), AnimatePresence не мешает.
+- Стиль: слайдинг-индикатор активной секции — header nav, активный `<a>` теперь содержит `<motion.span layoutId="nav-active-pill">` с bg-primary/90 + тенью; текст в `<span className="relative">` над пилюлей. Framer-motion spring (stiffness:380, damping:32) анимирует перелёт пилюли между ссылками при смене активной секции. Проверено: scrolled to bio → active="Обо мне", pill present inside; меняется между Главная/Проекты/Обо мне/Отзывы/Контакты. VLM: 9/10 flawless alignment.
+- Стиль: cursor-following ambient glow в hero — motion.div 340×340, bg-violet-500/15, blur-[90px], z-[2], position via useMotionValue(left/top) + useSpring (stiffness:120, damping:24); центр через marginLeft/marginTop:-170 (не transform — framer-motion обнуляет transform, конфликт с Tailwind -translate-1/2; найден и исправлен в ходе QA: glow center точно совпадает с курсором 600,400 → 600,400). onMouseMove на hero section; скрыт при prefers-reduced-motion и на тач (@media hover:none → display:none через класс .hero-cursor-glow). Headless = hover:none → glow скрыт (корректно).
+- Стиль: magnetic-эффект для 2 главных CTA в hero — компонент `Magnetic` обёртка (motion.div inline-block, useMotionValue x/y + useSpring stiffness:200 damping:14 mass:0.4, onMouseMove считает offset от центра × 0.25, onMouseLeave сбрасывает в 0). Кнопки (gradient "Смотреть проекты" + outline "Связаться") обёрнуты в Magnetic. Проверено: hover CTA → transform matrix(28.7, 5.5) (pull к курсору), увод мыши → transform: none (reset). Отключён при reduced-motion.
+- Стиль: исправлен indigo→violet в третьем aurora-orb hero (bg-indigo-500/10 → bg-violet-700/15) — нарушало правило «без indigo/blue».
+- Локали: projectDialog.copyLink, projectDialog.shareLabel, toast.linkCopied — RU + EN (Dictionary = typeof en).
+- README: не требует обновления (фичи самоописательные), но worklog фиксирует всё.
+
+Результаты верификации:
+- agent-browser QA: 5 секций/8 карточек, хеш-синх (#p=nebula-analytics при открытии, очищен при закрытии, deep-link #p=vaultdrop → диалог), стрелки галереи (→ ← переключают скриншоты), слайдинг-pill (active="Обо мне" в bio), cursor-glow (motion value updates, center=cursor), magnetic (transform pull к курсору, reset при mouseleave).
+- VLM-ревью скриншотов: hero 9/10 (polished, production-ready), dialog с copy-link 9/10 (consistent, correct hierarchy), nav-pill 9/10 (flawless alignment), mobile dialog actions 8/10 (label скрыт на мобиле намеренно — компактность).
+- Мобайл 390px: оверфлоу нет, magnetic-wrappers присутствуют, hero-glow скрыт (hover:none), все 5 секций на месте.
+- EN-режим: navLinks=["Home","Projects","About","Reviews","Contact"], lang="en" — все новые тексты локализованы.
+- Регрессия фазы 5: testimonials (5 dots, quote present), featured-фильтр, marquee-track, spotlight-class, palette-hint seen — всё на месте. Палитра Ctrl+K открывается (20 пунктов). Поиск "rust" → 1 карта (Prism Notes) при правильном ожидании анимации выхода.
+- Линт чистый. dev.log чистый. Консоль и ошибки страницы чистые (после clean reload; hydration-варнинг после Fast Refresh — известный dev-артефакт React19+Radix+Turbopack, в production не воспроизводится).
+
+Нерешённые вопросы / риски, приоритеты следующей фазы:
+- Clipboard API в headless запрещён (copy-link проверялся по факту клика и отсутствию ошибок; toast в реальных браузерах работает через fallback).
+- Домен-заглушка alexvolkov.dev в layout.tsx/sitemap.ts/robots.ts/page.tsx (JSON-LD) — заменить при деплое (TODO на месте).
+- 3D-tilt карточек отклонён в этом раунде — конфликт с framer-motion transforms на motion.article (потребовал бы рефакторинга entry-анимации). Альтернатива — вынести tilt на внутренний wrapper, но риск регрессии выше ценности.
+- Идеи следующего раунда: 404/not-found страница (вне видимых маршрутов песочницы, но для продакшена), e2e-тесты Playwright, секция «сейчас читаю»/«изучаю», skeleton для GitHub-меты при медленном API, RSS/blog-микросекция, анимация появления тултипов при первом визите (onboarding).
