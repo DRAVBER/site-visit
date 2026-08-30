@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "framer-motion";
 import { FolderOpen, LayoutGrid, ListIcon, SearchX, Star } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import { resolveLocalized, type Project } from "@/lib/portfolio";
+import { resolveLocalized, hasGit, type Project } from "@/lib/portfolio";
 import { useUiStore } from "@/lib/ui-store";
 import { SectionHeading } from "./section-heading";
 import { ProjectCard, CategoryTabs } from "./project-card";
@@ -92,16 +92,17 @@ export function ProjectsSection({
     const bySort = (a: Project, b: Project) => {
       switch (sortMode) {
         case "stars":
-          return b.stars - a.stars;
+          return (b.stars ?? 0) - (a.stars ?? 0);
         case "name":
           return a.title.localeCompare(b.title);
         case "updated":
           return (
-            new Date(b.lastCommit).getTime() - new Date(a.lastCommit).getTime()
+            new Date(b.lastCommit ?? 0).getTime() -
+            new Date(a.lastCommit ?? 0).getTime()
           );
         default:
           if (!!b.featured !== !!a.featured) return b.featured ? 1 : -1;
-          return b.stars - a.stars;
+          return (b.stars ?? 0) - (a.stars ?? 0);
       }
     };
     return [...projects].sort(bySort);
@@ -139,8 +140,10 @@ export function ProjectsSection({
     }
   };
 
-  /** merge live GitHub meta over local fallback values */
+  /** merge live GitHub meta over local fallback values
+   *  (closed-source git:false projects never enter this path) */
   const withMeta = (p: Project): Project => {
+    if (!hasGit(p)) return p;
     const meta = liveMeta[p.id];
     if (!meta) return p;
     return {
@@ -164,7 +167,7 @@ export function ProjectsSection({
         const sameCategory = p.category === selected.category ? 1 : 0;
         return { p, score: sameCategory * 10 + sharedTags };
       })
-      .sort((a, b) => b.score - a.score || b.p.stars - a.p.stars);
+      .sort((a, b) => b.score - a.score || (b.p.stars ?? 0) - (a.p.stars ?? 0));
     const matched = scored.filter((s) => s.score > 0);
     return (matched.length > 0 ? matched : scored)
       .slice(0, 3)
@@ -403,6 +406,7 @@ export function ProjectsSection({
                     updated: t("projects.updated"),
                     demo: t("projects.details"),
                     source: t("projects.source"),
+                    open: t("projects.open"),
                     tags: t("projects.tagsLabel"),
                   }}
                 />

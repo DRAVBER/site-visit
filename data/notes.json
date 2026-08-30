@@ -1,81 +1,16 @@
 [
   {
     "id": "nebula-v2-1",
-    "date": "2026-08-24",
+    "date": "2026-08-30",
     "type": "release",
     "text": {
-      "en": "Nebula Analytics v2.1 is out — real-time alerting on saved queries, 40% faster dashboards and a dark chart theme. The biggest release since the initial launch.",
-      "ru": "Вышел Nebula Analytics v2.1 — real-time алерты по сохранённым запросам, дашборды быстрее на 40% и тёмная тема графиков. Самый крупный релиз с момента запуска."
+      "en": "My personal portfolio website is out, where I showcased all my skills as a web full-stack developer.",
+      "ru": "Вышел мой личный сайт-визитка, где я прининил, все свои навыки web full-stack разработчика."
     },
     "tags": [
-      "nebula",
+      "SITE",
       "release"
     ]
-  },
-  {
-    "id": "perf-budgets-thought",
-    "date": "2026-08-12",
-    "type": "thought",
-    "text": {
-      "en": "Thinking about a short piece on performance budgets as a design tool, not a QA step. When the budget is part of the mockup, “we'll optimize later” stops being an option.",
-      "ru": "Думаю написать небольшую статью про бюджеты производительности как инструмент дизайна, а не шаг QA. Когда бюджет — часть макета, «оптимизируем потом» перестаёт существовать."
-    },
-    "tags": [
-      "performance",
-      "writing"
-    ]
-  },
-  {
-    "id": "no-interface-read",
-    "date": "2026-07-28",
-    "type": "link",
-    "text": {
-      "en": "Re-reading “The Best Interface Is No Interface” — still the most relevant design book for CLI tools. Every screen you remove is a decision the user never has to make.",
-      "ru": "Перечитываю «The Best Interface Is No Interface» — всё ещё самая актуальная книга о дизайне для CLI-инструментов. Каждый убранный экран — решение, которое пользователю не приходится принимать."
-    },
-    "url": "https://www.goodreads.com/book/show/22517622-the-best-interface-is-no-interface",
-    "tags": [
-      "reading",
-      "design"
-    ]
-  },
-  {
-    "id": "stars-milestone",
-    "date": "2026-07-05",
-    "type": "milestone",
-    "text": {
-      "en": "2,400 stars across all repositories this year. Thank you for every issue, PR and kind word — open source is a team sport.",
-      "ru": "2 400 звёзд по всем репозиториям в этом году. Спасибо за каждый issue, PR и доброе слово — open source — командный вид спорта."
-    },
-    "tags": [
-      "open-source",
-      "community"
-    ]
-  },
-  {
-    "id": "rust-rewrite-thought",
-    "date": "2026-06-15",
-    "type": "thought",
-    "text": {
-      "en": "Rewriting side projects in Rust taught me more about error handling than any book. The borrow checker doesn't read documentation — it reads your actual assumptions.",
-      "ru": "Переписывание пет-проектов на Rust научило меня обработке ошибок больше, чем любая книга. Borrow checker не читает документацию — он читает ваши настоящие предположения."
-    },
-    "tags": [
-      "rust",
-      "learning"
-    ]
-  },
-  {
-    "id": "prism-notes-release",
-    "date": "2026-05-20",
-    "type": "release",
-    "text": {
-      "en": "Prism Notes 1.0 — a local-first notes app with instant full-text search. Zero telemetry, one binary, works offline. My answer to note apps that need an account to open a text file.",
-      "ru": "Prism Notes 1.0 — local-first заметки с мгновенным полнотекстовым поиском. Ноль телеметрии, один бинарник, работает офлайн. Мой ответ заметкам, которым нужен аккаунт, чтобы открыть текстовый файл."
-    },
-    "tags": [
-      "prism-notes",
-      "release"
-    ]
+
   }
 ]

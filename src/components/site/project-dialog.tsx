@@ -27,6 +27,7 @@ import { useI18n } from "@/lib/i18n";
 import {
   resolveLocalized,
   formatStars,
+  hasGit,
   type Project,
   type Category,
 } from "@/lib/portfolio";
@@ -226,6 +227,10 @@ export function ProjectDialog({
 
   if (!project) return null;
 
+  /** closed-source (git:false) → no GitHub meta row / repo button;
+   *  the primary "Open" action points at demoUrl instead */
+  const git = hasGit(project);
+
   const copyRun = async () => {
     if (!project.run) return;
     const ok = await copyToClipboard(project.run);
@@ -247,10 +252,12 @@ export function ProjectDialog({
     }
   };
 
-  const lastCommit = new Date(project.lastCommit).toLocaleDateString(
-    locale === "ru" ? "ru-RU" : "en-US",
-    { year: "numeric", month: "short", day: "numeric" }
-  );
+  const lastCommit = project.lastCommit
+    ? new Date(project.lastCommit).toLocaleDateString(
+        locale === "ru" ? "ru-RU" : "en-US",
+        { year: "numeric", month: "short", day: "numeric" }
+      )
+    : "";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -315,26 +322,28 @@ export function ProjectDialog({
               {project.title}
             </h3>
 
-            {/* meta */}
-            <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
-              <span className="inline-flex items-center gap-1.5">
-                <Star className="h-4 w-4 text-amber-400" aria-hidden="true" />
-                <b className="font-semibold text-foreground">{formatStars(project.stars)}</b>{" "}
-                {t("projects.stars")}
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <Calendar className="h-4 w-4" aria-hidden="true" />
-                {t("projectDialog.lastCommit")}: {lastCommit}
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <span
-                  className="h-2.5 w-2.5 rounded-full"
-                  style={{ background: "#8b5cf6" }}
-                  aria-hidden="true"
-                />
-                {project.language}
-              </span>
-            </div>
+            {/* meta — GitHub-only block, hidden for closed-source projects */}
+            {git ? (
+              <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
+                <span className="inline-flex items-center gap-1.5">
+                  <Star className="h-4 w-4 text-amber-400" aria-hidden="true" />
+                  <b className="font-semibold text-foreground">{formatStars(project.stars ?? 0)}</b>{" "}
+                  {t("projects.stars")}
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <Calendar className="h-4 w-4" aria-hidden="true" />
+                  {t("projectDialog.lastCommit")}: {lastCommit}
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <span
+                    className="h-2.5 w-2.5 rounded-full"
+                    style={{ background: "#8b5cf6" }}
+                    aria-hidden="true"
+                  />
+                  {project.language}
+                </span>
+              </div>
+            ) : null}
           </div>
 
           {/* prev / next project navigation — follows the active filter +
@@ -453,20 +462,35 @@ export function ProjectDialog({
             </section>
           ) : null}
 
-          {/* actions */}
+          {/* actions — primary: repo (open-source) or site (closed-source) */}
           <div className="flex flex-col gap-3 border-t border-border/60 pt-5 sm:flex-row">
-            <motion.a
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              href={project.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-violet-600 to-purple-600 px-6 text-sm font-semibold text-white shadow-[0_8px_28px_-8px_rgba(139,92,246,0.7)] transition-shadow hover:shadow-[0_10px_34px_-6px_rgba(139,92,246,0.9)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            >
-              <GithubIcon className="h-4 w-4" aria-hidden="true" />
-              {t("projectDialog.openRepo")}
-            </motion.a>
-            {project.demoUrl ? (
+            {git && project.githubUrl ? (
+              <motion.a
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                href={project.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-violet-600 to-purple-600 px-6 text-sm font-semibold text-white shadow-[0_8px_28px_-8px_rgba(139,92,246,0.7)] transition-shadow hover:shadow-[0_10px_34px_-6px_rgba(139,92,246,0.9)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <GithubIcon className="h-4 w-4" aria-hidden="true" />
+                {t("projectDialog.openRepo")}
+              </motion.a>
+            ) : null}
+            {!git && project.demoUrl ? (
+              <motion.a
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                href={project.demoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-violet-600 to-purple-600 px-6 text-sm font-semibold text-white shadow-[0_8px_28px_-8px_rgba(139,92,246,0.7)] transition-shadow hover:shadow-[0_10px_34px_-6px_rgba(139,92,246,0.9)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                {t("projectDialog.openSite")}
+              </motion.a>
+            ) : null}
+            {git && project.demoUrl ? (
               <motion.a
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -548,11 +572,16 @@ export function ProjectDialog({
                             {rel.title}
                           </span>
                           <span className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground">
-                            <Star
-                              className="h-3 w-3 text-amber-400"
-                              aria-hidden="true"
-                            />
-                            {formatStars(rel.stars)} · {categoryLabel}
+                            {hasGit(rel) ? (
+                              <>
+                                <Star
+                                  className="h-3 w-3 text-amber-400"
+                                  aria-hidden="true"
+                                />
+                                {formatStars(rel.stars ?? 0)} ·{" "}
+                              </>
+                            ) : null}
+                            {categoryLabel}
                           </span>
                         </span>
                       </button>

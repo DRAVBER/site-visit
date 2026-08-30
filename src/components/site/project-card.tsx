@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, LayoutGrid } from "lucide-react";
+import { ArrowRight, ExternalLink, LayoutGrid } from "lucide-react";
 import {
   resolveLocalized,
   formatStars,
+  hasGit,
   type Project,
   type Category,
   type Locale,
@@ -37,6 +38,8 @@ export function ProjectCard({
     updated: string;
     demo: string;
     source: string;
+    /** "Open" — primary link for closed-source (git:false) projects */
+    open: string;
     tags?: string;
   };
   index: number;
@@ -53,6 +56,7 @@ export function ProjectCard({
 }) {
   const [imageError, setImageError] = useState(false);
   const cover = project.screenshots[0];
+  const git = hasGit(project);
   const spotlight = spotlightProps<HTMLElement>();
 
   return (
@@ -127,15 +131,17 @@ export function ProjectCard({
           >
             {project.title}
           </button>
-          <span
-            className={`mt-1 inline-flex shrink-0 items-center gap-1 text-[11px] font-medium tabular-nums text-muted-foreground/90 ${metaPending ? "meta-pending" : ""}`}
-            title={labels.stars}
-          >
-            <svg viewBox="0 0 24 24" fill="currentColor" className="h-3 w-3 text-amber-400" aria-hidden="true">
-              <path d="M12 2l2.9 6.26 6.6.56-5 4.36 1.5 6.45L12 16.9 5.99 19.63l1.5-6.45-5-4.36 6.6-.56L12 2z" />
-            </svg>
-            {formatStars(project.stars)}
-          </span>
+          {git ? (
+            <span
+              className={`mt-1 inline-flex shrink-0 items-center gap-1 text-[11px] font-medium tabular-nums text-muted-foreground/90 ${metaPending ? "meta-pending" : ""}`}
+              title={labels.stars}
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" className="h-3 w-3 text-amber-400" aria-hidden="true">
+                <path d="M12 2l2.9 6.26 6.6.56-5 4.36 1.5 6.45L12 16.9 5.99 19.63l1.5-6.45-5-4.36 6.6-.56L12 2z" />
+              </svg>
+              {formatStars(project.stars ?? 0)}
+            </span>
+          ) : null}
         </div>
 
         <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground">
@@ -171,36 +177,55 @@ export function ProjectCard({
           ) : null}
         </ul>
 
-        {/* footer: language + last commit + repo link */}
-        <div className="mt-auto flex items-center justify-between gap-2 pt-4 text-xs text-muted-foreground">
-          <span
-            className={`inline-flex min-w-0 items-center gap-1.5 ${metaPending ? "meta-pending" : ""}`}
+        {/* footer: language + last commit + repo link (git projects) /
+            just the "Open" link for closed-source (git:false) projects */}
+        {git || project.demoUrl ? (
+          <div
+            className={`mt-auto flex items-center gap-2 pt-4 text-xs text-muted-foreground ${git ? "justify-between" : "justify-end"}`}
           >
-            <span
-              className="h-2 w-2 shrink-0 rounded-full"
-              style={{ background: languageColor(project.language) }}
-              aria-hidden="true"
-            />
-            <span className="shrink-0">{project.language}</span>
-            <span aria-hidden="true" className="text-muted-foreground/40">·</span>
-            <RelativeTime
-              isoDate={project.lastCommit}
-              prefix={updatedPrefix}
-              className="inline-flex min-w-0 items-center gap-1 truncate"
-            />
-          </span>
-          <a
-            href={project.githubUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 rounded-md px-2 py-1 font-medium text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring print:hidden"
-          >
-            <svg viewBox="0 0 16 16" fill="currentColor" className="h-3.5 w-3.5" aria-hidden="true">
-              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z" />
-            </svg>
-            {labels.source}
-          </a>
-        </div>
+            {git ? (
+              <span
+                className={`inline-flex min-w-0 items-center gap-1.5 ${metaPending ? "meta-pending" : ""}`}
+              >
+                <span
+                  className="h-2 w-2 shrink-0 rounded-full"
+                  style={{ background: languageColor(project.language ?? "") }}
+                  aria-hidden="true"
+                />
+                <span className="shrink-0">{project.language}</span>
+                <span aria-hidden="true" className="text-muted-foreground/40">·</span>
+                <RelativeTime
+                  isoDate={project.lastCommit ?? ""}
+                  prefix={updatedPrefix}
+                  className="inline-flex min-w-0 items-center gap-1 truncate"
+                />
+              </span>
+            ) : null}
+            {git ? (
+              <a
+                href={project.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 rounded-md px-2 py-1 font-medium text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring print:hidden"
+              >
+                <svg viewBox="0 0 16 16" fill="currentColor" className="h-3.5 w-3.5" aria-hidden="true">
+                  <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z" />
+                </svg>
+                {labels.source}
+              </a>
+            ) : project.demoUrl ? (
+              <a
+                href={project.demoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 rounded-md px-2 py-1 font-medium text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring print:hidden"
+              >
+                <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+                {labels.open}
+              </a>
+            ) : null}
+          </div>
+        ) : null}
       </div>
     </motion.article>
   );

@@ -27,12 +27,15 @@ export async function GET() {
     .map((p) => {
       const link = `${siteUrl}/#p=${p.id}`;
       const description = resolveLocalized(p.description, "en");
+      // closed-source projects have no lastCommit — pubDate is simply omitted
+      const pubDate = p.lastCommit
+        ? `\n      <pubDate>${new Date(p.lastCommit).toUTCString()}</pubDate>`
+        : "";
       return `    <item>
       <title>${esc(p.title)}</title>
       <link>${esc(link)}</link>
       <guid isPermaLink="true">${esc(link)}</guid>
-      <description>${esc(description)}</description>
-      <pubDate>${new Date(p.lastCommit).toUTCString()}</pubDate>
+      <description>${esc(description)}</description>${pubDate}
       <category>${esc(p.category)}</category>
 ${p.tags.map((tag) => `      <category>${esc(tag)}</category>`).join("\n")}
     </item>`;

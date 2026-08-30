@@ -41,18 +41,31 @@ export interface Project {
   description: Localized;
   /** must match a category id in data/categories.json */
   category: string;
-  githubUrl: string;
+  /** false → closed-source / client work: all GitHub UI is hidden
+   *  (repo link, stars, language, last commit, live meta enrichment)
+   *  and the primary action becomes an "Open" button → demoUrl.
+   *  Absent / true → normal open-source behavior. */
+  git?: boolean;
+  /** repo url — omit it for closed-source projects (git:false) */
+  githubUrl?: string;
   demoUrl?: string;
   tags: string[];
   /** local (public/) or remote image urls */
   screenshots: string[];
   featured?: boolean;
-  /** fallback metadata — refreshed from the GitHub API when reachable */
-  stars: number;
-  language: string;
-  lastCommit: string; // ISO date
+  /** fallback metadata — refreshed from the GitHub API when reachable.
+   *  Omit these for closed-source projects (git:false). */
+  stars?: number;
+  language?: string;
+  lastCommit?: string; // ISO date
   /** shell commands shown in the "How to run" block */
   run?: string;
+}
+
+/** Projects without an explicit git:false keep the full GitHub experience
+ *  (repo link, stars, language, last commit, live meta). */
+export function hasGit(project: Project): boolean {
+  return project.git !== false;
 }
 
 export interface SkillGroup {

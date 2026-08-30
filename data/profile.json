@@ -1,48 +1,48 @@
 {
-  "name": "Alex Volkov",
-  "handle": "alexvolkov",
-  "initials": "AV",
+  "name": " DRAVBER",
+  "handle": "DRAVBER",
+  "initials": "DV",
   "avatarUrl": "/images/profile/avatar.png",
   "socialLinks": {
-    "github": "https://github.com/alexvolkov",
-    "discord": "https://discord.com/users/284701628193622112",
-    "telegram": "https://t.me/alexvolkov",
-    "email": "hello@alexvolkov.dev"
+    "github": "https://github.com/DRAVBER",
+    "discord": "https://discord.com/users/447022364404744192",
+    "telegram": "https://t.me/@xDRAVBER",
+    "email": "4091045@gmail.com"
   },
   "stats": {
     "years": 6,
-    "projects": 40,
-    "openSource": 25,
-    "stars": 2400
+    "projects": 13,
+    "openSource": 10,
+    "stars": 0
   },
   "timezone": "Europe/Moscow",
   "now": [
     {
       "emoji": "🚀",
       "label": {
-        "en": "Shipping Nebula Analytics v2 — real-time dashboards & alerting",
-        "ru": "Выпускаю Nebula Analytics v2 — дашборды и алерты в реальном времени"
+        "en": "Shipping eGamePad v2 — better support and response",
+        "ru": "Выпускаю eGamePad v2 — лучше поддержка и отклик"
       }
     },
     {
       "emoji": "📝",
       "label": {
-        "en": "Writing a blog series: “Frontend performance without magic”",
-        "ru": "Пишу цикл статей: «Фронтенд-производительность без магии»"
+        "en": "I write mostly small scripts for UserBot”",
+        "ru": "Пишу больше мелких скриптов для UserBot"
       }
     },
     {
       "emoji": "🦀",
       "label": {
-        "en": "Rewriting my CLI toolbox in Rust — repo-sweep is next",
-        "ru": "Переписываю свой CLI-набор на Rust — следующий repo-sweep"
+        "en": "I'm rewriting my local CLI toolkit with an agent",
+        "ru": "Переписываю свой локальный CLI-набор с агентом"
       }
     },
     {
       "emoji": "🎯",
       "label": {
-        "en": "Open for 1 freelance slot starting next month",
-        "ru": "Открыт 1 фриланс-слот со следующего месяца"
+        "en": "I want to find myself a team of enthusiasts",
+        "ru": "Хочу найти себе команду энтузиастов"
       }
     }
   ],
@@ -51,22 +51,22 @@
   },
   "learning": [
     {
-      "topic": "WASM & wasm-bindgen",
+      "topic": "XAML",
       "level": 68
     },
     {
-      "topic": "Rust async internals (tokio)",
+      "topic": "CLI",
       "level": 42
     },
     {
-      "topic": "Local-first sync & CRDTs",
+      "topic": "AI",
       "level": 24
     }
   ],
   "skills": [
     {
       "label": { "en": "Frontend", "ru": "Фронтенд" },
-      "items": ["React", "Next.js", "TypeScript", "Tailwind CSS", "Framer Motion"]
+      "items": ["React", "Next.js", "TypeScript", "Tailwind CSS", "Framer Motion", "XAML"]
     },
     {
       "label": { "en": "Backend", "ru": "Бэкенд" },
@@ -74,11 +74,11 @@
     },
     {
       "label": { "en": "Languages", "ru": "Языки" },
-      "items": ["TypeScript", "JavaScript", "Python", "Rust", "Go"]
+      "items": ["TypeScript", "JavaScript", "Python", "Rust", "Go", "С++", "C#"]
     },
     {
       "label": { "en": "Tools", "ru": "Инструменты" },
-      "items": ["Git", "Docker", "Linux", "Figma", "CI/CD"]
+      "items": ["Git", "Docker", "Linux", "Figma", "CI/CD", "AI agent"]
     }
   ],
   "experience": [
@@ -87,26 +87,26 @@
       "role": { "en": "Independent Developer", "ru": "Независимый разработчик" },
       "company": { "en": "Freelance & Open Source", "ru": "Фриланс и Open Source" },
       "description": {
-        "en": "Building web platforms, developer tools and automation scripts for clients around the world. 25+ open-source projects.",
-        "ru": "Создаю веб-платформы, инструменты для разработчиков и скрипты автоматизации для клиентов по всему миру. 25+ open-source проектов."
+        "en": "Building web platforms, developer tools and automation scripts for clients around the world. 10+ open-source projects.",
+        "ru": "Создаю веб-платформы, инструменты для разработчиков и скрипты автоматизации для клиентов по всему миру. 10+ open-source проектов."
       }
     },
     {
       "period": "2019 — 2021",
       "role": { "en": "Full-stack Developer", "ru": "Full-stack разработчик" },
-      "company": { "en": "Product Studio «Codex»", "ru": "Продуктовая студия «Codex»" },
+      "company": { "en": "Freelance & Open Source", "ru": "Фриланс и Open Source" },
       "description": {
-        "en": "Shipped 12 client products: from landing pages to high-load dashboards with real-time data.",
-        "ru": "Выпустил 12 клиентских продуктов: от лендингов до высоконагруженных дашбордов с данными в реальном времени."
+        "en": "studied and improved my skill and knowledge..",
+        "ru": "изучал и развивал свой навык и занания."
       }
     },
     {
       "period": "2018 — 2019",
-      "role": { "en": "Frontend Developer", "ru": "Frontend-разработчик" },
-      "company": { "en": "Startup «Zenith»", "ru": "Стартап «Zenith»" },
+      "role": { "en": "Full-stack Developer", "ru": "Full-stack разработчик" },
+      "company": { "en": "Startup «Lenotion»", "ru": "Стартап «Lenotion»" },
       "description": {
-        "en": "First commercial experience: built the MVP of a fintech app and fell in love with UI engineering.",
-        "ru": "Первый коммерческий опыт: собрал MVP финтех-приложения и влюбился в UI-инженерию."
+        "en": "First commercial experience: built the business card website and fell in love with UI engineering.",
+        "ru": "Первый коммерческий опыт: собрал визитный сайт и влюбился в UI-инженерию."
       }
     }
   ]

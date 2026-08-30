@@ -1,148 +1,218 @@
 [
   {
-    "id": "nebula-analytics",
-    "title": "Nebula Analytics",
+    "id": "Lenotion",
+    "title": "Lenotion",
     "description": {
-      "en": "Privacy-first real-time web analytics platform. Cookieless tracking, live visitor stream, custom dashboards and 1s refresh — all self-hosted in a single Docker container.",
-      "ru": "Платформа веб-аналитики в реальном времени с уважением к приватности. Трекинг без cookies, живой поток посетителей, кастомные дашборды и обновление раз в секунду — всё self-hosted в одном Docker-контейнере."
+      "en": "A business card website for the gaming project Frogrealms: Elemental Climb.",
+      "ru": "Сайт-визитка для игрового проекта Frogrealms: Elemental Climb."
     },
     "category": "web",
-    "githubUrl": "https://github.com/alexvolkov/nebula-analytics",
-    "demoUrl": "https://nebula.alexvolkov.dev",
-    "tags": ["Next.js", "TypeScript", "ClickHouse", "Tailwind CSS", "WebSockets"],
+    "githubUrl": "https://github.com/DRAVBER/Lenotion",
+    "demoUrl": "https://github.com/DRAVBER/Lenotion",
+    "tags": ["JS", "Tailwind CSS"],
     "screenshots": [
-      "/images/projects/nebula-analytics-1.png",
-      "/images/projects/nebula-analytics-2.png"
+      "/images/projects/LW.png",
+      "/images/projects/LW2.png"
     ],
     "featured": true,
-    "stars": 1284,
-    "language": "TypeScript",
+    "stars": 0,
+    "language": "HTML",
     "lastCommit": "2026-08-21",
-    "run": "git clone https://github.com/alexvolkov/nebula-analytics\ncd nebula-analytics\ncp .env.example .env\ndocker compose up -d\n# open http://localhost:3000"
+    "run": "git clone https://github.com/DRAVBER/Lenotion-Website"
   },
   {
-    "id": "lumen-kit",
-    "title": "Lumen Landing Kit",
+    "id": "Laarena1",
+    "title": "Playa de la arena",
     "description": {
-      "en": "Open-source landing page kit with 16 production-ready sections: hero, pricing, testimonials, FAQ. Themeable via CSS variables, 100/100 Lighthouse out of the box.",
-      "ru": "Open-source набор для лендингов с 16 production-секциями: герой, тарифы, отзывы, FAQ. Темизация через CSS-переменные и 100/100 в Lighthouse из коробки."
+      "en": "A full-fledged website for selling real estate, made on Tilda.",
+      "ru": "Полноценный сайт для продажи недвижимости, сделный на Tilda."
     },
     "category": "web",
-    "githubUrl": "https://github.com/alexvolkov/lumen-kit",
-    "demoUrl": "https://lumen.alexvolkov.dev",
-    "tags": ["Astro", "Tailwind CSS", "MDX", "Framer Motion"],
+    "git": false,
+    "demoUrl": "https://playalaarena.es",
+    "tags": ["Tilda", "Tailwind CSS", "HTML", "JS"],
     "screenshots": [
-      "/images/projects/lumen-kit-1.png",
-      "/images/projects/lumen-kit-2.png"
+      "/images/projects/laarena.png",
+      "/images/projects/laarena2.png"
     ],
+    "featured": true
+  },
+  {
+    "id": "homefeelings",
+    "title": "homefeelings",
+    "description": {
+      "en": "A full-fledged website for selling real estate, made on Tilda.",
+      "ru": "Полноценный сайт для продажи недвижимости, сделный на Tilda."
+    },
+    "category": "web",
+    "git": false,
+    "demoUrl": "https://homefeelings.eu",
+    "tags": ["Tilda", "Tailwind CSS", "HTML", "JS"],
+    "screenshots": [
+      "/images/projects/homef2.png",
+      "/images/projects/homef1.png"
+    ],
+    "featured": true
+  },
+  {
+    "id": "Gamep",
+    "title": "eGamePad",
+    "description": {
+      "en": "A desktop app for full gamepad emulation using mouse and keyboard, released via ViGEm and interception.",
+      "ru": "Десктоп-приложение для полноценной эмуляции геймпада на мыши и клавиатуре, выпущенное через ViGEm и interception."
+    },
+    "category": "software",
+    "githubUrl": "https://github.com/DRAVBER/eGamePad",
+    "tags": ["XAML", "C#", "Dll", "EXE"],
+    "screenshots": ["/images/projects/eG.png"],
     "featured": true,
-    "stars": 862,
-    "language": "Astro",
-    "lastCommit": "2026-07-30",
-    "run": "git clone https://github.com/alexvolkov/lumen-kit\ncd lumen-kit\nbun install\nbun run dev\n# open http://localhost:4321"
-  },
-  {
-    "id": "prism-notes",
-    "title": "Prism Notes",
-    "description": {
-      "en": "Minimalist cross-platform markdown notes app with instant full-text search, backlinks and local-first sync. Built with Tauri — 8 MB binary, starts in 40ms.",
-      "ru": "Минималистичное кроссплатформенное приложение для markdown-заметок с мгновенным полнотекстовым поиском, бэклинками и локальным-first синком. Собрано на Tauri — бинарник 8 МБ, старт за 40мс."
-    },
-    "category": "software",
-    "githubUrl": "https://github.com/alexvolkov/prism-notes",
-    "tags": ["Tauri", "Rust", "React", "SQLite", "Markdown"],
-    "screenshots": ["/images/projects/prism-notes-1.png"],
-    "featured": false,
-    "stars": 541,
-    "language": "Rust",
-    "lastCommit": "2026-06-14",
-    "run": "git clone https://github.com/alexvolkov/prism-notes\ncd prism-notes\nbun install\nbun run tauri dev"
-  },
-  {
-    "id": "vaultdrop",
-    "title": "VaultDrop",
-    "description": {
-      "en": "Encrypted file transfer desktop app. End-to-end AES-256, files never touch a server — direct P2P transfer with a 6-digit pairing code.",
-      "ru": "Десктоп-приложение для шифрованной передачи файлов. Сквозное AES-256 шифрование, файлы не попадают на сервер — прямой P2P-обмен по 6-значному коду."
-    },
-    "category": "software",
-    "githubUrl": "https://github.com/alexvolkov/vaultdrop",
-    "tags": ["Electron", "WebRTC", "TypeScript", "Crypto"],
-    "screenshots": ["/images/projects/vaultdrop-1.png"],
-    "featured": false,
-    "stars": 318,
-    "language": "TypeScript",
+    "stars": 0,
+    "language": "C#",
     "lastCommit": "2026-05-08",
-    "run": "git clone https://github.com/alexvolkov/vaultdrop\ncd vaultdrop\nbun install\nbun run dev"
+    "run": "git clone https://github.com/DRAVBER/eGamePad"
   },
   {
-    "id": "ship-it",
-    "title": "ship-it",
+    "id": "Wter",
+    "title": "Wterminal",
     "description": {
-      "en": "One-command deployment CLI: builds, tags, pushes and announces releases to Telegram/Discord. Zero-config for Next.js, Bun and Vite projects.",
-      "ru": "CLI для деплоя одной командой: сборка, тег, пуш и анонс релиза в Telegram/Discord. Zero-config для Next.js, Bun и Vite проектов."
+      "en": "Integration with the Windows terminal via a userbot in Telegram.",
+      "ru": "Интеграция с терминалом Windows через userbot в telegram."
     },
     "category": "scripts",
-    "githubUrl": "https://github.com/alexvolkov/ship-it",
-    "demoUrl": "https://npmjs.com/package/ship-it",
-    "tags": ["Node.js", "CLI", "CI/CD", "Automation"],
-    "screenshots": ["/images/projects/ship-it-1.png"],
+    "githubUrl": "https://github.com/DRAVBER/Wterminal",
+    "demoUrl": "https://github.com/DRAVBER/Wterminal",
+    "tags": ["Python"],
+    "screenshots": ["/images/projects/1.svg"],
     "featured": false,
-    "stars": 429,
-    "language": "TypeScript",
-    "lastCommit": "2026-08-12",
-    "run": "npm i -g @alexvolkov/ship-it\ncd your-project\nship-it --prod"
-  },
-  {
-    "id": "repo-sweep",
-    "title": "repo-sweep",
-    "description": {
-      "en": "Python toolkit that keeps GitHub repos tidy: finds stale branches, dead links in READMEs, and generates a monthly activity report as a markdown file.",
-      "ru": "Python-тулкит для чистоты GitHub-репозиториев: ищет устаревшие ветки, битые ссылки в README и генерирует ежемесячный отчёт об активности в markdown."
-    },
-    "category": "scripts",
-    "githubUrl": "https://github.com/alexvolkov/repo-sweep",
-    "tags": ["Python", "GitHub API", "Automation", "CLI"],
-    "screenshots": ["/images/projects/repo-sweep-1.png"],
-    "featured": false,
-    "stars": 156,
+    "stars": 0,
     "language": "Python",
-    "lastCommit": "2026-04-19",
-    "run": "git clone https://github.com/alexvolkov/repo-sweep\ncd repo-sweep\npip install -e .\nrepo-sweep --org your-org"
+    "lastCommit": "2026-08-12",
+    "run": "git clone https://github.com/DRAVBER/Wterminal"
   },
   {
-    "id": "dotfiles-plus",
-    "title": "Dotfiles+",
+    "id": "MRI",
+    "title": "ChatMRI",
     "description": {
-      "en": "Battle-tested dotfiles for zsh, tmux, neovim and git. One install script turns a fresh Linux/macOS into a fully-loaded dev environment in 5 minutes.",
-      "ru": "Обкатанные в боях dotfiles для zsh, tmux, neovim и git. Один установочный скрипт превращает свежий Linux/macOS в полностью готовое окружение разработчика за 5 минут."
+      "en": "A module for a Telegram userbot called 'ChatMRI — Chat MRI.' Just use the .mri N command — and the bot scans the chat history and makes a poster infographic on its own.",
+      "ru": "Модуль для userbot в telegram «ChatMRI — МРТ чата». Одна команда .мрт N — и бот сам сканирует историю чата и рисует постер-инфографику."
     },
-    "category": "others",
-    "githubUrl": "https://github.com/alexvolkov/dotfiles-plus",
-    "tags": ["zsh", "neovim", "tmux", "Linux", "macOS"],
-    "screenshots": ["/images/projects/dotfiles-plus-1.png"],
+    "category": "scripts",
+    "githubUrl": "https://github.com/DRAVBER/ChatMRI",
+    "demoUrl": "https://github.com/DRAVBER/ChatMRI",
+    "tags": ["Python"],
+    "screenshots": ["/images/projects/MRT.jpg"],
     "featured": false,
-    "stars": 203,
-    "language": "Shell",
-    "lastCommit": "2026-07-05",
-    "run": "git clone https://github.com/alexvolkov/dotfiles-plus ~/.dotfiles\ncd ~/.dotfiles\n./install.sh"
+    "stars": 0,
+    "language": "Python",
+    "lastCommit": "2026-08-12",
+    "run": "git clone https://github.com/DRAVBER/ChatMRI"
   },
   {
-    "id": "pixel-forge",
-    "title": "Pixel Forge",
+    "id": "Rep",
+    "title": "AutoReply",
     "description": {
-      "en": "Free pack of 240 pixel-perfect icons and 30 gradient wallpapers for developer tools and dark UI. MIT licensed, Figma + SVG sources included.",
-      "ru": "Бесплатный набор из 240 pixel-perfect иконок и 30 градиентных обоев для dev-инструментов и тёмных интерфейсов. MIT-лицензия, исходники Figma + SVG."
+      "en": "A module for a Telegram userbot that automatically replies to messages from a preset list of phrases or picks them automatically.",
+      "ru": "Модуль для userbot в telegram, который автоматически отвечает на сообщения из заготовленного списка фраз или подбирает автоматически."
     },
-    "category": "others",
-    "githubUrl": "https://github.com/alexvolkov/pixel-forge",
-    "demoUrl": "https://pixelforge.alexvolkov.dev",
-    "tags": ["Design", "SVG", "Figma", "Open Source"],
-    "screenshots": ["/images/projects/pixel-forge-1.png"],
+    "category": "scripts",
+    "githubUrl": "https://github.com/DRAVBER/AutoReply",
+    "demoUrl": "https://github.com/DRAVBER/AutoReply",
+    "tags": ["Python"],
+    "screenshots": ["/images/projects/1.svg"],
     "featured": false,
-    "stars": 97,
-    "language": "SVG",
-    "lastCommit": "2026-02-15",
-    "run": "git clone https://github.com/alexvolkov/pixel-forge\n# icons in /svg, wallpapers in /wallpapers"
+    "stars": 0,
+    "language": "Python",
+    "lastCommit": "2026-08-12",
+    "run": "git clone https://github.com/DRAVBER/AutoReply"
+  },
+  {
+    "id": "QE",
+    "title": "AutoDel",
+    "description": {
+      "en": "A module for a Telegram userbot that deletes your messages or userbot messages with the command .del N or .delb N.",
+      "ru": "Модуль для userbot в telegram, который удаляет ваши сообщения или сообщения userbot по команде .del N или .delb N."
+    },
+    "category": "scripts",
+    "githubUrl": "https://github.com/DRAVBER/AutoDel",
+    "demoUrl": "https://github.com/DRAVBER/AutoDel",
+    "tags": ["Python"],
+    "screenshots": ["/images/projects/1.svg"],
+    "featured": false,
+    "stars": 0,
+    "language": "Python",
+    "lastCommit": "2026-08-12",
+    "run": "git clone https://github.com/DRAVBER/AutoDel"
+  },
+  {
+    "id": "MQ",
+    "title": "Marquee",
+    "description": {
+      "en": "A module for a Telegram userbot that runs a scrolling text with your message in any chat and shows your local time in BIO.",
+      "ru": "Модуль для userbot в telegram, который запускает бегущею строку с вашим текстом в любом чате и показывает ваше региональное время в BIO ."
+    },
+    "category": "scripts",
+    "githubUrl": "https://github.com/DRAVBER/Marquee",
+    "demoUrl": "https://github.com/DRAVBER/Marquee",
+    "tags": ["Python"],
+    "screenshots": ["/images/projects/1.svg"],
+    "featured": false,
+    "stars": 0,
+    "language": "Python",
+    "lastCommit": "2026-08-12",
+    "run": "git clone https://github.com/DRAVBER/Marquee"
+  },
+  {
+    "id": "Rest",
+    "title": "WRestart",
+    "description": {
+      "en": "A module for a Telegram userbot that restarts the bot on command.",
+      "ru": "Модуль для userbot в telegram, который перезапускает бота по команде."
+    },
+    "category": "scripts",
+    "githubUrl": "https://github.com/DRAVBER/WRestart",
+    "demoUrl": "https://github.com/DRAVBER/WRestart",
+    "tags": ["Python"],
+    "screenshots": ["/images/projects/1.svg"],
+    "featured": false,
+    "stars": 0,
+    "language": "Python",
+    "lastCommit": "2026-08-12",
+    "run": "git clone https://github.com/DRAVBER/WRestart"
+  },
+  {
+    "id": "SmartSpeech",
+    "title": "Smart Speech",
+    "description": {
+      "en": "A module for a Telegram userbot that converts any audio files into text.",
+      "ru": "Модуль для userbot в telegram, который переводит любые аудио файлы в текст."
+    },
+    "category": "scripts",
+    "githubUrl": "https://github.com/DRAVBER/Smart-Speech",
+    "demoUrl": "https://github.com/DRAVBER/Smart-Speech",
+    "tags": ["Python"],
+    "screenshots": ["/images/projects/1.svg"],
+    "featured": false,
+    "stars": 0,
+    "language": "Python",
+    "lastCommit": "2026-08-12",
+    "run": "git clone https://github.com/DRAVBER/Smart-Speech"
+  },
+  {
+    "id": "ConsoleLog",
+    "title": "Console Log",
+    "description": {
+      "en": "A module for a Telegram userbot that outputs the bot's console logs.",
+      "ru": "Модуль для userbot в telegram, который выводит консольные логи бота."
+    },
+    "category": "scripts",
+    "githubUrl": "https://github.com/DRAVBER/Console-Log",
+    "demoUrl": "https://github.com/DRAVBER/Console-Log",
+    "tags": ["Python"],
+    "screenshots": ["/images/projects/1.svg"],
+    "featured": false,
+    "stars": 0,
+    "language": "Python",
+    "lastCommit": "2026-08-12",
+    "run": "git clone https://github.com/DRAVBER/Console-Log"
   }
 ]

@@ -6,6 +6,7 @@ import { ArrowRight, Star } from "lucide-react";
 import {
   resolveLocalized,
   formatStars,
+  hasGit,
   type Project,
   type Category,
   type Locale,
@@ -53,6 +54,7 @@ export function ProjectRow({
 }) {
   const [imageError, setImageError] = useState(false);
   const cover = project.screenshots[0];
+  const git = hasGit(project);
   const spotlight = spotlightProps<HTMLElement>();
 
   return (
@@ -118,13 +120,15 @@ export function ProjectRow({
             <span className="truncate font-semibold tracking-tight transition-colors group-hover:text-primary">
               {project.title}
             </span>
-            <span
-              className={`hidden shrink-0 items-center gap-1 text-[11px] font-medium tabular-nums text-muted-foreground/90 sm:inline-flex ${metaPending ? "meta-pending" : ""}`}
-              title={labels.source}
-            >
-              <Star className="h-3 w-3 text-amber-400" aria-hidden="true" />
-              {formatStars(project.stars)}
-            </span>
+            {git ? (
+              <span
+                className={`hidden shrink-0 items-center gap-1 text-[11px] font-medium tabular-nums text-muted-foreground/90 sm:inline-flex ${metaPending ? "meta-pending" : ""}`}
+                title={labels.source}
+              >
+                <Star className="h-3 w-3 text-amber-400" aria-hidden="true" />
+                {formatStars(project.stars ?? 0)}
+              </span>
+            ) : null}
             <span className="hidden shrink-0 items-center gap-1 rounded-full border border-border/60 px-2 py-0.5 text-[10px] font-medium text-muted-foreground lg:inline-flex">
               <CategoryGlyph name={category?.icon} className="h-3 w-3" />
               {category ? resolveLocalized(category.label, locale) : project.category}
@@ -165,17 +169,21 @@ export function ProjectRow({
                 );
               })}
             </span>
-            <span className="inline-flex items-center gap-1">
-              <span
-                className="h-1.5 w-1.5 rounded-full"
-                style={{ background: languageDot(project.language) }}
-                aria-hidden="true"
-              />
-              {project.language}
-            </span>
-            <span className={`hidden items-center sm:inline-flex ${metaPending ? "meta-pending" : ""}`}>
-              <RelativeTime isoDate={project.lastCommit} prefix={updatedPrefix} />
-            </span>
+            {git ? (
+              <span className="inline-flex items-center gap-1">
+                <span
+                  className="h-1.5 w-1.5 rounded-full"
+                  style={{ background: languageDot(project.language ?? "") }}
+                  aria-hidden="true"
+                />
+                {project.language}
+              </span>
+            ) : null}
+            {git ? (
+              <span className={`hidden items-center sm:inline-flex ${metaPending ? "meta-pending" : ""}`}>
+                <RelativeTime isoDate={project.lastCommit ?? ""} prefix={updatedPrefix} />
+              </span>
+            ) : null}
           </span>
         </span>
 

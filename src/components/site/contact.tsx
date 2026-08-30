@@ -31,21 +31,21 @@ export function ContactSection() {
       label: t("contact.github"),
       desc: t("contact.githubDesc"),
       icon: GithubIcon,
-      handle: `@${profile.handle}`,
+      handle: `DRAVBER`,
     },
     {
       href: profile.socialLinks.discord,
       label: t("contact.discord"),
       desc: t("contact.discordDesc"),
       icon: DiscordIcon,
-      handle: `@${profile.handle}`,
+      handle: `addsme`,
     },
     {
       href: profile.socialLinks.telegram,
       label: t("contact.telegram"),
       desc: t("contact.telegramDesc"),
       icon: TelegramIcon,
-      handle: `t.me/${profile.handle}`,
+      handle: `t.me/@xDRAVBER`,
     },
   ];
 

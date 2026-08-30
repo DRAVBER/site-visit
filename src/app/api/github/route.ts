@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { projects } from "@/lib/portfolio";
+import { projects, hasGit } from "@/lib/portfolio";
 
 /**
  * GET /api/github?ids=nebula-analytics,lumen-kit
@@ -65,11 +65,14 @@ async function fetchRepo(owner: string, repo: string): Promise<RepoMeta | null> 
 
 export async function GET(request: NextRequest) {
   const ids = request.nextUrl.searchParams.get("ids")?.split(",").filter(Boolean);
-  const targets = ids ? projects.filter((p) => ids.includes(p.id)) : projects;
+  // closed-source (git:false) projects have no repo — skip them entirely
+  const targets = (ids ? projects.filter((p) => ids.includes(p.id)) : projects).filter(
+    (p) => hasGit(p)
+  );
 
   const results = await Promise.allSettled(
     targets.map(async (project) => {
-      const parsed = parseOwnerRepo(project.githubUrl);
+      const parsed = parseOwnerRepo(project.githubUrl ?? "");
       const meta = parsed ? await fetchRepo(parsed.owner, parsed.repo) : null;
       return [project.id, meta] as const;
     })
